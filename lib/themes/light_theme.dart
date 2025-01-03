@@ -36,7 +36,8 @@ ThemeData light() => ThemeData(
   appBarTheme: AppBarTheme(
     scrolledUnderElevation: 0,
 centerTitle: true,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.transparent,
+    foregroundColor: AppColors.textColor,
     shadowColor: Colors.black.withOpacity(0.12),
   ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(backgroundColor: AppColors.buttonSecondColor),

@@ -63,14 +63,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   //button
                   CustomTextButton(
                     text: "Get Started",
-                    onTap: () {},
+                    onTap: () {
+
+                      Get.offAllNamed(AppRoutes.signUpScreen);
+                    },
                   ),
 
                   //already have account
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      CustomTextTwo(
+                      const CustomTextTwo(
                         text: "Already have an account?",
                         color: Colors.white,
                       ),

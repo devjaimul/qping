@@ -118,7 +118,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           horizontal: widget.contentPaddingHorizontal ?? 20.w,
           vertical: widget.contentPaddingVertical ?? 14.h,
         ),
-        fillColor: widget.filColor ?? Colors.transparent,
+        fillColor: widget.filColor ?? AppColors.textFieldFillColor,
         filled: true,
         prefixIcon: widget.prefixIcon,
         suffixIcon: widget.isPassword
@@ -169,6 +169,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       borderRadius: BorderRadius.circular(widget.borderRadio?.r ?? 100.r),
       borderSide: BorderSide(
         color: widget.borderColor ?? AppColors.primaryColor,
+        width: 1.5,
       ),
     );
   }

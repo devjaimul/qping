@@ -8,13 +8,15 @@ import 'package:qping/global_widgets/custom_text_field.dart';
 import 'package:qping/routes/app_routes.dart';
 import 'package:qping/utils/app_icons.dart';
 
-class SignInScreen extends StatelessWidget {
-  const SignInScreen({super.key});
+class SignUpScreen extends StatelessWidget {
+  const SignUpScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController nameTEController = TextEditingController();
     TextEditingController emailTEController = TextEditingController();
     TextEditingController passTEController = TextEditingController();
+    TextEditingController confirmPassTEController = TextEditingController();
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -27,6 +29,18 @@ class SignInScreen extends StatelessWidget {
               const AppLogo(),
               SizedBox(height: 15.h,),
               CustomTextField(
+                  controller: nameTEController,
+                  hintText: "Name",
+                  prefixIcon: Padding(
+                    padding:  EdgeInsets.symmetric(horizontal: 10.w),
+                    child: Image.asset(
+                      AppIcons.person,
+                      height: 18.h,
+                    ),
+                  ),
+              borderRadio: 12.r,
+              ),
+              CustomTextField(
                   controller: emailTEController,
                   hintText: "Enter E-mail",
                   isEmail: true,
@@ -36,11 +50,14 @@ class SignInScreen extends StatelessWidget {
                       AppIcons.email,
                       height: 18.h,
                     ),
-                  )),
+                  ),
+              borderRadio: 12.r,
+              ),
               CustomTextField(
                   controller: passTEController,
                   hintText: "Enter Password",
                   isPassword: true,
+                  borderRadio: 12.r,
                   prefixIcon: Padding(
                     padding:  EdgeInsets.symmetric(horizontal: 10.w),
                     child: Image.asset(
@@ -48,18 +65,27 @@ class SignInScreen extends StatelessWidget {
                       height: 18.h,
                     ),
                   )),
-              Align(
-                  alignment: Alignment.centerRight,
-                  child: StyleTextButton(text: "Forget Password?", onTap: (){})),
-              CustomTextButton(text: "Let’s Go", onTap: (){}),
+              CustomTextField(
+                  controller: confirmPassTEController,
+                  hintText: "Re-Enter Password",
+                  isPassword: true,
+                  borderRadio: 12.r,
+                  prefixIcon: Padding(
+                    padding:  EdgeInsets.symmetric(horizontal: 10.w),
+                    child: Image.asset(
+                      AppIcons.password,
+                      height: 18.h,
+                    ),
+                  )),
+              CustomTextButton(text: "Sign Up", onTap: (){     Get.toNamed(AppRoutes.registrationScreen);}),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                 CustomTextTwo(text: "Don’t have an account?"),
+                  const CustomTextTwo(text: "Already have an account?"),
                   StyleTextButton(
-                    text: "Sign Up",
+                    text: "Sign In",
                     onTap: () {
-                      Get.toNamed(AppRoutes.signUpScreen);
+                      Get.toNamed(AppRoutes.signInScreen);
 
                     },
                   ),

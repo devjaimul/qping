@@ -2,6 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>We need your location to show relevant map data.</string>
+<key>NSLocationAlwaysUsageDescription</key>
+<string>We need your location to provide accurate services.</string>
+<key>io.flutter.embedded_views_preview</key>
+<true/>
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>We need your location to show you nearby places.</string>
+<key>NSLocationAlwaysUsageDescription</key>
+<string>We need your location to provide accurate services.</string>
+<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+<string>We need your location for better user experience.</string>
+
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
