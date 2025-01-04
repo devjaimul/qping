@@ -6,8 +6,10 @@ import 'package:qping/utils/app_images.dart';
 
 class AppLogo extends StatelessWidget {
   final String? img;
+  final double? height;
+
   const AppLogo({
-    super.key, this.img,
+    super.key, this.img, this.height,
 
   });
 
@@ -18,7 +20,7 @@ class AppLogo extends StatelessWidget {
     final sizeW = MediaQuery.sizeOf(context).width;
     return Image.asset(
      img??AppImages.appLogoBlack,
-      height: sizeH * .15,
+      height:height?? sizeH * .15,
       width: sizeW * .4,
     );
   }

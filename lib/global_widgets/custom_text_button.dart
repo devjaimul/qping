@@ -57,6 +57,7 @@ class StyleTextButton extends StatelessWidget {
   final Function onTap;
   final double? radius;
   final TextAlign? textAlign;
+  final TextDecoration? textDecoration;
   const StyleTextButton({
     super.key,
     required this.text,
@@ -64,7 +65,7 @@ class StyleTextButton extends StatelessWidget {
     required this.onTap,
     this.fontSize,
     this.radius,
-    this.textColor, this.textAlign,
+    this.textColor, this.textAlign, this.textDecoration,
   });
 
   @override
@@ -81,7 +82,10 @@ class StyleTextButton extends StatelessWidget {
             color: textColor??AppColors.primaryColor,
               fontSize: sizeH * .018,
               fontWeight: FontWeight.w600,
-              fontFamily: 'Outfit'),
+              fontFamily: 'Outfit',
+          decoration: textDecoration ?? TextDecoration.underline,
+          ),
+
         ));
   }
 }

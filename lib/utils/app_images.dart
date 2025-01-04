@@ -4,4 +4,6 @@ class AppImages {
   static const String onBoarding = "$baseUrl/onBoarding.png";
   static const String appLogoBlack = "$baseUrl/appLogo_black.png";
   static const String appLogoWhite = "$baseUrl/app_logo_white.png";
+  static const String model = "$baseUrl/MODEL.jpg";
+  static const String attach = "$baseUrl/attach.png";
 }

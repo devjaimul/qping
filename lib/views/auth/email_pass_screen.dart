@@ -6,16 +6,19 @@ import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_button.dart';
 import 'package:qping/global_widgets/custom_text_field.dart';
 import 'package:qping/routes/app_routes.dart';
+import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_icons.dart';
 
-class SignInScreen extends StatelessWidget {
-  const SignInScreen({super.key});
+class EmailPassScreen extends StatelessWidget {
+  const EmailPassScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     TextEditingController emailTEController = TextEditingController();
-    TextEditingController passTEController = TextEditingController();
     return Scaffold(
+      appBar: AppBar(
+        title: CustomTextOne(text: "E-mail Verification",fontSize: 18.sp,color: AppColors.textColor,),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16.h),
@@ -23,9 +26,9 @@ class SignInScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             spacing: 15.h,
             children: [
-              SizedBox(height: 100.h,),
+              SizedBox(height: 50.h,),
               const AppLogo(),
-              SizedBox(height: 15.h,),
+              SizedBox(height: 20.h,),
               CustomTextField(
                   controller: emailTEController,
                   hintText: "Enter E-mail",
@@ -37,29 +40,14 @@ class SignInScreen extends StatelessWidget {
                       height: 18.h,
                     ),
                   )),
-              CustomTextField(
-                  controller: passTEController,
-                  hintText: "Enter Password",
-                  isPassword: true,
-                  prefixIcon: Padding(
-                    padding:  EdgeInsets.symmetric(horizontal: 10.w),
-                    child: Image.asset(
-                      AppIcons.password,
-                      height: 18.h,
-                    ),
-                  )),
-              Align(
-                  alignment: Alignment.centerRight,
-                  child: StyleTextButton(text: "Forget Password?", onTap: (){
-                    Get.toNamed(AppRoutes.emailPassScreen);
-                  },textDecoration: TextDecoration.none,)),
-              CustomTextButton(text: "Let’s Go", onTap: (){
-                Get.offAllNamed(AppRoutes.customNavBar);
+              SizedBox(height: 50.h,),
+              CustomTextButton(text: "Send Otp", onTap: (){
+                Get.toNamed(AppRoutes.otpVerificationScreen);
               }),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                 const CustomTextTwo(text: "Don’t have an account?"),
+                  const CustomTextTwo(text: "Don’t have an account?"),
                   StyleTextButton(
                     text: "Sign Up",
                     onTap: () {

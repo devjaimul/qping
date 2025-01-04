@@ -63,6 +63,7 @@ class RegistrationScreen extends StatelessWidget {
                 borderRadio: 12.r,
               ),
               CustomTextField(
+                keyboardType: TextInputType.number,
                 controller: phoneTEController,
                 hintText: "Phone Number",
                 prefixIcon: Padding(
@@ -75,6 +76,7 @@ class RegistrationScreen extends StatelessWidget {
                 borderRadio: 12.r,
               ),
               CustomTextField(
+                readOnly: true,
                 controller: genderTEController,
                 hintText: "Gender",
                 prefixIcon: Padding(
@@ -84,9 +86,32 @@ class RegistrationScreen extends StatelessWidget {
                     height: 18.h,
                   ),
                 ),
+                suffixIcon: PopupMenuButton<String>(
+                  icon:  const Icon(Icons.arrow_drop_down_circle_outlined,color: AppColors.primaryColor,),
+                  onSelected: (String selectedGender) {
+                    genderTEController.text = selectedGender;
+                  },
+                  itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                    const PopupMenuItem<String>(
+                      value: "Male",
+                      child: Text("Male"),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: "Female",
+                      child: Text("Female"),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: "Prefer not to say",
+                      child: Text("Prefer not to say"),
+                    ),
+                  ],
+                ),
                 borderRadio: 12.r,
               ),
+
+
               CustomTextField(
+                readOnly: true,
                 controller: locationTEController,
                 hintText: "Address",
                 prefixIcon: Padding(
@@ -112,6 +137,7 @@ class RegistrationScreen extends StatelessWidget {
                 borderRadio: 12.r,
               ),
               CustomTextField(
+                readOnly: true,
                 controller: birthdayTEController,
                 hintText: "Birthday",
                 prefixIcon: Padding(
@@ -125,7 +151,7 @@ class RegistrationScreen extends StatelessWidget {
                   onPressed: () {
                     selectDate(context);
                   },
-                  icon: const Icon(Icons.calendar_today_outlined,
+                  icon: const Icon(Icons.calendar_month,
                       color: AppColors.primaryColor),
                 ),
                 borderRadio: 12.r,

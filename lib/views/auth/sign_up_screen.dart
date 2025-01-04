@@ -29,6 +29,7 @@ class SignUpScreen extends StatelessWidget {
               const AppLogo(),
               SizedBox(height: 15.h,),
               CustomTextField(
+                keyboardType: TextInputType.name,
                   controller: nameTEController,
                   hintText: "Name",
                   prefixIcon: Padding(

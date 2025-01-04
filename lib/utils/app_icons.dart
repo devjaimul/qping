@@ -11,6 +11,16 @@ class AppIcons {
   static const String calender = "$path/calender.png";
   static const String birthday = "$path/birthday.png";
 
+  //navbar
+  static const String msgFill = "$path/msgFill.png";
+  static const String msg = "$path/msg.png";
+  static const String discoverFill = "$path/discoverFill.png";
+  static const String discover = "$path/discover.png";
+  static const String event = "$path/event.png";
+  static const String eventFill = "$path/eventFill.png";
+  static const String personFill = "$path/personFill.png";
+  static const String search = "$path/search.png";
+
 
 
 

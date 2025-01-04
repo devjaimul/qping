@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
           theme: light(),
           debugShowCheckedModeBanner: false,
           getPages: AppRoutes.routes,
-          initialRoute: AppRoutes.splashScreen,
+          initialRoute: AppRoutes.customNavBar,
           initialBinding: ControllerBindings(),
           // builder: DevicePreview.appBuilder, // Add this line to wrap the app in DevicePreview.
           // locale: DevicePreview.locale(context), // Adds support for locale preview.

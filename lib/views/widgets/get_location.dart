@@ -31,12 +31,6 @@ class _GetLocationState extends State<GetLocation> {
   );
 
   // Constants for text and error messages
-  static const String locationPermissionDenied =
-      'Location permission is denied.';
-  static const String locationPermissionDeniedForever =
-      'Location permission is permanently denied.';
-  static const String locationServicesDisabled =
-      'Location services are disabled.';
   static const String pleaseSelectLocation =
       'Please select a location on the map';
   static const String failedToRetrieveAddress = 'Failed to retrieve address';
@@ -60,19 +54,13 @@ class _GetLocationState extends State<GetLocation> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Location permission is denied.')),
-        );
+       Get.snackbar("!!!", 'Location permission is denied.');
         return;
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Location permission is permanently denied. Please enable it in settings.'),
-        ),
-      );
+    Get.snackbar("!!!", "Location permission is permanently denied. Please enable it in settings.");
       openAppSettings(); // Redirect user to app settings
       return;
     }
