@@ -12,8 +12,7 @@ import 'package:qping/utils/app_images.dart';
 
 
 class ProfileUpdate extends StatefulWidget {
-
-  const ProfileUpdate({super.key,});
+  const ProfileUpdate({super.key});
 
   @override
   _ProfileUpdateState createState() => _ProfileUpdateState();
@@ -30,6 +29,19 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
   final TextEditingController heightController = TextEditingController();
   final TextEditingController weightController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize controllers with default values
+    nameController.text = "Lucy";
+    addressController.text = "lucyhuntstreasure@hmail.com";
+    genderController.text = "Female";
+    ageController.text = "24 yrs";
+    heightController.text = "5'6\""; // Example default value
+    weightController.text = "65 kg"; // Example default value
+  }
+
   Future<void> _pickImage() async {
     showModalBottomSheet(
       context: context,
@@ -40,7 +52,8 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
               leading: const Icon(Icons.photo_library),
               title: const Text("Pick from Gallery"),
               onTap: () async {
-                final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+                final XFile? image =
+                await _picker.pickImage(source: ImageSource.gallery);
                 if (image != null) {
                   setState(() {
                     _profileImage = File(image.path);
@@ -53,7 +66,8 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
               leading: const Icon(Icons.camera_alt),
               title: const Text("Take a Photo"),
               onTap: () async {
-                final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+                final XFile? image =
+                await _picker.pickImage(source: ImageSource.camera);
                 if (image != null) {
                   setState(() {
                     _profileImage = File(image.path);
@@ -68,17 +82,17 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       appBar: AppBar(
-        title: CustomTextOne(text: 'Profile Update',fontSize: 18.sp,color: AppColors.textColor,),
+        title: CustomTextOne(
+          text: 'Profile Update',
+          fontSize: 18.sp,
+          color: AppColors.textColor,
+        ),
       ),
-      body:SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16.w),
           child: Column(
@@ -103,75 +117,72 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                           ),
                         ],
                         border: Border.all(
-                          color: AppColors.primaryColor
-                              .withOpacity(0.5), // Outer blue border
+                          color: AppColors.primaryColor.withOpacity(0.5),
                           width: 2.w,
                         ),
                       ),
                       child: CircleAvatar(
-                  radius: 50.r,
-                  backgroundColor: Colors.grey[300],
-                  backgroundImage: _profileImage != null
-                      ? FileImage(_profileImage!) as ImageProvider
-                      : const AssetImage(AppImages.model),
-                ),
-
-              ),
+                        radius: 50.r,
+                        backgroundColor: Colors.grey[300],
+                        backgroundImage: _profileImage != null
+                            ? FileImage(_profileImage!) as ImageProvider
+                            : const AssetImage(AppImages.model),
+                      ),
+                    ),
                     Container(
                       height: 40.h,
-                        width: 40.w,
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryColor,
-                          shape: BoxShape.circle
+                      width: 40.w,
+                      decoration: const BoxDecoration(
+                        color: AppColors.primaryColor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: IconButton(
+                          onPressed: _pickImage,
+                          icon: const Icon(Icons.camera_alt, color: Colors.white),
                         ),
-                        child: Center(child: IconButton(onPressed: (){
-                          _pickImage();
-                        }, icon: Icon(Icons.camera_alt,color: Colors.white,))))
+                      ),
+                    ),
                   ],
                 ),
               ),
-
               const CustomTextTwo(text: "Your Name"),
               CustomTextField(
-                controller: TextEditingController(),
-                hintText: "Lucy",
+                controller: nameController,
+                hintText: "Enter your name",
                 filColor: Colors.transparent,
                 borderColor: Colors.black,
-
               ),
               const CustomTextTwo(text: "E-mail"),
               CustomTextField(
-                controller: TextEditingController(),
-                hintText: "lucyhuntstreasure@hmail.com",
+                controller: addressController,
+                hintText: "Enter your email address",
                 filColor: Colors.transparent,
                 borderColor: Colors.black,
-
               ),
               const CustomTextTwo(text: "Gender"),
               CustomTextField(
-                controller: TextEditingController(),
-                hintText: "Female",
+                controller: genderController,
+                hintText: "Enter your gender",
                 filColor: Colors.transparent,
                 borderColor: Colors.black,
-
               ),
               const CustomTextTwo(text: "Age"),
               CustomTextField(
-                controller: TextEditingController(),
-                hintText: "24 yrs",
+                controller: ageController,
+                hintText: "Enter your age",
                 filColor: Colors.transparent,
                 borderColor: Colors.black,
-
               ),
-
               SizedBox(
                 height: 20.h,
               ),
               // Edit Profile Button
               CustomTextButton(
                 text: 'Update Profile',
-
-                onTap: () async {},
+                onTap: () async {
+                  // Implement profile update logic
+                },
               ),
             ],
           ),
@@ -179,5 +190,5 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
       ),
     );
   }
-
 }
+
