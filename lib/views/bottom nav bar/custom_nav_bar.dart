@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:qping/global_widgets/app_logo.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_icons.dart';
-import 'package:qping/views/Message/message_screen.dart';
 import 'package:qping/views/Message/message_tab_bar_screen.dart';
+import 'package:qping/views/notification/notification.dart';
+import 'package:qping/views/profile/profile_screen.dart';
 
 class CustomNavBar extends StatefulWidget {
   const CustomNavBar({super.key});
@@ -18,10 +20,10 @@ class _CustomNavBarState extends State<CustomNavBar> {
 
   // List of screens for navigation
   final List<Widget> _screens = [
-    MessageTabBarScreen(),
+    const MessageTabBarScreen(),
     const CircularProgressIndicator(),
     const CircularProgressIndicator(),
-    const CircularProgressIndicator(),
+    const ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -39,7 +41,9 @@ class _CustomNavBarState extends State<CustomNavBar> {
           child: AppLogo(height:40.h),
         ),
         actions: [
-          IconButton(onPressed: (){}, icon: Badge(label: const Text("2"), child: Icon(Icons.notifications_none_outlined,size: 22.h,),))
+          IconButton(onPressed: (){
+            Get.to(()=> const NotificationScreen());
+          }, icon: Badge(label: const Text("2"), child: Icon(Icons.notifications_none_outlined,size: 22.h,),))
         ],
       ),
       body: Center(

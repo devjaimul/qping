@@ -6,11 +6,10 @@ import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_field.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_images.dart';
-import 'package:qping/views/Message/create_group_screen.dart';
-import 'package:qping/views/Message/message_chat_screen.dart';
+import 'package:qping/views/Message/message_request_chat_screen.dart';
 
-class MessageScreen extends StatelessWidget {
-  MessageScreen({super.key});
+class MessageRequestScreen extends StatelessWidget {
+  MessageRequestScreen({super.key});
 
   final MessageController messageController = Get.put(MessageController());
 
@@ -47,10 +46,6 @@ class MessageScreen extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(onPressed: (){
-        Get.to(()=> const CreateGroupScreen());
-
-      },backgroundColor: AppColors.primaryColor,foregroundColor: Colors.white,child: const Icon(Icons.add),),
     );
   }
 
@@ -88,7 +83,7 @@ class MessageScreen extends StatelessWidget {
                 textAlign: TextAlign.start,
                 textOverflow: TextOverflow.ellipsis,
               ),
-            
+
               /// ================================> Time ==================================>
               trailing: Column(
                 children: [
@@ -112,7 +107,7 @@ class MessageScreen extends StatelessWidget {
                 ],
               ),
               onTap: () {
-                Get.to( MessageChatScreen());
+                Get.to( ()=>MessageRequestChatScreen());
               },
             ),
           );

@@ -10,6 +10,8 @@ import 'package:qping/views/Message/media_screen.dart';
 import 'package:qping/views/Message/report_screen.dart';
 
 class ProfileAboutScreen extends StatefulWidget {
+  const ProfileAboutScreen({super.key});
+
   @override
   State<ProfileAboutScreen> createState() => _ProfileAboutScreenState();
 }
@@ -85,7 +87,7 @@ class _ProfileAboutScreenState extends State<ProfileAboutScreen> {
               _buildProfileOption(
                   title: 'Report',
                   onTap: () {
-                    Get.to(ReportScreen());
+                    Get.to(const ReportScreen());
                   }),
               Divider(
                 color: AppColors.primaryColor.withOpacity(0.3),
@@ -99,7 +101,7 @@ class _ProfileAboutScreenState extends State<ProfileAboutScreen> {
                       builder: (context) => CustomDialog(
                         title: 'Are you sure you want to block this Account?',
                         confirmButtonText: "Yes, Block",
-                        confirmButtonColor: Colors.red,
+                        confirmButtonColor: AppColors.primaryColor,
                         onCancel: () {
                           Get.back();
                         },

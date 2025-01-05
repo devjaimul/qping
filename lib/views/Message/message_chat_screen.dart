@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:qping/Controller/message/message_chat_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
-import 'package:qping/global_widgets/custom_text_button.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_images.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
@@ -13,8 +12,13 @@ import 'package:qping/views/Message/profile_about_screen.dart';
 import 'package:qping/views/widgets/poll_widget.dart';
 
 class MessageChatScreen extends StatelessWidget {
+ final bool? isGroup;
+  MessageChatScreen({super.key, this.isGroup,});
+
   final MessageChatController _controller = Get.put(MessageChatController());
+
   final TextEditingController _messageController = TextEditingController();
+
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage(bool fromCamera) async {
@@ -127,14 +131,14 @@ class MessageChatScreen extends StatelessWidget {
               padding: EdgeInsets.all(10.w),
               child: Row(
                 children: [
-                  IconButton(
+                 isGroup==true? IconButton(
                     onPressed: _controller.addPoll, // Trigger poll creation
                     icon: Icon(
                       Icons.add_circle_outline,
                       color: Colors.grey,
                       size: 35.h,
                     ),
-                  ),
+                  ):Container(),
                   InkWell(
                     onTap: () => _pickImage(false),
                     child: Image.asset(

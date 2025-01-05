@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qping/utils/app_colors.dart';
+import 'package:qping/views/Message/message_request_screen.dart';
 import 'package:qping/views/Message/message_screen.dart';
 
 class MessageTabBarScreen extends StatelessWidget {
@@ -60,7 +61,7 @@ class MessageTabBarScreen extends StatelessWidget {
               child: TabBarView(
                 children: [
                   MessageScreen(),
-                  MessageScreen(),
+                 MessageRequestScreen()
                 ],
               ),
             ),

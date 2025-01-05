@@ -10,6 +10,8 @@ class AppIcons {
   static const String address = "$path/address.png";
   static const String calender = "$path/calender.png";
   static const String birthday = "$path/birthday.png";
+  static const String subscription = "$path/subscription.png";
+
 
   //navbar
   static const String msgFill = "$path/msgFill.png";

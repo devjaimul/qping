@@ -44,19 +44,7 @@ class EmailPassScreen extends StatelessWidget {
               CustomTextButton(text: "Send Otp", onTap: (){
                 Get.toNamed(AppRoutes.otpVerificationScreen);
               }),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const CustomTextTwo(text: "Don’t have an account?"),
-                  StyleTextButton(
-                    text: "Sign Up",
-                    onTap: () {
-                      Get.toNamed(AppRoutes.signUpScreen);
 
-                    },
-                  ),
-                ],
-              ),
             ],
           ),
         ),
