@@ -23,15 +23,16 @@ class MySubscription extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.all(sizeH * 0.016),
           child: Column(
+            spacing: 10.h,
             children: [
-              SizedBox(height: sizeH * 0.02),
 
-              SizedBox(height: sizeH * 0.02),
-              CustomTextTwo(text: 'You’re not subscribed to any plan'),
-              SizedBox(height: sizeH * 0.016),
-              CustomTextTwo(
+
+
+              const CustomTextTwo(text: 'You’re not subscribed to any plan'),
+
+              const CustomTextTwo(
                   text: 'Please subscribe to a plan to use all the features'),
-              SizedBox(height: sizeH * 0.3),
+
               CustomTextButton(
                 text: 'See Packages',
                 onTap: () {

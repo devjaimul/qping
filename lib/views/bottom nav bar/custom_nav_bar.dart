@@ -5,6 +5,7 @@ import 'package:qping/global_widgets/app_logo.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_icons.dart';
 import 'package:qping/views/Message/message_tab_bar_screen.dart';
+import 'package:qping/views/discover/discover_screen.dart';
 import 'package:qping/views/notification/notification.dart';
 import 'package:qping/views/profile/profile_screen.dart';
 
@@ -21,7 +22,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
   // List of screens for navigation
   final List<Widget> _screens = [
     const MessageTabBarScreen(),
-    const CircularProgressIndicator(),
+    const DiscoverScreen(),
     const CircularProgressIndicator(),
     const ProfileScreen(),
   ];

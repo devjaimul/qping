@@ -155,6 +155,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
               ),
               const CustomTextTwo(text: "E-mail"),
               CustomTextField(
+                readOnly: true,
                 controller: addressController,
                 hintText: "Enter your email address",
                 filColor: Colors.transparent,

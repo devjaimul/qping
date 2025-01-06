@@ -6,4 +6,6 @@ class AppImages {
   static const String appLogoWhite = "$baseUrl/app_logo_white.png";
   static const String model = "$baseUrl/MODEL.jpg";
   static const String attach = "$baseUrl/attach.png";
+  static const String marker = "$baseUrl/marker.png";
+  static const String discover = "$baseUrl/discover.png";
 }
