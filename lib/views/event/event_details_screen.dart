@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
+import 'package:get/get.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_button.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_images.dart';
+import 'package:qping/views/event/event_map_screen.dart';
 
 class EventDetailsScreen extends StatelessWidget {
   const EventDetailsScreen({super.key});
@@ -131,7 +133,10 @@ class EventDetailsScreen extends StatelessWidget {
         padding:  EdgeInsets.all(16.r),
         child: CustomTextButton(
           text: "Start Hunting",
-          onTap: () {},
+          onTap: () {
+
+Get.to(()=>EventMapScreen());
+          },
 
         ),
       ),
