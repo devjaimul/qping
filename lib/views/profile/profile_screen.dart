@@ -10,7 +10,6 @@ import 'package:qping/utils/app_icons.dart';
 import 'package:qping/utils/app_images.dart';
 import 'package:qping/views/profile/profile_information.dart';
 import 'package:qping/views/profile/setting/setting_screen.dart';
-import 'package:qping/views/profile/subscription/my_subscription.dart';
 
 
 class ProfileScreen extends StatelessWidget {
@@ -80,18 +79,6 @@ class ProfileScreen extends StatelessWidget {
             label: 'Profile Information',
             onTap: () async {
               await Get.to(()=> ProfileInformation());
-            },
-          ),
-          const Divider(
-            thickness: 1,
-            indent: 40,
-            endIndent: 40,
-          ),
-          _buildProfileOption(
-            icon: Image.asset(AppIcons.subscription,height: 18.h),
-            label: 'Subscription',
-            onTap: () {
-              Get.to(()=> MySubscription());
             },
           ),
           const Divider(
