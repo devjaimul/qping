@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -58,17 +59,17 @@ class DiscoverMapController extends GetxController {
       );
     }
   }
-
   Future<void> _getCurrentLocation() async {
     currentPosition = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
 
+    // Add user location marker
     markers.add(
       Marker(
         markerId: const MarkerId('currentLocation'),
         position: LatLng(currentPosition!.latitude, currentPosition!.longitude),
         infoWindow: const InfoWindow(title: 'You are here'),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+        icon: BitmapDescriptor.defaultMarker,
       ),
     );
 
@@ -194,5 +195,44 @@ class DiscoverMapController extends GetxController {
         ),
       ),
     );
+  }
+  Future<void> searchLocation(String query) async {
+    if (query.isNotEmpty) {
+      try {
+        // Get latitude and longitude for the query
+        List<Location> locations = await locationFromAddress(query);
+        if (locations.isNotEmpty) {
+          LatLng searchedLocation =
+          LatLng(locations[0].latitude, locations[0].longitude);
+
+          // Update map camera to the searched location
+          final GoogleMapController controller = await mapController.future;
+          controller.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(target: searchedLocation, zoom: 14.0),
+            ),
+          );
+
+          // Add marker for the searched location
+          markers.add(
+            Marker(
+              markerId: MarkerId('searchedLocation'),
+              position: searchedLocation,
+              infoWindow: InfoWindow(title: query),
+            ),
+          );
+
+          // Update selected location
+          selectedLocation.value = searchedLocation;
+        }
+      } catch (e) {
+        // Handle errors gracefully
+        Get.snackbar(
+          'Error',
+          'Location not found. Please try another query.',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    }
   }
 }
