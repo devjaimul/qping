@@ -48,7 +48,7 @@ class ProfileScreen extends StatelessWidget {
             child: CircleAvatar(
               radius: 50.r,
               backgroundColor: Colors.grey[300],
-              backgroundImage: AssetImage(AppImages.model),
+              backgroundImage: const AssetImage(AppImages.model),
             ),
           ),
 
@@ -78,7 +78,7 @@ class ProfileScreen extends StatelessWidget {
             icon: Image.asset(AppIcons.person,height: 18.h),
             label: 'Profile Information',
             onTap: () async {
-              await Get.to(()=> ProfileInformation());
+              await Get.to(()=> const ProfileInformation());
             },
           ),
           const Divider(
@@ -90,7 +90,7 @@ class ProfileScreen extends StatelessWidget {
             icon: Icon(Icons.settings_outlined,color: AppColors.primaryColor.withOpacity(0.5),size: 22.sp,),
             label: 'Settings',
             onTap: () {
-              Get.to( ()=> SettingScreen());
+              Get.to( ()=> const SettingScreen());
             },
           ),
           const Divider(

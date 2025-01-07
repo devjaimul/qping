@@ -8,4 +8,6 @@ class AppImages {
   static const String attach = "$baseUrl/attach.png";
   static const String marker = "$baseUrl/marker.png";
   static const String discover = "$baseUrl/discover.png";
+  static const String event = "$baseUrl/event.png";
+  static const String selecton = "$baseUrl/selecton.png";
 }
