@@ -87,7 +87,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       validator: widget.validator ??
               (value) {
             if (value == null || value.isEmpty) {
-              return "Please enter ${widget.hintText?.toLowerCase() ?? 'this field'}";
+              return "Please ${widget.hintText?.toLowerCase() ?? 'this field'}";
             }
 
             if (widget.isPassword) {

@@ -25,6 +25,37 @@ class _EventMapScreenState extends State<EventMapScreen> {
   Set<Polyline> _polylines = {};
   Circle? _circle;
 
+  List<LatLng> _decodePolyline(String encoded) {
+    List<LatLng> polyline = [];
+    int index = 0, len = encoded.length;
+    int lat = 0, lng = 0;
+
+    while (index < len) {
+      int shift = 0, result = 0;
+      int b;
+      do {
+        b = encoded.codeUnitAt(index++) - 63;
+        result |= (b & 0x1F) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      int deltaLat = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
+      lat += deltaLat;
+
+      shift = 0;
+      result = 0;
+      do {
+        b = encoded.codeUnitAt(index++) - 63;
+        result |= (b & 0x1F) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      int deltaLng = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
+      lng += deltaLng;
+
+      polyline.add(LatLng(lat / 1e5, lng / 1e5));
+    }
+    return polyline;
+  }
+
   final String _googleApiKey = ApiConstants.googleMapKey; // Replace with your API key
 
   @override
@@ -84,18 +115,8 @@ class _EventMapScreenState extends State<EventMapScreen> {
         final data = json.decode(response.body);
 
         if (data["status"] == "OK") {
-          List<LatLng> polylineCoordinates = [];
-          final steps = data["routes"][0]["legs"][0]["steps"];
-
-          for (var step in steps) {
-            final startLat = step["start_location"]["lat"];
-            final startLng = step["start_location"]["lng"];
-            polylineCoordinates.add(LatLng(startLat, startLng));
-
-            final endLat = step["end_location"]["lat"];
-            final endLng = step["end_location"]["lng"];
-            polylineCoordinates.add(LatLng(endLat, endLng));
-          }
+          final overviewPolyline = data["routes"][0]["overview_polyline"]["points"];
+          List<LatLng> polylineCoordinates = _decodePolyline(overviewPolyline);
 
           setState(() {
             _polylines = {
@@ -107,7 +128,8 @@ class _EventMapScreenState extends State<EventMapScreen> {
               ),
             };
           });
-        } else {
+        }
+        else {
           debugPrint("Directions API Error: ${data["status"]}");
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Error: ${data["status"]}")),
@@ -165,4 +187,5 @@ class _EventMapScreenState extends State<EventMapScreen> {
       ),
     );
   }
+
 }

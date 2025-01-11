@@ -13,7 +13,7 @@ class SignUpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController nameTEController = TextEditingController();
+    TextEditingController userNameTEController = TextEditingController();
     TextEditingController emailTEController = TextEditingController();
     TextEditingController passTEController = TextEditingController();
     TextEditingController confirmPassTEController = TextEditingController();
@@ -30,8 +30,8 @@ class SignUpScreen extends StatelessWidget {
               SizedBox(height: 15.h,),
               CustomTextField(
                 keyboardType: TextInputType.name,
-                  controller: nameTEController,
-                  hintText: "Name",
+                  controller: userNameTEController,
+                  hintText: "Enter Unique User Name",
                   prefixIcon: Padding(
                     padding:  EdgeInsets.symmetric(horizontal: 10.w),
                     child: Image.asset(

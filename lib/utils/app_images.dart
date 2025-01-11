@@ -10,4 +10,7 @@ class AppImages {
   static const String discover = "$baseUrl/discover.png";
   static const String event = "$baseUrl/event.png";
   static const String selecton = "$baseUrl/selecton.png";
+  static const String dogAvater = "$baseUrl/avatars/dog.png";
+  static const String crowAvater = "$baseUrl/avatars/crow.png";
+  static const String hippoAvater = "$baseUrl/avatars/hippo.png";
 }

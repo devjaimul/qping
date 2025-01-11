@@ -1,3 +1,4 @@
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -15,11 +16,14 @@ class RegistrationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController bioTEController = TextEditingController();
+    TextEditingController nameTEController = TextEditingController();
     TextEditingController phoneTEController = TextEditingController();
     TextEditingController genderTEController = TextEditingController();
     TextEditingController locationTEController = TextEditingController();
     TextEditingController birthdayTEController = TextEditingController();
+
+    // Initialize selected country code
+    String selectedCountryCode = '+1';
 
     Future<void> selectDate(BuildContext context) async {
       DateTime? pickedDate = await showDatePicker(
@@ -37,26 +41,28 @@ class RegistrationScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: CustomTextOne(text: "Registration",color: AppColors.textColor,fontSize: 18.sp,),
-
+        title: CustomTextOne(
+          text: "Registration",
+          color: AppColors.textColor,
+          fontSize: 18.sp,
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16.h),
           child: Column(
+            spacing: 15.h,
             mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 10.h,
             children: [
               const AppLogo(),
               SizedBox(height: 15.h),
               CustomTextField(
-                controller: bioTEController,
-                hintText: "Bio",
-                maxLine: 4,
+                controller: nameTEController,
+                hintText: "Name",
                 prefixIcon: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10.w),
                   child: Image.asset(
-                    AppIcons.pen,
+                    AppIcons.person,
                     height: 18.h,
                   ),
                 ),
@@ -66,14 +72,18 @@ class RegistrationScreen extends StatelessWidget {
                 keyboardType: TextInputType.number,
                 controller: phoneTEController,
                 hintText: "Phone Number",
-                prefixIcon: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w),
-                  child: Image.asset(
-                    AppIcons.phone,
-                    height: 18.h,
-                  ),
-                ),
                 borderRadio: 12.r,
+                prefixIcon:   CountryCodePicker(
+                  onChanged: (CountryCode countryCode) {
+                    selectedCountryCode = countryCode.dialCode ?? '+1';
+                    debugPrint("Selected country code: $selectedCountryCode");
+                  },
+                  initialSelection: 'US',
+                  favorite: ['+1', 'US'],
+                  showCountryOnly: false,
+                  showOnlyCountryWhenClosed: false,
+                  alignLeft: false,
+                ),
               ),
               CustomTextField(
                 readOnly: true,
@@ -87,7 +97,10 @@ class RegistrationScreen extends StatelessWidget {
                   ),
                 ),
                 suffixIcon: PopupMenuButton<String>(
-                  icon:  const Icon(Icons.arrow_drop_down_circle_outlined,color: AppColors.primaryColor,),
+                  icon: const Icon(
+                    Icons.arrow_drop_down_circle_outlined,
+                    color: AppColors.primaryColor,
+                  ),
                   onSelected: (String selectedGender) {
                     genderTEController.text = selectedGender;
                   },
@@ -108,8 +121,6 @@ class RegistrationScreen extends StatelessWidget {
                 ),
                 borderRadio: 12.r,
               ),
-
-
               CustomTextField(
                 readOnly: true,
                 controller: locationTEController,
@@ -127,8 +138,6 @@ class RegistrationScreen extends StatelessWidget {
                     await Get.to(() => const GetLocation());
                     if (locationData != null) {
                       locationTEController.text = locationData['address'];
-                      // double latitude = locationData['latitude'];
-                      // double longitude = locationData['longitude'];
                     }
                   },
                   icon: const Icon(Icons.location_on,
@@ -158,10 +167,14 @@ class RegistrationScreen extends StatelessWidget {
               ),
               SizedBox(height: 10.h),
               CustomTextButton(
-                  text: "Next",
-                  onTap: () {
-                    Get.toNamed(AppRoutes.uploadPhotosScreen);
-                  }),
+                text: "Next",
+                onTap: () {
+                  String fullPhoneNumber =
+                      '$selectedCountryCode${phoneTEController.text}';
+                  debugPrint("Full Phone Number: $fullPhoneNumber");
+                  Get.toNamed(AppRoutes.phoneNumberVerificationScreen);
+                },
+              ),
             ],
           ),
         ),
@@ -169,3 +182,4 @@ class RegistrationScreen extends StatelessWidget {
     );
   }
 }
+
