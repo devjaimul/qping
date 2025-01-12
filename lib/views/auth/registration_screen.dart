@@ -172,7 +172,7 @@ class RegistrationScreen extends StatelessWidget {
                   String fullPhoneNumber =
                       '$selectedCountryCode${phoneTEController.text}';
                   debugPrint("Full Phone Number: $fullPhoneNumber");
-                  Get.toNamed(AppRoutes.phoneNumberVerificationScreen);
+                  Get.toNamed(AppRoutes.uploadPhotosScreen);
                 },
               ),
             ],

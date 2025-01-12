@@ -7,7 +7,6 @@ class AppRoutes{
   static const String signInScreen = "/SignInScreen";
   static const String signUpScreen = "/SignUpScreen";
   static const String registrationScreen = "/RegistrationScreen";
-  static const String phoneNumberVerificationScreen = "/PhoneNumberVerificationScreen";
   static const String uploadPhotosScreen = "/UploadPhotosScreen";
   static const String emailPassScreen = "/EmailPassScreen";
   static const String otpVerificationScreen = "/OtpVerificationScreen";
@@ -21,7 +20,6 @@ class AppRoutes{
     GetPage(name: signInScreen, page: () =>  const SignInScreen()),
     GetPage(name: signUpScreen, page: () =>  const SignUpScreen()),
     GetPage(name: registrationScreen, page: () =>  const RegistrationScreen()),
-    GetPage(name: phoneNumberVerificationScreen, page: () =>  const PhoneNumberVerificationScreen()),
     GetPage(name: uploadPhotosScreen, page: () =>  const UploadPhotosScreen()),
     GetPage(name: emailPassScreen, page: () =>  const EmailPassScreen()),
     GetPage(name: otpVerificationScreen, page: () =>  const OtpVerificationScreen()),
