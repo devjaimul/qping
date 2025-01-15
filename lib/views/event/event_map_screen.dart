@@ -56,7 +56,7 @@ class _EventMapScreenState extends State<EventMapScreen> {
     return polyline;
   }
 
-  final String _googleApiKey = ApiConstants.googleMapKey; // Replace with your API key
+  final String _googleApiKey = ApiConstants.googleMapKey;
 
   @override
   void initState() {
