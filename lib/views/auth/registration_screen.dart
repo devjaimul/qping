@@ -1,26 +1,25 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:qping/Controller/auth/registration_controller.dart';
 import 'package:qping/global_widgets/app_logo.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_button.dart';
 import 'package:qping/global_widgets/custom_text_field.dart';
-import 'package:qping/routes/app_routes.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_icons.dart';
-import 'package:qping/views/widgets/get_location.dart';
 
 class RegistrationScreen extends StatelessWidget {
   const RegistrationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final RegistrationController registrationController = Get.put(RegistrationController());
+
     TextEditingController nameTEController = TextEditingController();
     TextEditingController genderTEController = TextEditingController();
     TextEditingController locationTEController = TextEditingController();
     TextEditingController birthdayTEController = TextEditingController();
-
 
     Future<void> selectDate(BuildContext context) async {
       DateTime? pickedDate = await showDatePicker(
@@ -53,9 +52,11 @@ class RegistrationScreen extends StatelessWidget {
             children: [
               const AppLogo(),
               SizedBox(height: 15.h),
+
+              // Full Name
               CustomTextField(
                 controller: nameTEController,
-                hintText: "Name",
+                hintText: "Full Name",
                 prefixIcon: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10.w),
                   child: Image.asset(
@@ -65,6 +66,8 @@ class RegistrationScreen extends StatelessWidget {
                 ),
                 borderRadio: 12.r,
               ),
+
+              // Gender
               CustomTextField(
                 readOnly: true,
                 controller: genderTEController,
@@ -94,15 +97,16 @@ class RegistrationScreen extends StatelessWidget {
                       child: Text("Female"),
                     ),
                     const PopupMenuItem<String>(
-                      value: "Prefer not to say",
-                      child: Text("Prefer not to say"),
+                      value: "Others",
+                      child: Text("Others"),
                     ),
                   ],
                 ),
                 borderRadio: 12.r,
               ),
+
+              // Address
               CustomTextField(
-                readOnly: true,
                 controller: locationTEController,
                 hintText: "Address",
                 prefixIcon: Padding(
@@ -112,19 +116,10 @@ class RegistrationScreen extends StatelessWidget {
                     height: 18.h,
                   ),
                 ),
-                suffixIcon: IconButton(
-                  onPressed: () async {
-                    final locationData =
-                    await Get.to(() => const GetLocation());
-                    if (locationData != null) {
-                      locationTEController.text = locationData['address'];
-                    }
-                  },
-                  icon: const Icon(Icons.location_on,
-                      color: AppColors.primaryColor),
-                ),
                 borderRadio: 12.r,
               ),
+
+              // Birthday
               CustomTextField(
                 readOnly: true,
                 controller: birthdayTEController,
@@ -140,17 +135,37 @@ class RegistrationScreen extends StatelessWidget {
                   onPressed: () {
                     selectDate(context);
                   },
-                  icon: const Icon(Icons.calendar_month,
-                      color: AppColors.primaryColor),
+                  icon: const Icon(Icons.calendar_month, color: AppColors.primaryColor),
                 ),
                 borderRadio: 12.r,
               ),
+
               SizedBox(height: 10.h),
-              CustomTextButton(
-                text: "Next",
-                onTap: () {
-                  Get.toNamed(AppRoutes.uploadPhotosScreen);
-                },
+
+              // Next Button
+              Obx(
+                    () => CustomTextButton(
+                  text: registrationController.isLoading.value ? "Submitting..." : "Next",
+                  onTap: () {
+                    final fullName = nameTEController.text.trim();
+                    final gender = genderTEController.text.trim();
+                    final address = locationTEController.text.trim();
+                    final dob = birthdayTEController.text.trim();
+
+                    if (fullName.isEmpty || gender.isEmpty || address.isEmpty || dob.isEmpty) {
+                      Get.snackbar("Error", "Please fill in all fields.");
+                      return;
+                    }
+
+                    // Call createProfile API
+                    registrationController.createProfile(
+                      fullName: fullName,
+                      address: address,
+                      dob: dob,
+                      gender: gender,
+                    );
+                  },
+                ),
               ),
             ],
           ),
@@ -159,4 +174,3 @@ class RegistrationScreen extends StatelessWidget {
     );
   }
 }
-
