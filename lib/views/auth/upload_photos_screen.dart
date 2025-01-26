@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:qping/Controller/auth/upload_profile_photo_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_button.dart';
-import 'package:qping/routes/app_routes.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_images.dart';
 
@@ -21,14 +21,16 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
   final ImagePicker _picker = ImagePicker();
   XFile? _image;
   String? _selectedAvatar;
+  final UploadProfilePhotoController photoController = Get.put(UploadProfilePhotoController());
 
-  // Predefined avatar options (add these images to your assets folder)
+  // Predefined avatar options
   final List<String> _avatars = [
     AppImages.dogAvater,
     AppImages.hippoAvater,
     AppImages.crowAvater,
-
-
+    AppImages.lion,
+    AppImages.cat,
+    AppImages.dolfin,
   ];
 
   Future<void> _pickImage() async {
@@ -36,7 +38,7 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
     if (pickedFile != null) {
       setState(() {
         _image = pickedFile;
-        _selectedAvatar = null; // Clear avatar selection if a photo is uploaded
+        _selectedAvatar = null; // Clear selected avatar when a file is picked
       });
     }
   }
@@ -65,23 +67,20 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
                 clipBehavior: Clip.none,
                 children: [
                   Container(
-                    height: 280.h,
-                    width: 300.w,
+                    height: 180.h,
+                    width: 250.w,
                     decoration: BoxDecoration(
                       color: AppColors.textFieldFillColor,
                       borderRadius: const BorderRadius.all(Radius.circular(16)),
                       image: _image != null
                           ? DecorationImage(
-                        image: FileImage(
-                          File(_image!.path),
-                        ),
+                        image: FileImage(File(_image!.path)),
                         fit: BoxFit.cover,
                       )
                           : _selectedAvatar != null
                           ? DecorationImage(
                         image: AssetImage(_selectedAvatar!),
-                        fit: BoxFit.cover,
-
+                        fit: BoxFit.contain,
                       )
                           : null,
                     ),
@@ -97,29 +96,26 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
                   ),
                   Positioned(
                     bottom: -30,
-                    child: GestureDetector(
-                      onTap: _pickImage,
-                      child: Container(
-                        height: 50.h,
-                        width: 50.h,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 8,
-                              spreadRadius: 1,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          Icons.camera_alt,
-                          color: AppColors.primaryColor,
-                          size: 30.h,
-                        ),
+                    child: Container(
+                      height: 50.h,
+                      width: 50.h,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 8,
+                            spreadRadius: 1,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
+                      child:IconButton(onPressed: _pickImage, icon:  Icon(
+                        Icons.camera_alt,
+                        color: AppColors.primaryColor,
+                        size: 30.h,
+                      )),
                     ),
                   ),
                 ],
@@ -145,7 +141,7 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
                     onTap: () {
                       setState(() {
                         _selectedAvatar = _avatars[index];
-                        _image = null; // Clear uploaded photo if avatar is selected
+                        _image = null; // Clear file selection when an avatar is picked
                       });
                     },
                     child: Container(
@@ -167,20 +163,25 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
                 },
               ),
               SizedBox(height: 40.h),
-              CustomTextButton(
-                text: "Submit",
-                onTap: () {
-                  String profileImage = _image?.path ?? _selectedAvatar ?? '';
-                  if (profileImage.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Please select or upload a profile image")),
-                    );
-                  } else {
-                    debugPrint("Selected Profile Image: $profileImage");
-                    Get.offAllNamed(AppRoutes.customNavBar);
-                  }
-                },
+              Obx(
+                    () => CustomTextButton(
+                  text: photoController.isLoading.value ? "Uploading..." : "Submit",
+                  onTap: () {
+                    if (_image == null && _selectedAvatar == null) {
+                      Get.snackbar("Error", "Please select or upload a profile image.");
+                    } else {
+                      // Upload image file or avatar
+                      final file = _image != null ? File(_image!.path) : null;
+                      photoController.uploadProfilePicture(
+                        imageFile: file,
+                        avatarPath: _selectedAvatar, // Pass avatar path if selected
+                      );
+                    }
+                  },
+                ),
               ),
+
+
             ],
           ),
         ),
@@ -188,4 +189,3 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
     );
   }
 }
-

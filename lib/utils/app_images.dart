@@ -13,4 +13,7 @@ class AppImages {
   static const String dogAvater = "$baseUrl/avatars/dog.png";
   static const String crowAvater = "$baseUrl/avatars/crow.png";
   static const String hippoAvater = "$baseUrl/avatars/hippo.png";
+  static const String dolfin = "$baseUrl/avatars/dolfin.png";
+  static const String cat = "$baseUrl/avatars/cat.png";
+  static const String lion = "$baseUrl/avatars/lion.png";
 }

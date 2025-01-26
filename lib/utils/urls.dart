@@ -7,6 +7,7 @@ class Urls {
 
   static const String otpResend = '/auth/otp/resend';
   static const String registration = '/profiles';
+  static const String profilePicture = '/users/profile-picture';
 
 
   static const String login = '/user/login';
