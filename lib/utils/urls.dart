@@ -3,14 +3,17 @@ class Urls {
   // Auth Endpoints
   static const String signUp = '/auth/register';
 
+  static const String otpVerify = '/auth/otp/verify';
+
+  static const String otpResend = '/auth/otp/resend';
+
+
   static const String login = '/user/login';
 
   static const String forgetPass = '/user/forget-password';
   static const String changePass = '/user/change-password';
-
-  static const String otpVerify = '/auth/otp/verify';
   static  String forgetOtpVerify(String email) =>'/user/verify-forget-otp?email=$email';
-  static String otpResend(String email) => '/user/resend?email=$email';
+
 
   static String updateUser(String userId) => '/users/$userId';
 
