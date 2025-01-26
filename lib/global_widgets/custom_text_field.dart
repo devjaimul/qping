@@ -25,6 +25,7 @@ class CustomTextField extends StatefulWidget {
   final bool? isEmail;
   final bool? readOnly;
   final double? borderRadio;
+  final double? validationHeight;
   final VoidCallback? onTap;
   final ValueChanged<String>? onChanged;
 
@@ -51,7 +52,7 @@ class CustomTextField extends StatefulWidget {
     this.readOnly = false,
     this.borderRadio,
     this.onTap,
-    this.onChanged,
+    this.onChanged, this.validationHeight,
   });
 
   @override
@@ -146,11 +147,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
         errorBorder: _errorBorder(),
         focusedErrorBorder: _focusedErrorBorder(),
         border: _focusedBorder(),
+        errorMaxLines: 10,
         errorStyle: TextStyle(
           fontSize: 12.sp,
           fontWeight: FontWeight.w400,
+          height: widget.validationHeight,
         ),
       ),
+
     );
   }
 
@@ -166,7 +170,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   OutlineInputBorder _focusedBorder() {
     return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(widget.borderRadio?.r ?? 100.r),
+      borderRadius: BorderRadius.circular(widget.borderRadio?.r ?? 16.r),
       borderSide: BorderSide(
         color: widget.borderColor ?? AppColors.primaryColor,
         width: 1.5,
@@ -176,7 +180,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   OutlineInputBorder _enabledBorder() {
     return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(widget.borderRadio?.r ?? 100.r),
+      borderRadius: BorderRadius.circular(widget.borderRadio?.r ?? 16.r),
       borderSide: BorderSide(
         color: widget.borderColor ?? AppColors.primaryColor,
         width: 0.8,
@@ -186,7 +190,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   OutlineInputBorder _errorBorder() {
     return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(widget.borderRadio?.r ?? 100.r),
+      borderRadius: BorderRadius.circular(widget.borderRadio?.r ?? 16.r),
       borderSide: const BorderSide(
         color: Colors.red,
         width: 0.8,
@@ -196,7 +200,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   OutlineInputBorder _focusedErrorBorder() {
     return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(widget.borderRadio?.r ?? 100.r),
+      borderRadius: BorderRadius.circular(widget.borderRadio?.r ?? 16.r),
       borderSide: const BorderSide(
         color: Colors.red,
       ),

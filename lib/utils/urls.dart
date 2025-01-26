@@ -1,7 +1,8 @@
 class Urls {
 
   // Auth Endpoints
-  static const String registration = '/user/register';
+  static const String signUp = '/auth/register';
+
   static const String login = '/user/login';
 
   static const String forgetPass = '/user/forget-password';
@@ -24,51 +25,6 @@ class Urls {
   static const String about = '/about';
 
 
-
-
-  //shower Part
-
-  static const String showerRegister = '/shower/register';
-  static const String hostAllShowers = '/shower/given-service';
-  static  String showerDetails(String showerId) => '/shower/single-service?serviceId=$showerId';
-  static  String showerReview(String showerId) => '/review/host-shower-review?showerId=$showerId';
-  static  String updateShower(String showerId) => '/shower/update-single-service?serviceId=$showerId';
-  static  String isAvailable(String showerId) => '/shower/isAvailable?serviceId=$showerId';
-  static  String confirmRequest(String showerId) => '/booking/confirm-booking?bookingId=$showerId';
-  static  String cancelRequest(String showerId) => '/booking/cancel-booking?bookingId=$showerId';
-  static const String hostBookingRequest= '/booking/status-booking-list?status=request';
-  static  String hostBookingConfirm(String date) => "/booking/status-booking-list?status=confirm&date=$date";
-  static const String hostSupport = '/user/admin-list';
-
-
-
-//guest part
-  static  String popularShower(String lat,String lon) => '/shower/popular?lat=$lat&lon=$lon';
-  static  String showAllShower(String lat,String lon) => '/shower?lon=$lon&lat=$lat';
-  static  String searchShower(String search) => '/shower?search=$search';
-
-  static  String searchShowerPrice(String lowPrice,String highPrice ) => '/shower?lowPrice=$lowPrice&highPrice=$highPrice';
-
-  static  String searchShowerRadius(String radius ) => '/shower?radius=$radius';
-
-  static  String nearMeShower(String lat,String lon) => '/shower/near-me?lon=$lon&lat=$lat';
-
-
-  static  String weeklyCalender(String date) => '/booking?date=$date&status=confirm';
-  static  String applyBooking(String showerId) => '/booking/request?showerId=$showerId';
-
-  static  String bookingType(String type) => '/booking?status=$type';
-
-  static  String review(String showerId,bookingId,time) => '/review/give?showerId=$showerId&time=$time&bookingId=$bookingId';
-
-  static  String bookingDetails(String showerId) => '/booking/details?bookingId=$showerId';
-
-  static  String bookingCancel(String bookingId) => '/booking/cancel-reservation?bookingId=$bookingId';
-
-  static const String balance = '/balance';
-  static const String withdrawHistory = '/withdraw/history';
-  static const String withdrawRequest ='/withdraw/request';
-  static const String guestSupport = '/user/need-support';
 
 
 //common

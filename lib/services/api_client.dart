@@ -50,7 +50,7 @@ class ApiClient extends GetxService {
 
     var mainHeaders = {
       'Content-Type': 'application/json',
-    'Authorization': 'Bearer $bearerToken',
+      'Authorization': 'Bearer $bearerToken',
 
     };
 

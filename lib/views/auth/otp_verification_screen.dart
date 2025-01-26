@@ -9,7 +9,8 @@ import 'package:qping/routes/app_routes.dart';
 import 'package:qping/utils/app_colors.dart';
 
 class OtpVerificationScreen extends StatelessWidget {
-  const OtpVerificationScreen({super.key});
+  final String? email;
+  const OtpVerificationScreen({super.key, this.email});
 
   @override
   Widget build(BuildContext context) {

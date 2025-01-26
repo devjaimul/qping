@@ -13,9 +13,10 @@ class AppConstants{
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
  static bool validatePassword(String value) {
-    RegExp regex = RegExp(r'^(?=.*[0-9])(?=.*[a-zA-Z]).{6,}$');
-    return regex.hasMatch(value);
-  }
+  // Regex: Minimum 6 characters, 1 capital letter, 1 number, 1 special character
+  RegExp regex = RegExp(r'^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$');
+  return regex.hasMatch(value);
+ }
 }
 
 enum Status { loading, completed, error, internetError }

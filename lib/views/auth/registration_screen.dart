@@ -17,13 +17,10 @@ class RegistrationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextEditingController nameTEController = TextEditingController();
-    TextEditingController phoneTEController = TextEditingController();
     TextEditingController genderTEController = TextEditingController();
     TextEditingController locationTEController = TextEditingController();
     TextEditingController birthdayTEController = TextEditingController();
 
-    // Initialize selected country code
-    String selectedCountryCode = '+1';
 
     Future<void> selectDate(BuildContext context) async {
       DateTime? pickedDate = await showDatePicker(
@@ -67,23 +64,6 @@ class RegistrationScreen extends StatelessWidget {
                   ),
                 ),
                 borderRadio: 12.r,
-              ),
-              CustomTextField(
-                keyboardType: TextInputType.number,
-                controller: phoneTEController,
-                hintText: "Phone Number",
-                borderRadio: 12.r,
-                prefixIcon:   CountryCodePicker(
-                  onChanged: (CountryCode countryCode) {
-                    selectedCountryCode = countryCode.dialCode ?? '+1';
-                    debugPrint("Selected country code: $selectedCountryCode");
-                  },
-                  initialSelection: 'US',
-                  favorite: ['+1', 'US'],
-                  showCountryOnly: false,
-                  showOnlyCountryWhenClosed: false,
-                  alignLeft: false,
-                ),
               ),
               CustomTextField(
                 readOnly: true,
@@ -169,9 +149,6 @@ class RegistrationScreen extends StatelessWidget {
               CustomTextButton(
                 text: "Next",
                 onTap: () {
-                  String fullPhoneNumber =
-                      '$selectedCountryCode${phoneTEController.text}';
-                  debugPrint("Full Phone Number: $fullPhoneNumber");
                   Get.toNamed(AppRoutes.uploadPhotosScreen);
                 },
               ),
