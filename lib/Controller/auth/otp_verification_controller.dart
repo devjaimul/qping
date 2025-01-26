@@ -9,7 +9,7 @@ class OtpVerificationController extends GetxController {
   final isLoading = false.obs;
 
   // Verify OTP
-  Future<void> verifyOtp(String otpCode) async {
+  Future<void> verifyOtp(String otpCode,bool? isFormForget) async {
     isLoading.value = true;
 
     final body = {
@@ -28,7 +28,11 @@ class OtpVerificationController extends GetxController {
         String token = response.body['token'];
         // Save token and userID to shared preferences
         await PrefsHelper.setString(AppConstants.bearerToken, token);
-        Get.toNamed(AppRoutes.registrationScreen);
+
+        if(isFormForget==true){
+          Get.toNamed(AppRoutes.resetPassScreen);
+        }else{
+        Get.toNamed(AppRoutes.registrationScreen);}
       } else {
         final errorMessage = response.body['message'];
         final formattedMessage = errorMessage is List

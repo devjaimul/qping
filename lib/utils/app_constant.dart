@@ -3,6 +3,9 @@ class AppConstants{
  static const String role = "userRole";
  static String bearerToken = 'bearerToken';
  static String email = 'email';
+ static String isEmailVerified = '';
+ static String isProfilePicture = '';
+ static String isProfileID = '';
  static String name = 'name';
  static String image = 'image';
  static String isLogged = 'true';

@@ -114,7 +114,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     onCountryChanged: (country) {
                     },
                     validator: (value) {
-                      if (value == null ) {
+                      if (value == null||value=="" ) {
                         return "Phone number cannot be empty";
                       }
                       return null;

@@ -8,13 +8,14 @@ class Urls {
   static const String otpResend = '/auth/otp/resend';
   static const String registration = '/profiles';
   static const String profilePicture = '/users/profile-picture';
+  static const String login = '/auth/login';
+  static const String emailVerify = '/auth/otp/send-for-forgot-password';
+
+  static const String forgetPass = '/auth/password/forgot';
 
 
-  static const String login = '/user/login';
-
-  static const String forgetPass = '/user/forget-password';
   static const String changePass = '/user/change-password';
-  static  String forgetOtpVerify(String email) =>'/user/verify-forget-otp?email=$email';
+
 
 
   static String updateUser(String userId) => '/users/$userId';

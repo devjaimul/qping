@@ -5,8 +5,9 @@ import 'package:qping/utils/app_colors.dart';
 
 
 class CustomPinCodeTextField extends StatelessWidget {
-  const CustomPinCodeTextField({super.key,this.textEditingController});
+  const CustomPinCodeTextField({super.key,this.textEditingController, this.validator});
   final TextEditingController? textEditingController;
+  final FormFieldValidator? validator;
   @override
   Widget build(BuildContext context) {
     return  PinCodeTextField(
@@ -31,6 +32,7 @@ class CustomPinCodeTextField extends StatelessWidget {
       obscureText: false,
       keyboardType: TextInputType.number,
       onChanged: (value) {},
+      validator:validator ,
     );
   }
 }

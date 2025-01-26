@@ -20,7 +20,7 @@ class RegistrationScreen extends StatelessWidget {
     TextEditingController genderTEController = TextEditingController();
     TextEditingController locationTEController = TextEditingController();
     TextEditingController birthdayTEController = TextEditingController();
-
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     Future<void> selectDate(BuildContext context) async {
       DateTime? pickedDate = await showDatePicker(
         context: context,
@@ -46,7 +46,9 @@ class RegistrationScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16.h),
-          child: Column(
+          child: Form(
+              key: formKey,
+              child: Column(
             spacing: 15.h,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -64,6 +66,12 @@ class RegistrationScreen extends StatelessWidget {
                     height: 18.h,
                   ),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Full Name cannot be empty";
+                  }
+                  return null;
+                },
                 borderRadio: 12.r,
               ),
 
@@ -102,6 +110,12 @@ class RegistrationScreen extends StatelessWidget {
                     ),
                   ],
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Gender cannot be empty";
+                  }
+                  return null;
+                },
                 borderRadio: 12.r,
               ),
 
@@ -116,6 +130,12 @@ class RegistrationScreen extends StatelessWidget {
                     height: 18.h,
                   ),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Address cannot be empty";
+                  }
+                  return null;
+                },
                 borderRadio: 12.r,
               ),
 
@@ -137,6 +157,12 @@ class RegistrationScreen extends StatelessWidget {
                   },
                   icon: const Icon(Icons.calendar_month, color: AppColors.primaryColor),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Birth Date cannot be empty";
+                  }
+                  return null;
+                },
                 borderRadio: 12.r,
               ),
 
@@ -147,15 +173,13 @@ class RegistrationScreen extends StatelessWidget {
                     () => CustomTextButton(
                   text: registrationController.isLoading.value ? "Submitting..." : "Next",
                   onTap: () {
+
+                    if (formKey.currentState?.validate() ?? false) {
                     final fullName = nameTEController.text.trim();
                     final gender = genderTEController.text.trim();
                     final address = locationTEController.text.trim();
                     final dob = birthdayTEController.text.trim();
 
-                    if (fullName.isEmpty || gender.isEmpty || address.isEmpty || dob.isEmpty) {
-                      Get.snackbar("Error", "Please fill in all fields.");
-                      return;
-                    }
 
                     // Call createProfile API
                     registrationController.createProfile(
@@ -163,12 +187,12 @@ class RegistrationScreen extends StatelessWidget {
                       address: address,
                       dob: dob,
                       gender: gender,
-                    );
+                    );}
                   },
                 ),
               ),
             ],
-          ),
+          )),
         ),
       ),
     );

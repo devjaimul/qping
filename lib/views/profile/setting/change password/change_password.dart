@@ -67,7 +67,7 @@ class ChangePassword extends StatelessWidget {
               Align(
                   alignment: Alignment.centerRight,
                   child: StyleTextButton(text: "Forgot Password?", onTap: (){
-                    Get.toNamed(AppRoutes.emailPassScreen);
+                    Get.toNamed(AppRoutes.emailVerificationScreen);
                   })),
               SizedBox(height: 15.h,),
               CustomTextButton(text: "Change Password", onTap: (){
