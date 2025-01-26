@@ -8,7 +8,7 @@ class Urls {
   static const String forgetPass = '/user/forget-password';
   static const String changePass = '/user/change-password';
 
-  static const String otpVerify = '/user/verify-otp';
+  static const String otpVerify = '/auth/otp/verify';
   static  String forgetOtpVerify(String email) =>'/user/verify-forget-otp?email=$email';
   static String otpResend(String email) => '/user/resend?email=$email';
 

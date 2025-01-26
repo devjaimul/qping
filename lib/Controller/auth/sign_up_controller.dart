@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:qping/helpers/prefs_helper.dart';
 import 'package:qping/routes/exports.dart';
 import 'package:qping/services/api_client.dart';
+import 'package:qping/utils/app_constant.dart';
 import 'package:qping/utils/urls.dart';
 
 class SignUpController extends GetxController {
@@ -10,19 +12,17 @@ class SignUpController extends GetxController {
   final phoneController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-  String selectedCountryCode = '+1'; // Default country code
-  final isLoading = false.obs; // Observable to track loading state
+  String selectedPhoneNumber = ''; // Store the full formatted phone number
+  final isLoading = false.obs;
 
   Future<void> createAccount() async {
     isLoading.value = true;
-
-    final fullPhoneNumber = "$selectedCountryCode${phoneController.text}";
 
     final body = {
       "name": userNameController.text,
       "password": passwordController.text,
       "email": emailController.text,
-      "phone": fullPhoneNumber,
+      "phone": selectedPhoneNumber, // Use formatted phone number
     };
 
     try {
@@ -33,22 +33,22 @@ class SignUpController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        // Success: Show success message and navigate to OTP verification
+        // Extract token and userID from response
+        String token = response.body['token'];
+        String userID = response.body['data']['_id'];
+
+        // Save token and userID to shared preferences
+        await PrefsHelper.setString(AppConstants.bearerToken, token);
+        await PrefsHelper.setString(AppConstants.userId, userID);
+
         Get.snackbar("Success", response.body['message'] ?? "Account created successfully!");
-        Get.to(OtpVerificationScreen(email: emailController.text));
+        Get.to(()=>OtpVerificationScreen(email: emailController.text));
+
       } else {
-        // Handle errors: Extract and format error messages
         final errorMessage = response.body['message'];
-        String formattedMessage;
-
-        if (errorMessage is List) {
-          formattedMessage = errorMessage.join(", "); // Join list into a single string
-        } else if (errorMessage is String) {
-          formattedMessage = errorMessage; // Use the string directly
-        } else {
-          formattedMessage = "Something went wrong. Please try again.";
-        }
-
+        final formattedMessage = errorMessage is List
+            ? errorMessage.join(", ")
+            : errorMessage ?? "Something went wrong.";
         Get.snackbar("Error", formattedMessage);
       }
     } catch (e) {
@@ -58,7 +58,6 @@ class SignUpController extends GetxController {
     }
   }
 
-
-
-
 }
+
+

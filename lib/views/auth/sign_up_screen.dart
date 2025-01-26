@@ -1,13 +1,14 @@
-import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:qping/Controller/auth/sign_up_controller.dart';
 import 'package:qping/global_widgets/app_logo.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_button.dart';
 import 'package:qping/global_widgets/custom_text_field.dart';
 import 'package:qping/routes/app_routes.dart';
+import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_icons.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -18,12 +19,7 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-
-
-
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  String selectedCountryCode = '+1';
-
   final SignUpController _signUpController = Get.put(SignUpController());
 
   @override
@@ -36,17 +32,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
             child: Form(
               key: formKey,
               child: Column(
+                spacing: 15.h,
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 15.h,
                 children: [
                   SizedBox(height: 50.h),
                   const Center(child: AppLogo()),
                   SizedBox(height: 10.h),
 
                   // Username Field
-
-
                   CustomTextField(
                     controller: _signUpController.userNameController,
                     hintText: "Enter User Name",
@@ -66,9 +60,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     },
                   ),
 
-
                   // Email Field
-
                   CustomTextField(
                     controller: _signUpController.emailController,
                     hintText: "Enter Email",
@@ -91,34 +83,49 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     },
                   ),
 
-                  CustomTextField(
-                    controller: _signUpController.phoneController,
-                    hintText: "Enter Phone Number",
-                    keyboardType: TextInputType.number,
-                    prefixIcon: CountryCodePicker(
-                      onChanged: (CountryCode countryCode) {
-                        // Update the country code in the controller
-                        _signUpController.selectedCountryCode = countryCode.dialCode ?? '+1';
-                      },
-                      initialSelection: 'US',
-                      favorite: const ['+1', 'US'],
-                      showCountryOnly: false,
-                      alignLeft: false,
+                  // Phone Field with intl_phone_field
+                  IntlPhoneField(
+                    decoration: InputDecoration(
+                      hintText: 'Phone Number',
+                      fillColor: AppColors.textFieldFillColor,
+                      filled: true,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16.r),
+                        borderSide: const BorderSide(color: AppColors.primaryColor),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16.r),
+                        borderSide: const BorderSide(color: AppColors.primaryColor),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16.r),
+                        borderSide: const BorderSide(color: AppColors.primaryColor, width: 1.5),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16.r),
+                        borderSide: const BorderSide(color: Colors.red),
+                      ),
                     ),
+                    initialCountryCode: 'US', // Default country
+                    onChanged: (phone) {
+                      _signUpController.selectedPhoneNumber = phone.completeNumber; // Store the full phone number
+                      // Debugging: Print the full number
+                    },
+                    onCountryChanged: (country) {
+                    },
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
+                      if (value == null ) {
                         return "Phone number cannot be empty";
-                      }
-                      if (value.length < 8) {
-                        return "Invalid phone number";
                       }
                       return null;
                     },
+                    showCursor: true, // This ensures the cursor is shown but no unnecessary counters
+                    showCountryFlag: true, // Optional: Show the country flag
+                    disableLengthCheck: true, // Prevents length enforcement on numbers
                   ),
 
-
+                  // Password Field
                   CustomTextField(
-
                     controller: _signUpController.passwordController,
                     hintText: "Enter Password",
                     isPassword: true,
@@ -134,16 +141,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         return "Password cannot be empty";
                       }
                       if (value.length < 8) {
-                        return "Password must be at least 8 characters and include uppercase, lowercase, numbers, and special characters,(eg. Abc123@!).";
+                        return "Password must be at least 8 characters and include uppercase, lowercase, numbers, and special characters (e.g., Abc123@!)";
                       }
                       if (!RegExp(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$')
                           .hasMatch(value)) {
-                        return "Password must contain letters, numbers, Capital Letter and special characters";
+                        return "Password must contain letters, numbers, uppercase, and special characters";
                       }
                       return null;
                     },
                   ),
 
+                  // Confirm Password Field
                   CustomTextField(
                     controller: _signUpController.confirmPasswordController,
                     hintText: "Re-Enter Password",
@@ -166,18 +174,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     },
                   ),
 
-
                   // Sign Up Button
                   Obx(
                         () => CustomTextButton(
-                          text: _signUpController.isLoading.value ? "Signing Up..." : "Sign Up",
-                          onTap: () {
-                            if (formKey.currentState?.validate() ?? false) {
-                              _signUpController.createAccount();
-                            } else {
-                          }
-                          },
-                        ),
+                      text: _signUpController.isLoading.value ? "Signing Up..." : "Sign Up",
+                      onTap: () {
+                        if (formKey.currentState?.validate() ?? false) {
+                          _signUpController.createAccount();
+                        } else {
+                        }
+                      },
+                    ),
                   ),
 
                   Row(
