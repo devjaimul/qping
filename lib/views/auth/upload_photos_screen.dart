@@ -34,14 +34,22 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
   ];
 
   Future<void> _pickImage() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _image = pickedFile;
-        _selectedAvatar = null; // Clear selected avatar when a file is picked
-      });
+    try {
+      // Temporarily disable the button while picking an image
+      final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        setState(() {
+          _image = pickedFile; // Set the selected image
+          _selectedAvatar = null; // Clear avatar selection
+        });
+      }
+    } catch (e) {
+      // Handle any errors (e.g., user denied permission)
+      Get.snackbar("Error", "Failed to pick an image: $e");
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -111,13 +119,26 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
                           ),
                         ],
                       ),
-                      child:IconButton(onPressed: _pickImage, icon:  Icon(
-                        Icons.camera_alt,
-                        color: AppColors.primaryColor,
-                        size: 30.h,
-                      )),
+                      child: Obx(
+                            () => IconButton(
+                          onPressed: photoController.isLoading.value
+                              ? null // Disable button if loading
+                              : () async {
+                            photoController.startLoading(); // Start loading
+                            await _pickImage(); // Open picker
+                            photoController.stopLoading(); // Stop loading after picker
+                          },
+                          icon: Icon(
+                            Icons.camera_alt,
+                            color: AppColors.primaryColor,
+                            size: 30.h,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
+
+
                 ],
               ),
               SizedBox(height: 50.h),
