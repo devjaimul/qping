@@ -2,8 +2,10 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:qping/helpers/prefs_helper.dart';
 import 'package:qping/routes/app_routes.dart';
 import 'package:qping/services/api_client.dart';
+import 'package:qping/utils/app_constant.dart';
 import 'package:qping/utils/urls.dart';
 
 class UploadProfilePhotoController extends GetxController {
@@ -44,6 +46,7 @@ class UploadProfilePhotoController extends GetxController {
 
       if (response.statusCode == 200) {
         Get.snackbar("Success", response.body['message'] ?? "Profile Picture Uploaded Successfully!");
+        await PrefsHelper.setString(AppConstants.isProfilePicture,"true");
         Get.offAllNamed(AppRoutes.customNavBar); // Navigate to home or desired route
       } else {
         final errorMessage = response.body['message'] ?? "Failed to upload profile picture.";

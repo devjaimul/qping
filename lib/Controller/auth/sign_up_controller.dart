@@ -40,7 +40,7 @@ class SignUpController extends GetxController {
         // Save token and userID to shared preferences
         await PrefsHelper.setString(AppConstants.bearerToken, token);
         await PrefsHelper.setString(AppConstants.userId, userID);
-
+        await PrefsHelper.setString(AppConstants.email, emailController.text);
         Get.snackbar("Success", response.body['message'] ?? "Account created successfully!");
         Get.to(()=>OtpVerificationScreen(email: emailController.text));
 

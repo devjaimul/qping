@@ -9,9 +9,9 @@ import 'package:qping/global_widgets/custom_text_button.dart';
 import 'package:qping/utils/app_colors.dart';
 
 class OtpVerificationScreen extends StatelessWidget {
-  final String? email;
+  final String email;
   final bool? isFormForget;
-  const OtpVerificationScreen({super.key, this.email, this.isFormForget});
+  const OtpVerificationScreen({super.key,required this.email, this.isFormForget});
 
   @override
   Widget build(BuildContext context) {

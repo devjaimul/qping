@@ -1,14 +1,16 @@
+import 'package:shared_preferences/shared_preferences.dart';
+
 class AppConstants{
   ///=======================Prefs Helper data===============================>
  static const String role = "userRole";
  static String bearerToken = 'bearerToken';
  static String email = 'email';
- static String isEmailVerified = '';
- static String isProfilePicture = '';
- static String isProfileID = '';
+ static String isEmailVerified = 'isEmailVerified';
+ static String isProfilePicture = 'isProfilePicture';
+ static String isProfileID = 'isProfileID';
  static String name = 'name';
  static String image = 'image';
- static String isLogged = 'true';
+ static String isLogged = 'login';
  static String userId = 'id';
 
 
@@ -23,3 +25,21 @@ class AppConstants{
 }
 
 enum Status { loading, completed, error, internetError }
+
+
+class a{
+
+
+ static Future<String> getString(String key) async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+
+  return preferences.getString(key) ?? "";
+ }
+
+
+ static Future<void> setString(String key, String value) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString(key, value);
+ }
+
+}

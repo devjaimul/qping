@@ -1,6 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qping/helpers/prefs_helper.dart';
 import 'package:qping/routes/app_routes.dart';
 import 'package:qping/services/api_client.dart';
+import 'package:qping/utils/app_constant.dart';
 import 'package:qping/utils/urls.dart';
 
 class RegistrationController extends GetxController {
@@ -29,8 +32,14 @@ class RegistrationController extends GetxController {
 
       if (response.statusCode == 200) {
         Get.snackbar("Success", response.body['message'] ?? "Profile created successfully!");
-        // Navigate to the next screen if needed
+        // String token = response.body['token'];
+        // // Save token and userID to shared preferences
+        // await PrefsHelper.setString(AppConstants.bearerToken, token);
+
         Get.toNamed(AppRoutes.uploadPhotosScreen);
+
+        await PrefsHelper.setString(AppConstants.isProfileID,"true");
+
       } else {
         final errorMessage = response.body['message'];
         final formattedMessage = errorMessage is List

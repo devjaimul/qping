@@ -28,6 +28,7 @@ class OtpVerificationController extends GetxController {
         String token = response.body['token'];
         // Save token and userID to shared preferences
         await PrefsHelper.setString(AppConstants.bearerToken, token);
+        await PrefsHelper.setString(AppConstants.isEmailVerified, "true");
 
         if(isFormForget==true){
           Get.toNamed(AppRoutes.resetPassScreen);
