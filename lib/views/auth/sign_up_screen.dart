@@ -89,6 +89,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       hintText: 'Phone Number',
                       fillColor: AppColors.textFieldFillColor,
                       filled: true,
+                      hintStyle: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w400,
+                          fontFamily: "Outfit"
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16.r),
                         borderSide: const BorderSide(color: AppColors.primaryColor),
