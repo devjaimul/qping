@@ -43,11 +43,11 @@ class SignInController extends GetxController {
         // Navigate to the dashboard or home screen
 
         if (isProfileID == "null") {
-          Get.snackbar("Unauthorized", response.body['message'] ?? "Profile Details Are Missing!!");
+          Get.snackbar("Unauthorized","Profile Details Are Missing!!");
           Get.toNamed(AppRoutes.registrationScreen);
         }
         else if (isProfilePicture == "null") {
-          Get.snackbar("Unauthorized", response.body['message'] ?? "Profile Picture Is Missing!!");
+          Get.snackbar("Unauthorized", "Profile Picture Is Missing!!");
           Get.toNamed(AppRoutes.uploadPhotosScreen);
         }
         else {
