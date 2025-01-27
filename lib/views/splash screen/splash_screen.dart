@@ -46,6 +46,8 @@ _checkUserLogin();
       }
       else if(isProfilePicture!="true"){
         Get.offAllNamed(AppRoutes.uploadPhotosScreen);
+      }else{
+        Get.snackbar("!!!!", "Something Went Wrong!!!");
       }
 
     }
