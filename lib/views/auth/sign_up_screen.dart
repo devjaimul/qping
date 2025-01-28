@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl_phone_field/countries.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:qping/Controller/auth/sign_up_controller.dart';
 import 'package:qping/global_widgets/app_logo.dart';
@@ -10,6 +11,8 @@ import 'package:qping/global_widgets/custom_text_field.dart';
 import 'package:qping/routes/app_routes.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_icons.dart';
+import 'package:qping/utils/app_images.dart';
+import 'package:qping/views/widgets/custom_country_code.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -84,53 +87,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
 
                   // Phone Field with intl_phone_field
-                  IntlPhoneField(
-                    decoration: InputDecoration(
-                      hintText: 'Phone Number',
-                      fillColor: AppColors.textFieldFillColor,
-                      filled: true,
-                      hintStyle: TextStyle(
-                          color: Colors.black,
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w400,
-                          fontFamily: "Outfit"
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16.r),
-                        borderSide: const BorderSide(color: AppColors.primaryColor),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16.r),
-                        borderSide: const BorderSide(color: AppColors.primaryColor),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16.r),
-                        borderSide: const BorderSide(color: AppColors.primaryColor, width: 1.5),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16.r),
-                        borderSide: const BorderSide(color: Colors.red),
-                      ),
-                    ),
-                    initialCountryCode: 'US', // Default country
-                    onChanged: (phone) {
-                      _signUpController.selectedPhoneNumber = phone.completeNumber; // Store the full phone number
-                      // Debugging: Print the full number
-                    },
-                    onCountryChanged: (country) {
-                    },
-                    validator: (value) {
-                      if (value == null||value=="" ) {
-                        return "Phone number cannot be empty";
-                      }
-                      return null;
-                    },
-                    showCursor: true, // This ensures the cursor is shown but no unnecessary counters
-                    showCountryFlag: true, // Optional: Show the country flag
-                    disableLengthCheck: true, // Prevents length enforcement on numbers
-                  ),
 
-                  // Password Field
+            CustomCountryCode(signUpController: _signUpController),
+
+
+
+
+
+
+          // Password Field
                   CustomTextField(
                     controller: _signUpController.passwordController,
                     hintText: "Enter Password",
@@ -212,3 +177,5 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 }
+
+

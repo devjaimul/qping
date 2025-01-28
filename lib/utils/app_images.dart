@@ -16,4 +16,5 @@ class AppImages {
   static const String dolfin = "$baseUrl/avatars/dolfin.png";
   static const String cat = "$baseUrl/avatars/cat.png";
   static const String lion = "$baseUrl/avatars/lion.png";
+  static const String palestineFlag = "$baseUrl/palestine_flag.webp";
 }
