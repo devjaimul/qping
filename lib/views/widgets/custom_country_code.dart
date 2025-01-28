@@ -59,7 +59,7 @@ class CustomCountryCode extends StatelessWidget {
           return Country(
             code: country.code, // Country code (PS for Palestine)
             dialCode: country.dialCode, // Dial code
-            name: 'India (son of Bangladesh)', // Custom name
+            name: 'India (Nearby Bangladesh)', // Custom name
             flag: country.flag, // Use the existing flag
             maxLength: 1, // Use the existing maxLength
             minLength: 1, nameTranslations: {}, // Use the existing minLength
