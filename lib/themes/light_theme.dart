@@ -21,6 +21,7 @@ ThemeData light() => ThemeData(
     TargetPlatform.fuchsia: ZoomPageTransitionsBuilder(),
   }),
 dividerColor: AppColors.primaryColor,
+
   textTheme: const TextTheme(
     displayLarge: TextStyle(fontWeight: FontWeight.w300, fontSize: Dimensions.fontSizeDefault),
     displayMedium: TextStyle(fontWeight: FontWeight.w400,fontSize: Dimensions.fontSizeDefault),
@@ -46,6 +47,7 @@ centerTitle: true,
       dayStyle: TextStyle(color: AppColors.primaryColor, fontSize: 14.h),
       weekdayStyle: TextStyle(fontSize: 14.h, color: Colors.black),
     ),
+  fontFamily: "Outfit"
 
 
 );

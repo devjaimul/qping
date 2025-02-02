@@ -39,7 +39,6 @@ class SignInController extends GetxController {
         // await PrefsHelper.setString(
         //     AppConstants.isProfilePicture, isProfilePicture);
         // await PrefsHelper.setString(AppConstants.isProfileID, isProfileID);
-
         // Navigate to the dashboard or home screen
 
         if (isProfileID == "null") {
