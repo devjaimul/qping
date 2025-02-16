@@ -145,8 +145,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     );
   }
   void _showGroupDialog(BuildContext context) {
-    final TextEditingController _groupNameController = TextEditingController();
-    String? _groupImage;
+    final TextEditingController groupNameController = TextEditingController();
+    String? groupImage;
 
     showDialog(
       context: context,
@@ -164,7 +164,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                 children: [
                   // Group Name Text Field
                   CustomTextField(
-                    controller: _groupNameController,
+                    controller: groupNameController,
                     hintText: "Enter Group Name",
                     filColor: Colors.transparent,
                   ),
@@ -176,7 +176,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                       final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
                       if (pickedFile != null) {
                         setState(() {
-                          _groupImage = pickedFile.path;
+                          groupImage = pickedFile.path;
                         });
                       }
                     },
@@ -187,11 +187,11 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                         color: Colors.grey[200],
                         borderRadius: BorderRadius.circular(8.r),
                       ),
-                      child: _groupImage == null
+                      child: groupImage == null
                           ? Icon(Icons.add_a_photo, size: 40.sp, color: Colors.grey)
                           : ClipRRect(
                           borderRadius: const BorderRadius.all(Radius.circular(12)),
-                          child: Image.file(File(_groupImage!), fit: BoxFit.cover)),
+                          child: Image.file(File(groupImage!), fit: BoxFit.cover)),
                     ),
                   ),
                   SizedBox(height: 15.h),
@@ -218,11 +218,11 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                     padding: 0,
                     text: "Create",
                     onTap: () {
-                      if (_groupNameController.text.isNotEmpty && _groupImage != null) {
+                      if (groupNameController.text.isNotEmpty && groupImage != null) {
                         Get.to(() => MessageChatScreen(isGroup: true));
 
-                        print("Group Name: ${_groupNameController.text}");
-                        print("Group Image: $_groupImage");
+                        print("Group Name: ${groupNameController.text}");
+                        print("Group Image: $groupImage");
                         print("Group Members: $selectedFriends");
 
 

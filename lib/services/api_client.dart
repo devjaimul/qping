@@ -327,7 +327,7 @@ class ApiClient extends GetxService {
     };
     try {
       debugPrint('====> API Call: $uri\nHeader: ${headers ?? mainHeaders}');
-      debugPrint('====> API Call: $uri\n Body: ${body}');
+      debugPrint('====> API Call: $uri\n Body: $body');
 
       http.Response response = await http
           .delete(Uri.parse(ApiConstants.baseUrl + uri),

@@ -107,7 +107,7 @@ class MessageRequestScreen extends StatelessWidget {
                 ],
               ),
               onTap: () {
-                Get.to( ()=>MessageRequestChatScreen());
+                Get.to( ()=>const MessageRequestChatScreen());
               },
             ),
           );

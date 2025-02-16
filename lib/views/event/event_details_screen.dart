@@ -135,7 +135,7 @@ class EventDetailsScreen extends StatelessWidget {
           text: "Start Hunting",
           onTap: () {
 
-Get.to(()=>EventMapScreen());
+Get.to(()=>const EventMapScreen());
           },
 
         ),

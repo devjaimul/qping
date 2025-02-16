@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qping/helpers/prefs_helper.dart';
 import 'package:qping/routes/app_routes.dart';

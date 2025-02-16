@@ -19,7 +19,7 @@ class SocketServices {
     print("Initializing socket with token: $token");
 
     // Validate token
-    if (token.isEmpty || token == null) {
+    if (token.isEmpty) {
       print("Error: Token is missing or invalid.");
       return;
     }

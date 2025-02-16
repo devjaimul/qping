@@ -9,6 +9,7 @@ class ImagePickerHelper {
     if (returnImage != null) {
       return await File(returnImage.path).readAsBytes();
     }
+    return null;
   }
 
   //==================================> Camera <===============================
@@ -18,6 +19,7 @@ class ImagePickerHelper {
     if (returnImage != null) {
       return await File(returnImage.path).readAsBytes();
     }
+    return null;
   }
 
   static Future<File?> pickImage(ImageSource imageSource) async {

@@ -59,7 +59,7 @@ class _ProfileAboutScreenState extends State<ProfileAboutScreen> {
               _buildProfileOption(
                   title: 'Media',
                   onTap: () {
-                    Get.to(MediaScreen());
+                    Get.to( MediaScreen());
                   }),
               Divider(
                 color: AppColors.primaryColor.withOpacity(0.3),

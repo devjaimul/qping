@@ -96,7 +96,7 @@ class ProfileInformation extends StatelessWidget {
                 borderColor: AppColors.primaryColor,
                 textColor: AppColors.primaryColor,
                 onTap: () async {
-                  Get.to(ProfileUpdate());
+                  Get.to(const ProfileUpdate());
                 },
               ),
             ],

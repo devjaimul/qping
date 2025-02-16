@@ -10,6 +10,8 @@ class MediaScreen extends StatelessWidget {
 
   final MediaController controller = Get.put(MediaController());
 
+   MediaScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

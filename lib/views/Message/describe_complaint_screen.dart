@@ -72,7 +72,7 @@ class _DescribeComplaintScreenState extends State<DescribeComplaintScreen> {
                 ),
               ),
               SizedBox(height: 10.h),
-              CustomTextTwo(text: 'Describe your Complaint'),
+              const CustomTextTwo(text: 'Describe your Complaint'),
               // Complaint Text Field
               CustomTextField(
                 controller: complaintController,

@@ -32,13 +32,13 @@ class DiscoverMapController extends GetxController {
       'id': '1',
       'name': 'Ahad Munshi',
       'image': 'https://imgs.search.brave.com/7pbjW4GuowwR959yWtROSCo5YtMblsLY3tBUcbe9Bdw/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzNiLzcx/L2Q1LzNiNzFkNWZi/MTQ1NWY2MDNiM2Rl/MmNiY2M4MThhMWVk/LmpwZw',
-      'location': LatLng(23.759287273526724, 90.42894329783785),
+      'location': const LatLng(23.759287273526724, 90.42894329783785),
     },
     {
       'id': '2',
       'name': 'Ashique',
       'image': "https://imgs.search.brave.com/1JofeKOgrP4Ez9lHmxBPZqekvGWtxx2pVTuTkvpI07Y/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzL2I0LzZl/LzUxL2I0NmU1MTg4/OTRjMTkzNmQzMzFj/MjY0OTRiYzRlMjc4/LS1pdGFjaGktYWth/dHN1a2ktc2FzdWtl/LXVjaGloYS5qcGc",
-      'location': LatLng(23.75872184162463, 90.42932194380249),
+      'location': const LatLng(23.75872184162463, 90.42932194380249),
     },
   ];
 
@@ -216,7 +216,7 @@ class DiscoverMapController extends GetxController {
           // Add marker for the searched location
           markers.add(
             Marker(
-              markerId: MarkerId('searchedLocation'),
+              markerId: const MarkerId('searchedLocation'),
               position: searchedLocation,
               infoWindow: InfoWindow(title: query),
             ),

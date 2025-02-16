@@ -55,6 +55,7 @@ class SignInController extends GetxController {
           await PrefsHelper.setString(AppConstants.isLogged, "true");
         }
       }
+
       else if (response.statusCode == 401) {
         final token = response.body['token'];
         await PrefsHelper.setString(AppConstants.bearerToken, token);

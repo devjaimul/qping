@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:intl_phone_field/countries.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:qping/Controller/auth/sign_up_controller.dart';
 import 'package:qping/global_widgets/app_logo.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_button.dart';
 import 'package:qping/global_widgets/custom_text_field.dart';
 import 'package:qping/routes/app_routes.dart';
-import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_icons.dart';
-import 'package:qping/utils/app_images.dart';
 import 'package:qping/views/widgets/custom_country_code.dart';
 
 class SignUpScreen extends StatefulWidget {

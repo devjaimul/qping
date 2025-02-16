@@ -1,6 +1,5 @@
 import 'dart:async'; // Correct import for Timer
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:qping/global_widgets/app_logo.dart';
 import 'package:qping/helpers/prefs_helper.dart';
 import 'package:qping/routes/app_routes.dart';

@@ -19,7 +19,7 @@ class EventMapScreen extends StatefulWidget {
 class _EventMapScreenState extends State<EventMapScreen> {
   late GoogleMapController _mapController;
   LatLng _currentLocation = const LatLng(23.758855691617622, 90.42896325285551); // Example current location (San Francisco)
-  LatLng _targetLocation = const LatLng(23.759359333841253, 90.44312769232896); // Example target location (Near SF)
+  final LatLng _targetLocation = const LatLng(23.759359333841253, 90.44312769232896); // Example target location (Near SF)
 
   Set<Marker> _markers = {};
   Set<Polyline> _polylines = {};

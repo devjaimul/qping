@@ -41,7 +41,7 @@ centerTitle: true,
     foregroundColor: AppColors.textColor,
     shadowColor: Colors.black.withOpacity(0.12),
   ),
-    bottomNavigationBarTheme: BottomNavigationBarThemeData(backgroundColor: AppColors.buttonSecondColor),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(backgroundColor: AppColors.buttonSecondColor),
 
     datePickerTheme: DatePickerThemeData(
       dayStyle: TextStyle(color: AppColors.primaryColor, fontSize: 14.h),

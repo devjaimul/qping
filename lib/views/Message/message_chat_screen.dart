@@ -38,7 +38,7 @@ class MessageChatScreen extends StatelessWidget {
         centerTitle: true,
         title: InkWell(
           onTap: () {
-            Get.to(ProfileAboutScreen());
+            Get.to(const ProfileAboutScreen());
           },
           child: Row(
             children: [

@@ -45,7 +45,7 @@ class _DisCoverMapScreenState extends State<DisCoverMapScreen> {
                   Expanded(
                     child: CustomTextField(controller: _searchController,hintText: 'Search Location or Keyword',
                     suffixIcon:  IconButton(
-                      icon: Icon(Icons.search,color: AppColors.primaryColor,),
+                      icon: const Icon(Icons.search,color: AppColors.primaryColor,),
                       onPressed: () {
                         mapController.searchLocation(
                           _searchController.text.trim(),
