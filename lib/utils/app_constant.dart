@@ -6,6 +6,7 @@ class AppConstants{
  static String bearerToken = 'bearerToken';
  static String email = 'email';
  static String isEmailVerified = 'isEmailVerified';
+ static String isResetPass = 'isResetPass';
  static String isProfilePicture = 'isProfilePicture';
  static String isProfileID = 'isProfileID';
  static String name = 'name';

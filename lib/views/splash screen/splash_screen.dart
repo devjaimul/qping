@@ -26,6 +26,7 @@ _checkUserLogin();
     var token = await PrefsHelper.getString(AppConstants.bearerToken);
     var isLogged = await PrefsHelper.getString(AppConstants.isLogged);
     var isEmailVerified = await PrefsHelper.getString(AppConstants.isEmailVerified);
+    var isResetPass = await PrefsHelper.getString(AppConstants.isResetPass);
     var isProfileID = await PrefsHelper.getString(AppConstants.isProfileID);
     var isProfilePicture = await PrefsHelper.getString(AppConstants.isProfilePicture);
     var email = await PrefsHelper.getString(AppConstants.email);
@@ -36,17 +37,20 @@ _checkUserLogin();
 
       if(isLogged=="true"){
         Get.offAllNamed(AppRoutes.customNavBar);
+      }else if(isResetPass=="true"){
+        Get.offAllNamed(AppRoutes.resetPassScreen);
       }
-     else if(isEmailVerified!="true"){
+     else if(isEmailVerified=="true"){
         Get.to(OtpVerificationScreen(email: email,));
       }
-      else if(isProfileID!="true"){
+      else if(isProfileID=="true"){
         Get.offAllNamed(AppRoutes.registrationScreen);
       }
-      else if(isProfilePicture!="true"){
+      else if(isProfilePicture=="true"){
         Get.offAllNamed(AppRoutes.uploadPhotosScreen);
       }else{
-        Get.snackbar("!!!!", "Something Went Wrong!!!");
+        Get.offAllNamed(AppRoutes.onboardingScreen);
+       // Get.snackbar("!!!!", "Something Went Wrong!!!");
       }
 
     }
