@@ -8,7 +8,7 @@ import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_images.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
-import 'package:qping/views/Message/profile_about_screen.dart';
+import 'package:qping/views/Message/single%20message/profile_about_screen.dart';
 import 'package:qping/views/widgets/poll_widget.dart';
 
 class MessageChatScreen extends StatelessWidget {

@@ -6,10 +6,13 @@ import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_field.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_images.dart';
-import 'package:qping/views/Message/message_request_chat_screen.dart';
 
-class MessageRequestScreen extends StatelessWidget {
-  MessageRequestScreen({super.key});
+
+import 'create_group_screen.dart';
+import 'group_message_chat_screen.dart';
+
+class GroupMessageScreen extends StatelessWidget {
+  GroupMessageScreen({super.key});
 
   final MessageController messageController = Get.put(MessageController());
 
@@ -46,6 +49,10 @@ class MessageRequestScreen extends StatelessWidget {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(onPressed: (){
+        Get.to(()=> const CreateGroupScreen());
+
+      },backgroundColor: AppColors.primaryColor,foregroundColor: Colors.white,child: const Icon(Icons.add),),
     );
   }
 
@@ -107,7 +114,7 @@ class MessageRequestScreen extends StatelessWidget {
                 ],
               ),
               onTap: () {
-                Get.to( ()=>const MessageRequestChatScreen());
+                Get.to( ()=> GroupMessageChatScreen());
               },
             ),
           );

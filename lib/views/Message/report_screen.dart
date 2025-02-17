@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_button.dart';
 import 'package:qping/utils/app_colors.dart';
@@ -109,19 +110,11 @@ class _ReportScreenState extends State<ReportScreen> {
               text: "Next",
               onTap: () {
                 if (selectedOption != null) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DescribeComplaintScreen(
-                        selectedOption: selectedOption!,
-                      ),
-                    ),
-                  );
+                Get.to(()=> DescribeComplaintScreen(
+                  selectedOption: selectedOption!,
+                ),);
                 } else {
-                  // Handle case when no option is selected
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please select a report option')),
-                  );
+                  Get.snackbar("!!!!!!!", 'Please select a report option');
                 }
               },
               color: AppColors.primaryColor,

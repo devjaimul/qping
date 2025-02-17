@@ -151,6 +151,7 @@ class ProfileScreen extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
+          color: Colors.transparent,
           padding: EdgeInsets.symmetric(vertical: 8.h),
           child: Row(
             children: [

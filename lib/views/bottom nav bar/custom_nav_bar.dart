@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:qping/global_widgets/app_logo.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_icons.dart';
+import 'package:qping/views/Message/message%20request/message_request_screen.dart';
 import 'package:qping/views/Message/message_tab_bar_screen.dart';
 import 'package:qping/views/discover/discover_screen.dart';
 import 'package:qping/views/event/event_screen.dart';
@@ -43,6 +44,9 @@ class _CustomNavBarState extends State<CustomNavBar> {
           child: AppLogo(height:40.h),
         ),
         actions: [
+          IconButton(onPressed: (){
+            Get.to(()=>MessageRequestScreen());
+          }, icon: Badge(label: const Text("2"), child: Icon(Icons.message_outlined,size: 22.h,),)),
           IconButton(onPressed: (){
             Get.to(()=> const NotificationScreen());
           }, icon: Badge(label: const Text("2"), child: Icon(Icons.notifications_none_outlined,size: 22.h,),))

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qping/utils/app_colors.dart';
-import 'package:qping/views/Message/message_request_screen.dart';
-import 'package:qping/views/Message/message_screen.dart';
+import 'package:qping/views/Message/group%20message/group_message_screen.dart';
+import 'package:qping/views/Message/single%20message/message_screen.dart';
 
 class MessageTabBarScreen extends StatelessWidget {
   const MessageTabBarScreen({super.key});
@@ -39,7 +39,7 @@ class MessageTabBarScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Message Requests Tab
+                  //Group Messages Tab
                   Tab(
                     child: Container(
                       decoration: BoxDecoration(
@@ -49,7 +49,7 @@ class MessageTabBarScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: const Center(
-                        child: Text('Message Requests',style: TextStyle(fontFamily: "Outfit")),
+                        child: Text('Groups',style: TextStyle(fontFamily: "Outfit"),),
                       ),
                     ),
                   ),
@@ -61,7 +61,7 @@ class MessageTabBarScreen extends StatelessWidget {
               child: TabBarView(
                 children: [
                   MessageScreen(),
-                 MessageRequestScreen()
+                  GroupMessageScreen(),
                 ],
               ),
             ),
