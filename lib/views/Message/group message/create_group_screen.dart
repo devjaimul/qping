@@ -4,14 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:qping/Controller/message/group%20message/create_group_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_button.dart';
 import 'package:qping/global_widgets/custom_text_field.dart';
+import 'package:qping/services/api_constants.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/views/Message/single%20message/message_chat_screen.dart';
 
 class CreateGroupScreen extends StatefulWidget {
   final bool? addParticipants;
+
   const CreateGroupScreen({super.key, this.addParticipants});
 
   @override
@@ -20,35 +23,17 @@ class CreateGroupScreen extends StatefulWidget {
 
 class _CreateGroupScreenState extends State<CreateGroupScreen> {
   final TextEditingController _searchController = TextEditingController();
-  List<String> friends = [
-    "Alice",
-    "Bob",
-    "Charlie",
-    "David",
-    "Eve",
-    "Frank",
-    "Grace",
-    "Hannah"
-  ];
-  List<String> filteredFriends = [];
-  List<String> selectedFriends = [];
-  bool _isPublic = true; // Group type state
+  final CreateGroupController _controller = Get.put(CreateGroupController());
+
+  List<dynamic> selectedFriends = [];
 
   @override
   void initState() {
     super.initState();
-    filteredFriends = friends;
+    _controller.getUsersList();
   }
 
-  void _filterFriends(String query) {
-    setState(() {
-      filteredFriends = friends
-          .where((friend) => friend.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    });
-  }
-
-  void _toggleSelection(String friend) {
+  void _toggleSelection(dynamic friend) {
     setState(() {
       if (selectedFriends.contains(friend)) {
         selectedFriends.remove(friend);
@@ -63,9 +48,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     return Scaffold(
       appBar: AppBar(
         title: CustomTextOne(
-          text: widget.addParticipants == true
-              ? "Add Participants"
-              : "Create Group",
+          text: widget.addParticipants == true ? "Add Participants" : "Create Group",
           fontSize: 18.sp,
           color: AppColors.textColor,
         ),
@@ -76,36 +59,45 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
           children: [
             CustomTextField(
               controller: _searchController,
-              onChanged: _filterFriends,
+              onChanged: (query) => _controller.filterUsers(query),
               hintText: "Search friends",
               filColor: Colors.transparent,
             ),
             SizedBox(height: 15.h),
             Expanded(
-              child: ListView.builder(
-                itemCount: filteredFriends.length,
-                itemBuilder: (context, index) {
-                  final friend = filteredFriends[index];
-                  final isSelected = selectedFriends.contains(friend);
-                  return ListTile(
-                    leading: CircleAvatar(
-                      child: CustomTextTwo(text: friend[0]),
-                    ),
-                    title: CustomTextTwo(
-                      text: friend,
-                      textAlign: TextAlign.start,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    trailing: Checkbox(
-                      value: isSelected,
-                      onChanged: (value) {
-                        _toggleSelection(friend);
-                      },
-                    ),
-                    onTap: () => _toggleSelection(friend),
-                  );
-                },
-              ),
+              child: Obx(() {
+                if (_controller.isLoading.value && _controller.usersList.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                return ListView.builder(
+                  itemCount: _controller.usersList.length,
+                  itemBuilder: (context, index) {
+                    final friend = _controller.usersList[index];
+                    final isSelected = selectedFriends.contains(friend);
+
+                    return ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: friend['profilePicture'] != null
+                            ? NetworkImage("${ApiConstants.imageBaseUrl}/${friend['profilePicture']}")
+                            : null,
+                        child: friend['profilePicture'] == null
+                            ? CustomTextTwo(text: friend['name'][0].toString().toUpperCase())
+                            : null,
+                      ),
+                      title: CustomTextTwo(
+                        text: friend['name'],
+                        textAlign: TextAlign.start,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      trailing: Checkbox(
+                        value: isSelected,
+                        onChanged: (value) => _toggleSelection(friend),
+                      ),
+                      onTap: () => _toggleSelection(friend),
+                    );
+                  },
+                );
+              }),
             ),
             if (selectedFriends.isNotEmpty) ...[
               const Divider(),
@@ -117,48 +109,40 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                 spacing: 8.w,
                 children: selectedFriends
                     .map((friend) => Chip(
-                          label: CustomTextTwo(text: friend),
-                          onDeleted: () {
-                            _toggleSelection(friend);
-                          },
-                        ))
+                  label: CustomTextTwo(text: friend['name']),
+                  onDeleted: () => _toggleSelection(friend),
+                ))
                     .toList(),
               ),
               SizedBox(height: 15.h),
             ],
             widget.addParticipants == true
                 ? CustomTextButton(
-                    text: "Add",
-                    onTap: selectedFriends.isNotEmpty
-                        ? () {
-                            print("Add Friends: $selectedFriends");
-                          }
-                        : () {},
-                    color: selectedFriends.isNotEmpty
-                        ? AppColors.primaryColor
-                        : Colors.grey,
-                  )
+              text: "Add",
+              onTap: selectedFriends.isNotEmpty ? () {
+                print("Add Friends: $selectedFriends");
+              } : () {},
+              color: selectedFriends.isNotEmpty ? AppColors.primaryColor : Colors.grey,
+            )
                 : CustomTextButton(
-                    text: "Create Group",
-                    onTap: selectedFriends.isNotEmpty
-                        ? () {
-                            print("Group created with: $selectedFriends");
-                            _showGroupDialog(context);
-                          }
-                        : () {},
-                    color: selectedFriends.isNotEmpty
-                        ? AppColors.primaryColor
-                        : Colors.grey,
-                  )
+              text: "Create Group",
+              onTap: selectedFriends.isNotEmpty ? () {
+                String groupName = "Group Name"; // Get from TextController
+                String groupType = "public"; // Replace with actual logic for type
+                List<String> userIds = selectedFriends.map((friend) => friend['_id'].toString()).toList();
+                _showGroupDialog(context, groupName, groupType, userIds);
+              } : () {},
+              color: selectedFriends.isNotEmpty ? AppColors.primaryColor : Colors.grey,
+            )
           ],
         ),
       ),
     );
   }
-
-  void _showGroupDialog(BuildContext context) {
+  void _showGroupDialog(BuildContext context, String groupName, String groupType, List<dynamic> selectedFriends) {
     final TextEditingController groupNameController = TextEditingController();
     String? groupImage;
+    bool _isPublic = true;
 
     showDialog(
       context: context,
@@ -180,11 +164,9 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                     filColor: Colors.transparent,
                   ),
                   SizedBox(height: 15.h),
-
                   InkWell(
                     onTap: () async {
-                      final pickedFile = await ImagePicker()
-                          .pickImage(source: ImageSource.gallery);
+                      final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
                       if (pickedFile != null) {
                         setState(() {
                           groupImage = pickedFile.path;
@@ -199,20 +181,14 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                         borderRadius: BorderRadius.circular(8.r),
                       ),
                       child: groupImage == null
-                          ? Icon(Icons.add_a_photo,
-                              size: 40.sp, color: Colors.grey)
+                          ? Icon(Icons.add_a_photo, size: 40.sp, color: Colors.grey)
                           : ClipRRect(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(12)),
-                              child: Image.file(File(groupImage!),
-                                  fit: BoxFit.cover),
-                            ),
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        child: Image.file(File(groupImage!), fit: BoxFit.cover),
+                      ),
                     ),
                   ),
-
                   SizedBox(height: 15.h),
-
-                  // Group Type Switch
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -247,32 +223,27 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                         color: Colors.grey,
                       ),
                     ),
-                    SizedBox(
-                      width: 15.w,
-                    ),
+                    SizedBox(width: 15.w),
                     SizedBox(
                       width: 100.w,
-                      child: CustomTextButton(
-                        padding: 0,
-                        text: "Create",
-                        onTap: () {
-                          if (groupNameController.text.isNotEmpty &&
-                              groupImage != null) {
-                            Get.to(() => MessageChatScreen(isGroup: true));
+                      child:
 
-                            print("Group Name: ${groupNameController.text}");
-                            print("Group Image: $groupImage");
-                            print("Group Members: $selectedFriends");
-                            print(
-                                "Group Type: ${_isPublic ? "Public" : "Private"}");
-                          } else {
-                            Get.snackbar("!!!!",
-                                "Please provide a group name and image");
-                            print("Please provide a group name and image");
-                          }
+                      CustomTextButton(
+                        text: "Create",
+                        onTap:() {
+                          String groupName = groupNameController.text;
+                          String groupType = _isPublic ? "public" : "private";
+
+                          _controller.createGroup(
+                            groupName: groupName,
+                            groupType: groupType,
+                            selectedUserIds: selectedFriends,
+                            groupImage: groupImage != null ? File(groupImage!) : null,
+                          );
                         },
-                        color: AppColors.primaryColor,
-                      ),
+                        color: selectedFriends.isNotEmpty ? AppColors.primaryColor : Colors.grey,
+                      )
+
                     ),
                   ],
                 )
@@ -283,4 +254,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       },
     );
   }
+
+
 }

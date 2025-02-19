@@ -80,7 +80,7 @@ class CustomTextTwo extends StatelessWidget {
   final double top;
   final double bottom;
   final double? fontSize;
-  final FontWeight fontWeight;
+  final FontWeight? fontWeight;
   final Color? color;
   final String text;
   final TextAlign textAlign;
@@ -100,7 +100,7 @@ class CustomTextTwo extends StatelessWidget {
         style: TextStyle(
             fontSize: fontSize ?? 12.h,
             fontFamily: 'Outfit',
-            fontWeight:FontWeight.w400 ,
+            fontWeight:fontWeight??FontWeight.w400 ,
             color: color ?? AppColors.textColor
         ),
       ),

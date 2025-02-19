@@ -30,9 +30,11 @@ class SignInController extends GetxController {
         final isEmailVerified = data['isEmailVerified'].toString();
         final isProfilePicture = data['profilePicture'] ?? '';
         final isProfileID = data['profileID'] ?? '';
+        final userId = data['_id'] ?? '';
 
         // Save these values in shared preferences
         await PrefsHelper.setString(AppConstants.bearerToken, token);
+        await PrefsHelper.setString(AppConstants.userId, userId);
 
         // await PrefsHelper.setString(
         //     AppConstants.isEmailVerified, isEmailVerified);

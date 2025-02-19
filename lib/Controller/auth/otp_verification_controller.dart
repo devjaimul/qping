@@ -22,7 +22,9 @@ class OtpVerificationController extends GetxController {
         Get.snackbar("Success", response.body['message'] ?? "OTP verified successfully!");
 
         String token = response.body['token'];
+        String userId = response.body['data']['id'];
         await PrefsHelper.setString(AppConstants.bearerToken, token);
+        await PrefsHelper.setString(AppConstants.userId, userId);
 
         if (isFormForget == true) {
           Get.toNamed(AppRoutes.resetPassScreen);
