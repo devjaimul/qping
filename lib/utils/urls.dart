@@ -53,4 +53,7 @@ class Urls {
   static  String removeFromParticipantsList(String userId) => '/conversation/$userId';
   static const String addParticipantsList = '/users';
   static const String createGroup = '/conversation';
+  static  String addUserToGroup (String userId)=> '/conversation/group/$userId';
+
+  static  String showGroupList (String page,limit,searchValue)=> '/conversation?page=$page&limit=$limit&searchTerm=$searchValue';
 }

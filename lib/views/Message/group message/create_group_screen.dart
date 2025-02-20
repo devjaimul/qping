@@ -1,21 +1,21 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:qping/Controller/message/group%20message/create_group_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_button.dart';
 import 'package:qping/global_widgets/custom_text_field.dart';
 import 'package:qping/services/api_constants.dart';
 import 'package:qping/utils/app_colors.dart';
-import 'package:qping/views/Message/single%20message/message_chat_screen.dart';
+
+import 'group_dialog.dart';
 
 class CreateGroupScreen extends StatefulWidget {
   final bool? addParticipants;
+  final String? groupId;
 
-  const CreateGroupScreen({super.key, this.addParticipants});
+  const CreateGroupScreen({super.key, this.addParticipants, this.groupId});
 
   @override
   State<CreateGroupScreen> createState() => _CreateGroupScreenState();
@@ -58,6 +58,9 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         child: Column(
           children: [
             CustomTextField(
+              validator: (value){
+                return null;
+              },
               controller: _searchController,
               onChanged: (query) => _controller.filterUsers(query),
               hintText: "Search friends",
@@ -120,7 +123,11 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                 ? CustomTextButton(
               text: "Add",
               onTap: selectedFriends.isNotEmpty ? () {
-                print("Add Friends: $selectedFriends");
+
+
+                List<String> userIds = selectedFriends.map((friend) => friend['_id'].toString()).toList();
+                _controller.addUserToGroup(selectedUserIds: userIds, groupId: widget.groupId.toString());
+
               } : () {},
               color: selectedFriends.isNotEmpty ? AppColors.primaryColor : Colors.grey,
             )
@@ -130,7 +137,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                 String groupName = "Group Name"; // Get from TextController
                 String groupType = "public"; // Replace with actual logic for type
                 List<String> userIds = selectedFriends.map((friend) => friend['_id'].toString()).toList();
-                _showGroupDialog(context, groupName, groupType, userIds);
+                showGroupDialog(context, groupName, groupType, userIds);
               } : () {},
               color: selectedFriends.isNotEmpty ? AppColors.primaryColor : Colors.grey,
             )
@@ -139,121 +146,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       ),
     );
   }
-  void _showGroupDialog(BuildContext context, String groupName, String groupType, List<dynamic> selectedFriends) {
-    final TextEditingController groupNameController = TextEditingController();
-    String? groupImage;
-    bool _isPublic = true;
 
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: CustomTextOne(
-                text: "Create Group",
-                fontSize: 18.sp,
-                color: AppColors.textColor,
-              ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CustomTextField(
-                    controller: groupNameController,
-                    hintText: "Enter Group Name",
-                    filColor: Colors.transparent,
-                  ),
-                  SizedBox(height: 15.h),
-                  InkWell(
-                    onTap: () async {
-                      final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-                      if (pickedFile != null) {
-                        setState(() {
-                          groupImage = pickedFile.path;
-                        });
-                      }
-                    },
-                    child: Container(
-                      height: 100.h,
-                      width: 100.h,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      child: groupImage == null
-                          ? Icon(Icons.add_a_photo, size: 40.sp, color: Colors.grey)
-                          : ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(12)),
-                        child: Image.file(File(groupImage!), fit: BoxFit.cover),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 15.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomTextTwo(
-                        text: "Group Type: ${_isPublic ? "Public" : "Private"}",
-                      ),
-                      Switch(
-                        value: _isPublic,
-                        onChanged: (bool value) {
-                          setState(() {
-                            _isPublic = value;
-                          });
-                        },
-                        activeColor: AppColors.primaryColor,
-                        inactiveThumbColor: Colors.grey,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              actions: [
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 100.w,
-                      child: CustomTextButton(
-                        text: "Cancel",
-                        padding: 0,
-                        onTap: () {
-                          Get.back();
-                        },
-                        color: Colors.grey,
-                      ),
-                    ),
-                    SizedBox(width: 15.w),
-                    SizedBox(
-                      width: 100.w,
-                      child:
 
-                      CustomTextButton(
-                        text: "Create",
-                        onTap:() {
-                          String groupName = groupNameController.text;
-                          String groupType = _isPublic ? "public" : "private";
-
-                          _controller.createGroup(
-                            groupName: groupName,
-                            groupType: groupType,
-                            selectedUserIds: selectedFriends,
-                            groupImage: groupImage != null ? File(groupImage!) : null,
-                          );
-                        },
-                        color: selectedFriends.isNotEmpty ? AppColors.primaryColor : Colors.grey,
-                      )
-
-                    ),
-                  ],
-                )
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
 
 
 }

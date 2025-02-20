@@ -96,7 +96,7 @@ class _GroupProfileAboutScreenState extends State<GroupProfileAboutScreen> {
               _buildProfileOption(
                   title: 'Add Participants',
                   onTap: () {
-                    Get.to(()=>  CreateGroupScreen(addParticipants: true,));
+                    Get.to(()=>  CreateGroupScreen(addParticipants: true,groupId:"67a6eb65c76be791ff3de30a",));
                   }),
               Divider(
                 color: AppColors.primaryColor.withOpacity(0.3),
