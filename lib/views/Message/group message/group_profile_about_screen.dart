@@ -13,7 +13,8 @@ import 'package:qping/views/Message/report_screen.dart';
 import 'create_group_screen.dart';
 
 class GroupProfileAboutScreen extends StatefulWidget {
-  const GroupProfileAboutScreen({super.key});
+  final String groupId;
+  const GroupProfileAboutScreen({super.key,required this.groupId});
 
   @override
   State<GroupProfileAboutScreen> createState() => _GroupProfileAboutScreenState();
@@ -24,18 +25,12 @@ class _GroupProfileAboutScreenState extends State<GroupProfileAboutScreen> {
 
   bool isSwitched = false;
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textColor),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
@@ -88,7 +83,7 @@ class _GroupProfileAboutScreenState extends State<GroupProfileAboutScreen> {
               _buildProfileOption(
                   title: 'Participants',
                   onTap: () {
-                    Get.to(()=> ParticipantsListScreen(groupId: "67a6eb65c76be791ff3de30a",));
+                    Get.to(()=> ParticipantsListScreen(groupId: widget.groupId,));
                   }),
               Divider(
                 color: AppColors.primaryColor.withOpacity(0.3),
@@ -96,7 +91,7 @@ class _GroupProfileAboutScreenState extends State<GroupProfileAboutScreen> {
               _buildProfileOption(
                   title: 'Add Participants',
                   onTap: () {
-                    Get.to(()=>  CreateGroupScreen(addParticipants: true,groupId:"67a6eb65c76be791ff3de30a",));
+                    Get.to(()=>  CreateGroupScreen(addParticipants: true,groupId:widget.groupId,));
                   }),
               Divider(
                 color: AppColors.primaryColor.withOpacity(0.3),

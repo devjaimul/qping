@@ -1,22 +1,51 @@
 import 'package:get/get.dart';
 import 'package:qping/services/api_client.dart';
 import 'package:qping/utils/urls.dart';
+import 'package:qping/helpers/prefs_helper.dart';
+import 'package:qping/utils/app_constant.dart';
 
 class ParticipantsListScreenController extends GetxController {
   var participantsList = <dynamic>[].obs;
   var isLoading = false.obs;
+  var currentPage = 1.obs;
+  var totalPages = 1.obs;
+  var userRole = ''.obs;
+  static const int limit = 10;
+
+
+ // Fetch the current user's role in the group
+  Future<void> getMyRole( String groupId) async {
+    try {
+      final response = await ApiClient.getData(
+        Urls.getParticipantsRole(groupId),
+      );
+
+      if (response.statusCode == 200) {
+        userRole.value = response.body['data']['role']; // Set role
+      } else {
+        Get.snackbar("Error", "Failed to load participant's role.");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "An unexpected error occurred: $e");
+    }
+  }
 
   // Function to get participants list from the API
   Future<void> getParticipantsList(String groupId) async {
+    if (currentPage.value > totalPages.value) return; // No more pages to load
+
     isLoading.value = true;
 
     try {
       final response = await ApiClient.getData(
-        Urls.participantsList(groupId), // Updated to GET request
+        Urls.participantsList(groupId, currentPage.value, limit),
       );
 
       if (response.statusCode == 200) {
-        participantsList.value = response.body['data']; // Assign participants list
+        var data = response.body['data'];
+        participantsList.addAll(data); // Add new participants to the list
+        totalPages.value = response.body['pagination']['totalPages']; // Update total pages
+        currentPage.value++; // Increment the current page
       } else {
         Get.snackbar("Error", response.body['message'] ?? "Failed to load participants.");
       }
@@ -28,19 +57,37 @@ class ParticipantsListScreenController extends GetxController {
   }
 
   // Function to kick out the participant by sending their userId
-  Future<void> kickOutUser(String userId) async {
+  Future<void> kickOutUser(String userId,groupId) async {
     try {
       final response = await ApiClient.postData(
-        Urls.removeFromParticipantsList(userId), // Send the userId to remove the participant
+        Urls.removeFromParticipantsList(groupId,userId),
         {},
       );
 
       if (response.statusCode == 200) {
         Get.snackbar("Success", "User has been kicked out.");
-        // Optionally, remove the user from the participants list immediately
         participantsList.removeWhere((participant) => participant['userId']['_id'] == userId);
       } else {
         Get.snackbar("Error", response.body['message'] ?? "Failed to kick out the user.");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "An unexpected error occurred: $e");
+    }
+  }
+
+  // // Function to promote a participant to moderator
+  Future<void> promoteToModerator(String userId,groupId) async {
+    try {
+      final response = await ApiClient.postData(
+        Urls.promoteToModerator(groupId,userId),
+        {},
+      );
+
+      if (response.statusCode == 200) {
+        Get.snackbar("Success", "User has been promoted to moderator.");
+        // Update participants list if necessary
+      } else {
+        Get.snackbar("Error", response.body['message'] ?? "Failed to promote to moderator.");
       }
     } catch (e) {
       Get.snackbar("Error", "An unexpected error occurred: $e");

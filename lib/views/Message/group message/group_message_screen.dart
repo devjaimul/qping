@@ -175,7 +175,7 @@ class GroupMessageScreen extends StatelessWidget {
                     ),
                 ],
               ),
-              onTap: () => Get.to(() => GroupMessageChatScreen()),
+              onTap: () => Get.to(() => GroupMessageChatScreen(groupId:chat["_id"],)),
             ),
           );
         },

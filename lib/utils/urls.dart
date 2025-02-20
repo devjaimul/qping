@@ -49,8 +49,10 @@ class Urls {
 
 
   //group message
-  static  String participantsList(String groupId) => '/conversation/group/$groupId';
-  static  String removeFromParticipantsList(String userId) => '/conversation/$userId';
+  static  String participantsList(String groupId,page,limit) => '/conversation/group/$groupId?page=$page&limit=$limit';
+  static  String getParticipantsRole(String groupId) => '/participant/$groupId';
+  static  String promoteToModerator(String groupId,userId) => '/conversation/group/$groupId/promote/$userId';
+  static  String removeFromParticipantsList(String groupId,userId) => '/conversation/group/$groupId/remove/$userId';
   static const String addParticipantsList = '/users';
   static const String createGroup = '/conversation';
   static  String addUserToGroup (String userId)=> '/conversation/group/$userId';

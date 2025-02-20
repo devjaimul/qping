@@ -13,8 +13,8 @@ import 'package:qping/views/widgets/poll_widget.dart';
 import 'group_profile_about_screen.dart';
 
 class GroupMessageChatScreen extends StatelessWidget {
-
-  GroupMessageChatScreen({super.key,});
+  final String? groupId;
+  GroupMessageChatScreen({super.key,  this.groupId,});
 
   final MessageChatController _controller = Get.put(MessageChatController());
 
@@ -39,7 +39,7 @@ class GroupMessageChatScreen extends StatelessWidget {
         centerTitle: true,
         title: InkWell(
           onTap: () {
-            Get.to(()=> const GroupProfileAboutScreen());
+            Get.to(()=>  GroupProfileAboutScreen(groupId: groupId!,));
           },
           child: Row(
             children: [
