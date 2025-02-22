@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:qping/Controller/message/group%20message/participants_list_screen_controller.dart';
+import 'package:qping/global_widgets/custom_text_button.dart';
+import 'package:qping/global_widgets/custom_text_field.dart';
 import 'package:qping/helpers/prefs_helper.dart';
 import 'package:qping/services/api_constants.dart';
 import 'package:qping/utils/app_colors.dart';
@@ -18,7 +20,7 @@ class ParticipantsListScreen extends StatefulWidget {
 
 class _ParticipantsListScreenState extends State<ParticipantsListScreen> {
   final controller = Get.put(ParticipantsListScreenController());
-
+TextEditingController sendMsgTEController=TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -67,7 +69,7 @@ class _ParticipantsListScreenState extends State<ParticipantsListScreen> {
                         ),
                         title: CustomTextOne(
                           text: "${user['name']} ${isCurrentUser ? '(Me)' : ''}",
-                          fontSize: 16.sp,
+                          fontSize: 14.sp,
                           textAlign: TextAlign.start,
                           color: AppColors.textColor,
                         ),
@@ -104,6 +106,52 @@ class _ParticipantsListScreenState extends State<ParticipantsListScreen> {
                                   }
                                 },
                               ),
+                              IconButton(onPressed: (){
+                                Get.dialog(
+                                  AlertDialog(
+                                    title: Column(
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.topRight,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              Get.back();
+                                            },
+                                            child: Icon(Icons.close, size: 24.sp, color: Colors.black),
+                                          ),
+                                        ),
+                                        CircleAvatar(
+                                          radius: 50.r,
+                                          backgroundImage: user["profilePicture"] != null
+                                              ? NetworkImage("${ApiConstants.imageBaseUrl}/${user["profilePicture"]}")
+                                              : null,
+                                          child: user["profilePicture"] == null
+                                              ? CustomTextTwo(text: user['name'][0].toString().toUpperCase())
+                                              : null,
+                                        ),
+                                      ],
+                                    ),
+                                    content: Column(
+                                      spacing: 20.h,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        CustomTextOne(text: user['name']),
+                                        CustomTextField(
+                                          controller:sendMsgTEController ,
+                                          hintText: "Type your message",
+                                        ),
+                                        CustomTextButton(
+                                          text: "Send Message",
+                                          onTap: () {
+                                            final messageText = sendMsgTEController.text;
+                                            controller.createChat(user["_id"], messageText);
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }, icon: const Icon(Icons.message,color: AppColors.primaryColor,))
                             ],
                           ),
                         ),

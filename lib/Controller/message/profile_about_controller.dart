@@ -73,7 +73,7 @@ class ProfileAboutController extends GetxController {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    showCustomDialog(context);
+                    //showCustomDialog(context);
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: AppColors.textColor,
@@ -94,60 +94,6 @@ class ProfileAboutController extends GetxController {
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  // Custom Dialog Method
-  void showCustomDialog(BuildContext context) {
-    Get.dialog(
-      Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.r),
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.h,vertical: 20.w),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Dropdown Field
-                DropdownButtonFormField<String>(
-                  value: 'Fake profile',
-                  items: const [
-                    DropdownMenuItem(value: 'Fake profile', child: Text('Fake profile')),
-                    DropdownMenuItem(value: 'Harassment', child: Text('Harassment')),
-                    DropdownMenuItem(value: 'Not one person', child: Text('Not one person')),
-                    DropdownMenuItem(value: 'Threatening behavior', child: Text('Threatening behavior')),
-                  ],
-                  onChanged: (value) {},
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.r)),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-                  ),
-                ),
-                SizedBox(height: 12.h),
-
-                // Text Fields
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Details',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.r)),
-                  ),
-                  maxLines: 3,
-                ),
-                SizedBox(height: 20.h),
-
-                // Submit Button
-               // CustomGradientButton(
-               //     onTap: () {
-               //      Get.back();
-               //     },
-               //     title: 'Submit')
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }

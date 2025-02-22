@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:qping/Controller/message/profile_about_controller.dart';
+import 'package:qping/Controller/message/group%20message/group_profile_about_screen_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/dialog.dart';
 import 'package:qping/utils/app_colors.dart';
-import 'package:qping/utils/app_images.dart';
 import 'package:qping/views/Message/group%20message/participants_list_screen.dart';
 import 'package:qping/views/Message/media_screen.dart';
 import 'package:qping/views/Message/report_screen.dart';
@@ -14,14 +13,16 @@ import 'create_group_screen.dart';
 
 class GroupProfileAboutScreen extends StatefulWidget {
   final String groupId;
-  const GroupProfileAboutScreen({super.key,required this.groupId});
+  final String name;
+  final String img;
+  const GroupProfileAboutScreen({super.key,required this.groupId, required this.name, required this.img});
 
   @override
   State<GroupProfileAboutScreen> createState() => _GroupProfileAboutScreenState();
 }
 
 class _GroupProfileAboutScreenState extends State<GroupProfileAboutScreen> {
-  final ProfileAboutController controller = Get.put(ProfileAboutController());
+  final GroupProfileAboutController controller = Get.put(GroupProfileAboutController());
 
   bool isSwitched = false;
 
@@ -40,12 +41,12 @@ class _GroupProfileAboutScreenState extends State<GroupProfileAboutScreen> {
             children: [
               CircleAvatar(
                 radius: 50.r,
-                backgroundImage: const AssetImage(AppImages.model),
+                backgroundImage: NetworkImage(widget.img),
               ),
               SizedBox(height: 20.h),
 
               CustomTextOne(
-                text: 'Jenni Miranda',
+                text: widget.name,
                 color: Colors.black,
                 fontSize: 20.sp,
                 maxLine: 1,
@@ -55,7 +56,6 @@ class _GroupProfileAboutScreenState extends State<GroupProfileAboutScreen> {
               _buildProfileOption(
                 title: 'Enable Notifications',
                 onTap: () {
-                  print('Option Tapped');
                 },
                 toogle: true,
                 noIcon: true,
@@ -64,7 +64,6 @@ class _GroupProfileAboutScreenState extends State<GroupProfileAboutScreen> {
                   setState(() {
                     isSwitched = value; // Update the state when toggled
                   });
-                  print('Switch Value: $value');
                 },
               ),
 
@@ -126,8 +125,7 @@ class _GroupProfileAboutScreenState extends State<GroupProfileAboutScreen> {
                           Get.back();
                         },
                         onConfirm: () {
-                          Get.back();
-                          Get.back();
+                          controller.leaveGroup(widget.groupId);
                         },
                       ),
                     );

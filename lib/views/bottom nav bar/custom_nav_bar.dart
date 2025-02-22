@@ -15,11 +15,11 @@ class CustomNavBar extends StatefulWidget {
   const CustomNavBar({super.key});
 
   @override
-  _CustomNavBarState createState() => _CustomNavBarState();
+  State<CustomNavBar> createState() => CustomNavBarState();
 }
 
-class _CustomNavBarState extends State<CustomNavBar> {
-  int _selectedIndex = 0;
+class CustomNavBarState extends State<CustomNavBar> {
+
 
   // List of screens for navigation
   final List<Widget> _screens = [
@@ -28,8 +28,15 @@ class _CustomNavBarState extends State<CustomNavBar> {
     const EventScreen(),
     const ProfileScreen(),
   ];
+  int _selectedIndex = 0;
 
-  void _onItemTapped(int index) {
+  @override
+  void initState() {
+    super.initState();
+    Get.put(this);
+  }
+
+  void onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -72,7 +79,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
         ),
         child: BottomNavigationBar(
           currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
+          onTap: onItemTapped,
           backgroundColor: AppColors.primaryColor,
           elevation: 0,
           type: BottomNavigationBarType.fixed,

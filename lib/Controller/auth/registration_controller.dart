@@ -44,7 +44,7 @@ class RegistrationController extends GetxController {
         final formattedMessage = errorMessage is List
             ? errorMessage.join(", ")
             : errorMessage ?? "Something went wrong.";
-        Get.snackbar("Error", formattedMessage);
+        Get.snackbar("!!!!!", formattedMessage);
       }
     } catch (e) {
       Get.snackbar("Error", "An unexpected error occurred: $e");

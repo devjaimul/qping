@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:qping/global_widgets/custom_text.dart';
+import 'package:qping/global_widgets/dialog.dart';
+import 'package:qping/routes/app_routes.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/views/profile/setting/about_screen.dart';
 import 'package:qping/views/profile/setting/change%20password/change_password.dart';
@@ -54,6 +56,31 @@ class SettingScreen extends StatelessWidget {
                 Get.to(const AboutScreen());
               },
             ),
+            const Spacer(),
+            _buildProfileOption(
+              icon: Icons.delete,
+              fillColor: AppColors.primaryColor.withOpacity(0.8),
+              iconColor: Colors.red,
+              noIcon: true,
+              textColor: Colors.white,
+              label: 'Delete Account',
+              onTap: () {
+                Get.dialog(
+                  CustomDialog(
+                    title: "Are you sure you want to Delete the Account??",
+                    confirmButtonText: "Yes",
+                    cancelButtonText: "No",
+                    onCancel: () {
+                      Get.back();
+                    },
+                    onConfirm: () {
+                      Get.offAllNamed(AppRoutes.signInScreen);
+                    },
+                  ),
+                );
+              },
+            ),
+            SizedBox(height: 20.h,)
           ],
         ),
       ),
@@ -63,6 +90,10 @@ class SettingScreen extends StatelessWidget {
   // Helper widget to build the profile options
   Widget _buildProfileOption({
     required IconData icon,
+     Color? iconColor,
+     Color? fillColor,
+     Color? textColor,
+    bool? noIcon,
     required String label,
     required VoidCallback onTap,
     Color borderColor = AppColors.primaryColor,
@@ -74,17 +105,18 @@ class SettingScreen extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 8.h),
           decoration: BoxDecoration(
+            color:fillColor ,
             borderRadius: BorderRadius.circular(50.r),
             border: Border.all(color: borderColor),
           ),
           child: Row(
             children: [
               SizedBox(width: 10.w),
-              Icon(icon, color: AppColors.primaryColor.withOpacity(0.5), size: 20.h),
+              Icon(icon, color:iconColor?? AppColors.primaryColor.withOpacity(0.5), size: 20.h),
               SizedBox(width: 20.w),
-              CustomTextTwo(text: label),
+              CustomTextTwo(text: label,color: textColor,),
               const Spacer(),
-              Icon(Icons.arrow_forward_ios, color: AppColors.primaryColor.withOpacity(0.5 ), size: 18.h),
+            noIcon==true?const SizedBox.shrink():  Icon(Icons.arrow_forward_ios, color:AppColors.primaryColor.withOpacity(0.5 ), size: 18.h),
               SizedBox(width: 10.w),
             ],
           ),

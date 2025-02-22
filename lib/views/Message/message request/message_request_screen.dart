@@ -1,24 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:qping/Controller/message/message_controller.dart';
+import 'package:intl/intl.dart';
+import 'package:qping/Controller/message/message%20request/message_request_screen_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_field.dart';
+import 'package:qping/global_widgets/shimmer_loading.dart';
+import 'package:qping/services/api_constants.dart';
 import 'package:qping/utils/app_colors.dart';
-import 'package:qping/utils/app_images.dart';
-import 'package:qping/views/Message/message%20request/message_request_chat_screen.dart';
 
-class MessageRequestScreen extends StatelessWidget {
-  MessageRequestScreen({super.key});
+class MessageRequestScreen extends StatefulWidget {
+  const MessageRequestScreen({super.key});
 
-  final MessageController messageController = Get.put(MessageController());
+  @override
+  State<MessageRequestScreen> createState() => _MessageRequestScreenState();
+}
 
+class _MessageRequestScreenState extends State<MessageRequestScreen> {
+  final MessageRequestController messageRequestController = Get.put(MessageRequestController());
+  final TextEditingController searchController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+   // messageRequestController.getPendingChatList(type: 'pending');
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-appBar: AppBar(
-  title: CustomTextOne(text: "Message Requests",fontSize: 18.sp,),
-),
+      appBar: AppBar(title:  CustomTextOne(text: "Message Request",fontSize: 18.sp,),),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
@@ -26,8 +35,15 @@ appBar: AppBar(
             children: [
               /// ==================================> Search ====================================>
               CustomTextField(
-                controller: TextEditingController(),
+                controller: searchController,
                 hintText: "Search",
+                validator: (value) {
+                  return null;
+                },
+                onChanged: (value) {
+                  // Just update the searchQuery; the debounce in the controller will trigger the API call.
+                  messageRequestController.searchQuery.value = value;
+                },
                 suffixIcon: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10.w),
                   child: Icon(
@@ -51,46 +67,88 @@ appBar: AppBar(
     );
   }
 
-
-  /// ===================================== _buildChatList ====================================>
-  Widget _buildChatList()  {
+  Widget _buildChatList() {
     return Obx(() {
-      return ListView.separated(
-        itemCount: messageController.chatData.length,
-        separatorBuilder: (_, __) =>
-            Divider(color: Colors.grey.shade300, thickness: 1),
+      // When loading and no data exists, show a list of shimmer loaders
+      if (messageRequestController.isLoading.value && messageRequestController.chatData.isEmpty) {
+        return ListView.builder(
+          itemCount: 6,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.h),
+              child: ShimmerLoading(
+                width: double.infinity,
+                height: 80.h,
+              ),
+            );
+          },
+        );
+      }
+
+      // Determine the item count and add one extra item if more pages are available
+      int itemCount = messageRequestController.chatData.length;
+      if (messageRequestController.currentPage.value <= messageRequestController.totalPages.value) {
+        itemCount++;
+      }
+
+      return itemCount == 0
+          ? Center(child: CustomTextOne(text: "No Message Available!!!", fontSize: 18.sp))
+          : ListView.separated(
+        itemCount: itemCount,
+        separatorBuilder: (_, __) => Divider(color: Colors.grey.shade300, thickness: 1),
         itemBuilder: (context, index) {
-          final chat = messageController.chatData[index];
-          return  Card(
-            color:chat["isUnread"] as bool? AppColors.primaryColor.withOpacity(0.1):Colors.transparent ,
+          // When reaching the extra item, load more data after the current build frame.
+          if (index == messageRequestController.chatData.length) {
+            Future.delayed(Duration.zero, () {
+              messageRequestController.getPendingChatList(type: 'pending');
+            });
+            return Center(
+              child: Padding(
+                padding: EdgeInsets.all(16.r),
+                child: const CircularProgressIndicator(),
+              ),
+            );
+          }
+          final chat = messageRequestController.chatData[index];
+          // Provide a default value for isUnread if missing
+          final bool isUnread = chat["isUnread"] ?? false;
+          return Card(
+            color: isUnread
+                ? AppColors.primaryColor.withOpacity(0.1)
+                : Colors.transparent,
             elevation: 0,
             child: ListTile(
               leading: CircleAvatar(
-                radius: 25.r,
-                backgroundImage: const AssetImage(AppImages.model),
+                backgroundImage: chat["profilePicture"] != null
+                    ? NetworkImage("${ApiConstants.imageBaseUrl}/${chat["profilePicture"]}")
+                    : null,
+                child: chat["profilePicture"] == null
+                    ? CustomTextTwo(
+                    text: chat["participantName"][0].toString().toUpperCase())
+                    : null,
               ),
               title: CustomTextOne(
-                text: chat["name"] as String,
+                text: chat["participantName"] as String,
                 color: AppColors.textColor,
-                fontSize: 15.sp,
+                fontSize: 14.sp,
                 maxLine: 1,
                 textAlign: TextAlign.start,
                 textOverflow: TextOverflow.ellipsis,
               ),
               subtitle: CustomTextOne(
-                text: "hello how are you",
-                fontSize: 14,
+                text: chat["lastMessage"] ?? "..........................................",
+                fontSize: 12.sp,
                 color: AppColors.textColor.withOpacity(0.5),
                 maxLine: 1,
                 textAlign: TextAlign.start,
                 textOverflow: TextOverflow.ellipsis,
               ),
-
-              /// ================================> Time ==================================>
               trailing: Column(
                 children: [
                   CustomTextOne(
-                    text: chat["time"] as String,
+                    text: DateFormat.jm().format(
+                        DateTime.parse(chat["lastMessageCreatedAt"].toString())
+                            .toLocal()),
                     color: AppColors.textColor.withOpacity(0.8),
                     fontSize: 12.sp,
                     maxLine: 1,
@@ -98,9 +156,9 @@ appBar: AppBar(
                     textOverflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 10.w),
-                  if (chat["isUnread"] as bool)
+                  if (isUnread)
                     GestureDetector(
-                      onTap: () => messageController.markAsRead(index),
+                      onTap: () => messageRequestController.markAsRead(index),
                       child: CircleAvatar(
                         radius: 5.r,
                         backgroundColor: AppColors.primaryColor,
@@ -109,7 +167,7 @@ appBar: AppBar(
                 ],
               ),
               onTap: () {
-                Get.to( ()=>const MessageRequestChatScreen());
+                Get.to(() => const MessageRequestScreen());
               },
             ),
           );

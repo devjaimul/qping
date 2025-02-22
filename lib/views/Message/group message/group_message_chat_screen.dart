@@ -13,8 +13,10 @@ import 'package:qping/views/widgets/poll_widget.dart';
 import 'group_profile_about_screen.dart';
 
 class GroupMessageChatScreen extends StatelessWidget {
-  final String? groupId;
-  GroupMessageChatScreen({super.key,  this.groupId,});
+  final String groupId;
+  final String name;
+  final String img;
+  GroupMessageChatScreen({super.key,  required this.groupId, required this.name, required this.img,});
 
   final MessageChatController _controller = Get.put(MessageChatController());
 
@@ -39,30 +41,22 @@ class GroupMessageChatScreen extends StatelessWidget {
         centerTitle: true,
         title: InkWell(
           onTap: () {
-            Get.to(()=>  GroupProfileAboutScreen(groupId: groupId!,));
+            Get.to(()=>  GroupProfileAboutScreen(groupId: groupId,img: img,name: name,));
           },
           child: Row(
             children: [
               CircleAvatar(
                 radius: 20.r,
-                backgroundImage: const AssetImage(AppImages.model),
+                backgroundImage:
+                    NetworkImage(img)
               ),
               SizedBox(width: 10.w),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CustomTextOne(
-                    text: "Jenni Miranda",
-                    fontSize: 15.sp,
-                    color: Colors.black,
-                    maxLine: 1,
-                    textOverflow: TextOverflow.ellipsis,
-                  ),
-                  CustomTextTwo(
-                    text: 'Active 2 hours ago',
-                    fontSize: 12.sp,
-                  ),
-                ],
+              CustomTextOne(
+                text: name,
+                fontSize: 15.sp,
+                color: Colors.black,
+                maxLine: 1,
+                textOverflow: TextOverflow.ellipsis,
               ),
             ],
           ),

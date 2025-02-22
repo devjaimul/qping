@@ -11,17 +11,32 @@ import 'package:qping/utils/app_colors.dart';
 import 'create_group_screen.dart';
 import 'group_message_chat_screen.dart';
 
-class GroupMessageScreen extends StatelessWidget {
+class GroupMessageScreen extends StatefulWidget {
   GroupMessageScreen({super.key});
 
-  final GroupMessageController groupMessageController = Get.put(GroupMessageController());
+  @override
+  State<GroupMessageScreen> createState() => _GroupMessageScreenState();
+}
+
+class _GroupMessageScreenState extends State<GroupMessageScreen> {
+  final GroupMessageController groupMessageController =
+      Get.put(GroupMessageController());
+
   final ScrollController scrollController = ScrollController();
+
   final TextEditingController searchController = TextEditingController();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    groupMessageController.fetchGroupList();
+  }
 
   @override
   Widget build(BuildContext context) {
     scrollController.addListener(() {
-      if (scrollController.position.pixels >= scrollController.position.maxScrollExtent &&
+      if (scrollController.position.pixels >=
+              scrollController.position.maxScrollExtent &&
           !groupMessageController.isLoading.value) {
         groupMessageController.fetchGroupList();
       }
@@ -35,10 +50,8 @@ class GroupMessageScreen extends StatelessWidget {
             children: [
               /// ========================== Search Bar ==========================
               CustomTextField(
-                validator: (value){
+                validator: (value) {
                   return null;
-
-
                 },
                 controller: searchController,
                 hintText: "Search Groups",
@@ -56,23 +69,22 @@ class GroupMessageScreen extends StatelessWidget {
                 onChanged: (value) {
                   groupMessageController.searchGroups(value);
                 },
-
               ),
               SizedBox(height: 20.h),
-
 
               Expanded(child: _buildChatList(context)),
 
               Obx(() {
-                final shimmerTheme = Theme.of(context).extension<ShimmerThemeExtension>()!;
+                final shimmerTheme =
+                    Theme.of(context).extension<ShimmerThemeExtension>()!;
                 return groupMessageController.isLoading.value
                     ? Padding(
-                  padding:  EdgeInsets.all(10.r),
-                  child: shimmerTheme.shimmerLoader(200.w, 20.h), // Shimmer Effect
-                )
+                        padding: EdgeInsets.all(10.r),
+                        child: shimmerTheme.shimmerLoader(
+                            200.w, 20.h), // Shimmer Effect
+                      )
                     : const SizedBox.shrink();
               }),
-
             ],
           ),
         ),
@@ -90,7 +102,8 @@ class GroupMessageScreen extends StatelessWidget {
   Widget _buildChatList(BuildContext context) {
     return Obx(() {
       if (groupMessageController.isLoading.value) {
-        final shimmerTheme = Theme.of(context).extension<ShimmerThemeExtension>()!;
+        final shimmerTheme =
+            Theme.of(context).extension<ShimmerThemeExtension>()!;
         return ListView.builder(
           itemCount: 10,
           itemBuilder: (context, index) => Padding(
@@ -113,32 +126,35 @@ class GroupMessageScreen extends StatelessWidget {
         );
       }
 
-      if (groupMessageController.chatData.isEmpty && !groupMessageController.isLoading.value) {
+      if (groupMessageController.chatData.isEmpty &&
+          !groupMessageController.isLoading.value) {
         return Center(
           child: searchController.text.isNotEmpty
-              ? CustomTextOne(text: "No matching groups found!!!", fontSize: 16.sp)
+              ? CustomTextOne(
+                  text: "No matching groups found!!!", fontSize: 16.sp)
               : CustomTextOne(text: "No groups found", fontSize: 16.sp),
         );
       }
 
-
-
       return ListView.separated(
         controller: scrollController,
         itemCount: groupMessageController.chatData.length,
-        separatorBuilder: (_, __) => Divider(color: Colors.grey.shade300, thickness: 1),
+        separatorBuilder: (_, __) =>
+            Divider(color: Colors.grey.shade300, thickness: 1),
         itemBuilder: (context, index) {
           final chat = groupMessageController.chatData[index];
           return Card(
             elevation: 0,
             color: Colors.transparent,
             child: ListTile(
-              leading:  CircleAvatar(
+              leading: CircleAvatar(
                 backgroundImage: chat["avatar"] != null
-                    ? NetworkImage("${ApiConstants.imageBaseUrl}/${chat["avatar"]}")
+                    ? NetworkImage(
+                        "${ApiConstants.imageBaseUrl}/${chat["avatar"]}")
                     : null,
                 child: chat["avatar"] == null
-                    ? CustomTextTwo(text: chat['name'][0].toString().toUpperCase())
+                    ? CustomTextTwo(
+                        text: chat['name'][0].toString().toUpperCase())
                     : null,
               ),
               title: CustomTextOne(
@@ -160,7 +176,9 @@ class GroupMessageScreen extends StatelessWidget {
               trailing: Column(
                 children: [
                   CustomTextOne(
-                    text: DateFormat.jm().format(DateTime.parse(chat["lastActiveAt"].toString()).toLocal()),
+                    text: DateFormat.jm().format(
+                        DateTime.parse(chat["lastActiveAt"].toString())
+                            .toLocal()),
                     color: AppColors.textColor.withOpacity(0.8),
                     fontSize: 12.sp,
                     maxLine: 1,
@@ -175,7 +193,11 @@ class GroupMessageScreen extends StatelessWidget {
                     ),
                 ],
               ),
-              onTap: () => Get.to(() => GroupMessageChatScreen(groupId:chat["_id"],)),
+              onTap: () => Get.to(() => GroupMessageChatScreen(
+                    groupId: chat["_id"],
+                    name: chat['name'],
+                    img:"${ApiConstants.imageBaseUrl}/${chat["avatar"]}",
+                  )),
             ),
           );
         },

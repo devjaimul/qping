@@ -29,7 +29,7 @@ class SignInController extends GetxController {
         final token = response.body['token'];
         final isEmailVerified = data['isEmailVerified'].toString();
         final isProfilePicture = data['profilePicture'] ?? '';
-        final isProfileID = data['profileID'] ?? '';
+        final isProfileID = data['profileID']??"";
         final userId = data['_id'] ?? '';
 
         // Save these values in shared preferences
@@ -43,11 +43,11 @@ class SignInController extends GetxController {
         // await PrefsHelper.setString(AppConstants.isProfileID, isProfileID);
         // Navigate to the dashboard or home screen
 
-        if (isProfileID == "null") {
+        if (isProfileID == null|| isProfileID.isEmpty) {
           Get.snackbar("Unauthorized","Profile Details Are Missing!!");
           Get.toNamed(AppRoutes.registrationScreen);
         }
-        else if (isProfilePicture == "null") {
+        else if (isProfilePicture == null || isProfilePicture.isEmpty) {
           Get.snackbar("Unauthorized", "Profile Picture Is Missing!!");
           Get.toNamed(AppRoutes.uploadPhotosScreen);
         }

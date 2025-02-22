@@ -141,6 +141,9 @@ class RegistrationScreen extends StatelessWidget {
 
               // Birthday
               CustomTextField(
+                onTap: (){
+                  selectDate(context);
+                },
                 readOnly: true,
                 controller: birthdayTEController,
                 hintText: "Birthday",
@@ -151,12 +154,7 @@ class RegistrationScreen extends StatelessWidget {
                     height: 18.h,
                   ),
                 ),
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    selectDate(context);
-                  },
-                  icon: const Icon(Icons.calendar_month, color: AppColors.primaryColor),
-                ),
+                suffixIcon: const Icon(Icons.calendar_month, color: AppColors.primaryColor),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Birth Date cannot be empty";

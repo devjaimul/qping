@@ -32,8 +32,11 @@ class Urls {
   static const String payments = '/purchase';
   static const String hostFeatureMode = '/user/guest-mode';
 
-//message
-  static const String chatList = '/chat/list';
+  //individual message
+  static  String createChat(String userId) => '/chat?participant=$userId';
+
+
+  static  String getChatList (String page,limit,type,search) => '/chat?page=$page&limit=$limit&type=$type&term=$search';
 
   static  String chatMsgList(String chatID) => '/chat/message?chatId=$chatID';
 
@@ -41,11 +44,9 @@ class Urls {
 
   static  String msgReport(String chatID) => '/user/report-profile?userId=$chatID';
 
-  static  String msgBlock(String userId) => '/user/block-user?blockUserId=$userId';
 
-  static  String msgUnBlock(String userId) => '/user/unblock-user?blockUserId=$userId';
 
-  static  String createChat(String chatID) => '/chat/create?receiverId=$chatID';
+
 
 
   //group message
@@ -55,7 +56,10 @@ class Urls {
   static  String removeFromParticipantsList(String groupId,userId) => '/conversation/group/$groupId/remove/$userId';
   static const String addParticipantsList = '/users';
   static const String createGroup = '/conversation';
+  static  String leaveGroup(String groupId) => '/conversation/group/$groupId/leave';
   static  String addUserToGroup (String userId)=> '/conversation/group/$userId';
-
   static  String showGroupList (String page,limit,searchValue)=> '/conversation?page=$page&limit=$limit&searchTerm=$searchValue';
+
+
+
 }

@@ -1,8 +1,6 @@
-import 'package:get/get.dart';
+import 'package:qping/routes/exports.dart';
 import 'package:qping/services/api_client.dart';
 import 'package:qping/utils/urls.dart';
-import 'package:qping/helpers/prefs_helper.dart';
-import 'package:qping/utils/app_constant.dart';
 
 class ParticipantsListScreenController extends GetxController {
   var participantsList = <dynamic>[].obs;
@@ -10,7 +8,7 @@ class ParticipantsListScreenController extends GetxController {
   var currentPage = 1.obs;
   var totalPages = 1.obs;
   var userRole = ''.obs;
-  static const int limit = 10;
+  static const int limit = 15;
 
 
  // Fetch the current user's role in the group
@@ -23,7 +21,7 @@ class ParticipantsListScreenController extends GetxController {
       if (response.statusCode == 200) {
         userRole.value = response.body['data']['role']; // Set role
       } else {
-        Get.snackbar("Error", "Failed to load participant's role.");
+      //  Get.snackbar("Error", "Failed to load participant's role.");
       }
     } catch (e) {
       Get.snackbar("Error", "An unexpected error occurred: $e");
@@ -88,6 +86,25 @@ class ParticipantsListScreenController extends GetxController {
         // Update participants list if necessary
       } else {
         Get.snackbar("Error", response.body['message'] ?? "Failed to promote to moderator.");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "An unexpected error occurred: $e");
+    }
+  }
+
+  // create chat
+  Future<void> createChat (String userId,message) async {
+    try {
+      final response = await ApiClient.postData(
+        Urls.createChat(userId),
+        {"message":message},
+      );
+
+      if (response.statusCode == 200) {
+        Get.snackbar("Success", response.body['message']);
+        Get.offAll(()=>const CustomNavBar());
+      } else {
+        Get.snackbar("!!!!!", response.body['message'] ?? "Failed.");
       }
     } catch (e) {
       Get.snackbar("Error", "An unexpected error occurred: $e");

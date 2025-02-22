@@ -1,9 +1,8 @@
 // Controller Update
 import 'dart:io';
-import 'package:get/get.dart';
+import 'package:qping/routes/exports.dart';
 import 'package:qping/services/api_client.dart';
 import 'package:qping/utils/urls.dart';
-import 'package:qping/views/Message/group%20message/group_message_chat_screen.dart';
 
 class CreateGroupController extends GetxController {
   var usersList = <dynamic>[].obs;
@@ -52,10 +51,11 @@ class CreateGroupController extends GetxController {
       final response = await ApiClient.postMultipartData(uri, body, multipartBody: multipartBody);
 
       if (response.statusCode == 200) {
+        Get.back();
+        Get.back();
         Get.snackbar("Success", "Group created successfully.");
-        Get.to(() => GroupMessageChatScreen());  // Navigate to the chat screen
       } else {
-        Get.snackbar("Error", "Failed to create group.");
+        Get.snackbar("Failed", response.body['message']);
       }
     } catch (e) {
       Get.snackbar("Error", "An unexpected error occurred: $e");
@@ -85,7 +85,7 @@ class CreateGroupController extends GetxController {
 
       } else {
         final errorMessage = response.body['message'] ?? "!!!!";
-        Get.snackbar("Error", errorMessage);
+        Get.snackbar("!!", errorMessage);
       }
     } catch (e) {
       Get.snackbar("Error", "An unexpected error occurred: $e");
