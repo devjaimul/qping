@@ -10,6 +10,8 @@ import 'package:qping/services/api_constants.dart';
 import 'package:qping/themes/light_theme.dart';
 import 'package:qping/utils/app_colors.dart';
 
+import 'message_request_chat_screen.dart';
+
 class MessageRequestScreen extends StatefulWidget {
   const MessageRequestScreen({super.key});
 
@@ -20,11 +22,7 @@ class MessageRequestScreen extends StatefulWidget {
 class _MessageRequestScreenState extends State<MessageRequestScreen> {
   final MessageRequestController messageRequestController = Get.put(MessageRequestController());
   final TextEditingController searchController = TextEditingController();
-  @override
-  void initState() {
-    super.initState();
-   // messageRequestController.getPendingChatList(type: 'pending');
-  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -157,15 +155,17 @@ class _MessageRequestScreenState extends State<MessageRequestScreen> {
               trailing: Column(
                 children: [
                   CustomTextOne(
-                    text: DateFormat.jm().format(
-                        DateTime.parse(chat["lastMessageCreatedAt"].toString())
-                            .toLocal()),
+                    text: chat["lastMessageCreatedAt"] != null
+                        ? DateFormat.jm().format(
+                        DateTime.parse(chat["lastMessageCreatedAt"].toString()).toLocal())
+                        : "No Date",
                     color: AppColors.textColor.withOpacity(0.8),
                     fontSize: 12.sp,
                     maxLine: 1,
                     textAlign: TextAlign.start,
                     textOverflow: TextOverflow.ellipsis,
                   ),
+
                   SizedBox(height: 10.w),
                   if (isUnread)
                     GestureDetector(
@@ -178,7 +178,7 @@ class _MessageRequestScreenState extends State<MessageRequestScreen> {
                 ],
               ),
               onTap: () {
-                Get.to(() => const MessageRequestScreen());
+                Get.to(() =>  MessageRequestChatScreen(name: chat["participantName"], image: "${ApiConstants.imageBaseUrl}/${chat["profilePicture"]}", conversationId: chat["_id"],));
               },
             ),
           );

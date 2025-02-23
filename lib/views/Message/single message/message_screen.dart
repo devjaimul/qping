@@ -157,15 +157,17 @@ class _MessageScreenState extends State<MessageScreen> {
               trailing: Column(
                 children: [
                   CustomTextOne(
-                    text: DateFormat.jm().format(
-                        DateTime.parse(chat["lastMessageCreatedAt"].toString())
-                            .toLocal()),
+                    text: chat["lastMessageCreatedAt"] != null
+                        ? DateFormat.jm().format(
+                        DateTime.parse(chat["lastMessageCreatedAt"].toString()).toLocal())
+                        : "No Date",
                     color: AppColors.textColor.withOpacity(0.8),
                     fontSize: 12.sp,
                     maxLine: 1,
                     textAlign: TextAlign.start,
                     textOverflow: TextOverflow.ellipsis,
                   ),
+
                   SizedBox(height: 10.w),
                   if (isUnread)
                     GestureDetector(

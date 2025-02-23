@@ -116,7 +116,7 @@ class MessageChatScreen extends StatelessWidget {
                                 isSender: message['isSentByMe'],
                                 color: message['isSentByMe']
                                     ? AppColors.primaryColor
-                                    : AppColors.buttonSecondColor,
+                                    : AppColors.chatSecondColor,
                                 tail: true,
                                 textStyle: TextStyle(
                                   color: Colors.white,
