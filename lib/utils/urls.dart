@@ -34,11 +34,11 @@ class Urls {
 
   //individual message
   static  String createChat(String userId) => '/chat?participant=$userId';
-
-
   static  String getChatList (String page,limit,type,search) => '/chat?page=$page&limit=$limit&type=$type&term=$search';
+  static  String chatMsgList (String page,limit,type,conversationId) => '/messages/$conversationId?type=$type&page=$page&limit=$limit';
 
-  static  String chatMsgList(String chatID) => '/chat/message?chatId=$chatID';
+
+
 
   static  String sendMsg(String chatID) => '/chat/create-message-with-file?chatId=$chatID';
 

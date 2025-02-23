@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:qping/Controller/message/message_chat_controller.dart';
+import 'package:qping/Controller/message/group%20message/group_message_chat_screen_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_images.dart';
@@ -18,7 +18,7 @@ class GroupMessageChatScreen extends StatelessWidget {
   final String img;
   GroupMessageChatScreen({super.key,  required this.groupId, required this.name, required this.img,});
 
-  final MessageChatController _controller = Get.put(MessageChatController());
+  final GroupMessageChatScreenController _controller = Get.put(GroupMessageChatScreenController());
 
   final TextEditingController _messageController = TextEditingController();
 

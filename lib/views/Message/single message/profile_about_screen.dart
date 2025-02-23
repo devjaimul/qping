@@ -10,7 +10,10 @@ import 'package:qping/views/Message/media_screen.dart';
 import 'package:qping/views/Message/report_screen.dart';
 
 class ProfileAboutScreen extends StatefulWidget {
-  const ProfileAboutScreen({super.key});
+  final String image;
+  final String name;
+  final String conversationId;
+  const ProfileAboutScreen({super.key, required this.image, required this.name, required this.conversationId});
 
   @override
   State<ProfileAboutScreen> createState() => _ProfileAboutScreenState();
@@ -43,28 +46,18 @@ class _ProfileAboutScreenState extends State<ProfileAboutScreen> {
             children: [
               CircleAvatar(
                 radius: 50.r,
-                backgroundImage: const AssetImage(AppImages.model),
+                backgroundImage: NetworkImage(widget.image),
               ),
               SizedBox(height: 20.h),
 
               CustomTextOne(
-                text: 'Jenni Miranda',
+                text: widget.name,
                 color: Colors.black,
                 fontSize: 20.sp,
                 maxLine: 1,
                 textOverflow: TextOverflow.ellipsis,
               ),
               SizedBox(height: 80.h),
-
-              _buildProfileOption(
-                  title: 'Media',
-                  onTap: () {
-                    Get.to( MediaScreen());
-                  }),
-              Divider(
-                color: AppColors.primaryColor.withOpacity(0.3),
-              ),
-
               _buildProfileOption(
                 title: 'Enable Notifications',
                 onTap: () {
@@ -84,6 +77,15 @@ class _ProfileAboutScreenState extends State<ProfileAboutScreen> {
               Divider(
                 color: AppColors.primaryColor.withOpacity(0.3),
               ),
+              _buildProfileOption(
+                  title: 'Media',
+                  onTap: () {
+                    Get.to( MediaScreen());
+                  }),
+              Divider(
+                color: AppColors.primaryColor.withOpacity(0.3),
+              ),
+
               _buildProfileOption(
                   title: 'Report',
                   onTap: () {

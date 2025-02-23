@@ -5,15 +5,14 @@ import 'package:intl/intl.dart';
 import 'package:qping/Controller/message/message_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_field.dart';
-import 'package:qping/global_widgets/shimmer_loading.dart';
 import 'package:qping/services/api_constants.dart';
+import 'package:qping/themes/light_theme.dart';
 import 'package:qping/utils/app_colors.dart';
-import 'package:qping/utils/app_images.dart';
 
 import 'message_chat_screen.dart';
 
 class MessageScreen extends StatefulWidget {
-  const MessageScreen({Key? key}) : super(key: key);
+  const MessageScreen({super.key});
 
   @override
   State<MessageScreen> createState() => _MessageScreenState();
@@ -39,7 +38,9 @@ class _MessageScreenState extends State<MessageScreen> {
               CustomTextField(
                 controller: searchController,
                 hintText: "Search",
-                validator: (value) {},
+                validator: (value) {
+                  return null;
+                },
                 onChanged: (value) {
                   // Just update the searchQuery; the debounce in the controller will trigger the API call.
                   messageController.searchQuery.value = value;
@@ -71,17 +72,27 @@ class _MessageScreenState extends State<MessageScreen> {
     return Obx(() {
       // When loading and no data exists, show a list of shimmer loaders
       if (messageController.isLoading.value && messageController.chatData.isEmpty) {
+        final shimmerTheme =
+        Theme.of(context).extension<ShimmerThemeExtension>()!;
         return ListView.builder(
-          itemCount: 6,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.h),
-              child: ShimmerLoading(
-                width: double.infinity,
-                height: 80.h,
-              ),
-            );
-          },
+          itemCount: 10,
+          itemBuilder: (context, index) => Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
+            child: Row(
+              children: [
+                shimmerTheme.shimmerLoader(50.w, 50.w),
+                SizedBox(width: 10.w),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    shimmerTheme.shimmerLoader(150.w, 15.h),
+                    SizedBox(height: 5.h),
+                    shimmerTheme.shimmerLoader(100.w, 10.h),
+                  ],
+                ),
+              ],
+            ),
+          ),
         );
       }
 
@@ -167,7 +178,7 @@ class _MessageScreenState extends State<MessageScreen> {
                 ],
               ),
               onTap: () {
-                Get.to(() => MessageChatScreen());
+              Get.to(() => MessageChatScreen(name: chat["participantName"], image: "${ApiConstants.imageBaseUrl}/${chat["profilePicture"]}",conversationId: chat["_id"],));
               },
             ),
           );

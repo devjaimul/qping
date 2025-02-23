@@ -7,6 +7,7 @@ import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_field.dart';
 import 'package:qping/global_widgets/shimmer_loading.dart';
 import 'package:qping/services/api_constants.dart';
+import 'package:qping/themes/light_theme.dart';
 import 'package:qping/utils/app_colors.dart';
 
 class MessageRequestScreen extends StatefulWidget {
@@ -71,17 +72,27 @@ class _MessageRequestScreenState extends State<MessageRequestScreen> {
     return Obx(() {
       // When loading and no data exists, show a list of shimmer loaders
       if (messageRequestController.isLoading.value && messageRequestController.chatData.isEmpty) {
+        final shimmerTheme =
+        Theme.of(context).extension<ShimmerThemeExtension>()!;
         return ListView.builder(
-          itemCount: 6,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.h),
-              child: ShimmerLoading(
-                width: double.infinity,
-                height: 80.h,
-              ),
-            );
-          },
+          itemCount: 10,
+          itemBuilder: (context, index) => Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
+            child: Row(
+              children: [
+                shimmerTheme.shimmerLoader(50.w, 50.w),
+                SizedBox(width: 10.w),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    shimmerTheme.shimmerLoader(150.w, 15.h),
+                    SizedBox(height: 5.h),
+                    shimmerTheme.shimmerLoader(100.w, 10.h),
+                  ],
+                ),
+              ],
+            ),
+          ),
         );
       }
 
