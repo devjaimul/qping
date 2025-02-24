@@ -54,6 +54,7 @@ class Urls {
   //group message
   static  String participantsList(String groupId,page,limit) => '/conversation/group/$groupId?page=$page&limit=$limit';
   static  String getParticipantsRole(String groupId) => '/participant/$groupId';
+  static  String joinPublicGroup(String groupId) => '/conversation/group/$groupId/join';
   static  String promoteToModerator(String groupId,userId) => '/conversation/group/$groupId/promote/$userId';
   static  String removeFromParticipantsList(String groupId,userId) => '/conversation/group/$groupId/remove/$userId';
   static const String addParticipantsList = '/users';

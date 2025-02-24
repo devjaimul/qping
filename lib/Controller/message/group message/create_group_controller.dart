@@ -26,6 +26,7 @@ class CreateGroupController extends GetxController {
 
   Future<void> createGroup({
     required String groupName,
+    required String groupDescription,
     required String groupType,
     required List<dynamic> selectedUserIds,
     required File? groupImage,
@@ -38,6 +39,7 @@ class CreateGroupController extends GetxController {
       Map<String, String> body = {
         'name': groupName,
         'type': groupType,
+        'description': groupDescription,
         'users': selectedUserIds.join(','),
       };
       List<MultipartBody> multipartBody = [];

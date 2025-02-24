@@ -12,6 +12,7 @@ import 'package:qping/utils/app_colors.dart';
 
 void showGroupDialog(BuildContext context, String groupName, String groupType, List<dynamic> selectedFriends) {
   final TextEditingController groupNameController = TextEditingController();
+  final TextEditingController groupDescriptionController = TextEditingController();
   final CreateGroupController controller = Get.put(CreateGroupController());
   String? groupImage;
   bool isPublic = true;
@@ -30,12 +31,6 @@ void showGroupDialog(BuildContext context, String groupName, String groupType, L
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                CustomTextField(
-                  controller: groupNameController,
-                  hintText: "Enter Group Name",
-                  filColor: Colors.transparent,
-                ),
-                SizedBox(height: 15.h),
                 InkWell(
                   onTap: () async {
                     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -46,8 +41,8 @@ void showGroupDialog(BuildContext context, String groupName, String groupType, L
                     }
                   },
                   child: Container(
-                    height: 100.h,
-                    width: 100.h,
+                    height: 80.h,
+                    width: 80.h,
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(8.r),
@@ -60,7 +55,22 @@ void showGroupDialog(BuildContext context, String groupName, String groupType, L
                     ),
                   ),
                 ),
-                SizedBox(height: 15.h),
+                SizedBox(height: 20.h),
+                CustomTextField(
+                  contentPaddingVertical: 2.h,
+                  controller: groupNameController,
+                  hintText: "Enter Group Name",
+                  filColor: Colors.transparent,
+                ),
+                SizedBox(height: 10.h),
+                CustomTextField(
+
+                  contentPaddingVertical: 2.h,
+                  controller: groupDescriptionController,
+                  hintText: "Enter Group Description",
+                  filColor: Colors.transparent,
+                ),
+                SizedBox(height: 10.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -95,19 +105,22 @@ void showGroupDialog(BuildContext context, String groupName, String groupType, L
                       color: Colors.grey,
                     ),
                   ),
-                  SizedBox(width: 15.w),
+                  SizedBox(width: 10.w),
                   SizedBox(
                       width: 100.w,
                       child:
 
                       CustomTextButton(
                         text: "Create",
+                        padding: 0,
                         onTap:() {
                           String groupName = groupNameController.text;
+                          String groupDescription = groupDescriptionController.text;
                           String groupType = isPublic ? "public" : "private";
 
                           controller.createGroup(
                             groupName: groupName,
+                            groupDescription:groupDescription,
                             groupType: groupType,
                             selectedUserIds: selectedFriends,
                             groupImage: groupImage != null ? File(groupImage!) : null,
