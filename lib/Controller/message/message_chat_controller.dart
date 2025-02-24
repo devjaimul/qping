@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:qping/services/api_client.dart';
+import 'package:qping/services/socket_services.dart';
 import 'package:qping/utils/urls.dart';
 
 class MessageChatController extends GetxController {
@@ -18,33 +19,19 @@ class MessageChatController extends GetxController {
     myUserId = id;
   }
 
-  void addTextMessage(String content) {
-    messages.add({
-      'type': 'text',
-      'content': content,
-      'isSentByMe': true,
-      'time': DateFormat('h.mm a').format(DateTime.now().toLocal()),
-    });
-  }
 
-  void addImageMessage(String path) {
-    messages.add({
-      'type': 'image',
-      'content': path,
-      'isSentByMe': true,
-      'time': DateFormat('h.mm a').format(DateTime.now().toLocal()),
-    });
-  }
-
-  // New method to fetch chat messages with pagination support
+  // fetch chat messages
   Future<void> fetchChatMessages(String conversationId,
       {String type = 'individual', bool refresh = false}) async {
     if (refresh) {
       currentPage.value = 1;
       messages.clear();
     }
-    // If there are no more pages, do nothing
-    if (currentPage.value > totalPages.value && currentPage.value != 1) return;
+
+    // Prevent fetching if there are no more pages to load
+    if (currentPage.value > totalPages.value) {
+      return;
+    }
 
     isLoadingMessages.value = true;
     try {
@@ -61,8 +48,7 @@ class MessageChatController extends GetxController {
         var data = response.body['data'];
         var pagination = response.body['pagination'];
 
-        // Map API messages into your local format.
-        // "isSentByMe" is determined by comparing msg['sender'] with myUserId.
+        // Map API messages into your local format
         List<Map<String, dynamic>> newMessages = (data as List).map((msg) {
           return {
             'type': msg['attachments'] != null &&
@@ -79,13 +65,12 @@ class MessageChatController extends GetxController {
           };
         }).toList();
 
-        // Append the newly fetched messages
+        // Add new messages and update pagination info
         messages.addAll(newMessages);
         totalPages.value = pagination['totalPages'];
         currentPage.value = pagination['currentPage'] + 1;
       } else {
-        Get.snackbar("Error",
-            response.body['message'] ?? "Failed to retrieve messages");
+        Get.snackbar("Error", response.body['message'] ?? "Failed to retrieve messages");
       }
     } catch (e) {
       Get.snackbar("Error", "An unexpected error occurred: $e");
@@ -93,4 +78,46 @@ class MessageChatController extends GetxController {
       isLoadingMessages.value = false;
     }
   }
+
+
+  ///  Initialize the socket connection and join a conversation
+  void initSocketAndJoinConversation(String conversationId) {
+    SocketServices.emit('join', {
+      'groupId': conversationId,
+    });
+
+    listenForIncomingMessages(conversationId);
+  }
+
+  /// Listen for messages from the socket
+  void listenForIncomingMessages(String conversationId) {
+
+    SocketServices.socket.on('conversation-$conversationId', (data) {
+      if (data != null) {
+        final bool isSentByMe = data['sender'] == myUserId;
+        final String messageType = data['type'] ?? 'text';
+        final String content = data['content'] ?? '';
+
+        messages.insert(0, {
+          'type': messageType == 'image' ? 'image' : 'text',
+          'content': content,
+          'isSentByMe': isSentByMe,
+          'time': DateFormat('h.mm a').format(DateTime.now().toLocal()),
+        });
+      }
+    });
+  }
+
+  /// Send a message over the socket
+  void sendMessageToSocket(String conversationId, String content, {String type = 'individual'}) {
+    final body = {
+      'groupId': conversationId,
+      'content': content,
+      'messageOn': type,
+    };
+
+    SocketServices.emit('send-message', body);
+  }
+
+
 }

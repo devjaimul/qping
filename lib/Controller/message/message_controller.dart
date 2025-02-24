@@ -14,11 +14,8 @@ class MessageController extends GetxController {
   void onInit() {
     super.onInit();
 
-   //getAcceptChatList(isRefresh: true, type: 'accepted');
-
     // Debounce search input so that the API call is triggered only after 500ms of no changes
     debounce(searchQuery, (_) {
-
       getAcceptChatList(isRefresh: true, type: 'accepted');
     }, time: const Duration(milliseconds: 500));
   }
@@ -29,6 +26,12 @@ class MessageController extends GetxController {
       totalPages.value = 1;
       chatData.clear();
     }
+
+    // If there are no more pages to load, return immediately.
+    if (currentPage.value > totalPages.value) {
+      return;
+    }
+
     isLoading.value = true;
     // Build the API URL with page, limit, type, and search parameters
     final response = await ApiClient.getData(
@@ -36,7 +39,7 @@ class MessageController extends GetxController {
         currentPage.value.toString(),
         limit.toString(),
         type,
-        searchQuery.value, // uses current search query
+        searchQuery.value,
       ),
     );
     isLoading.value = false;
@@ -48,7 +51,13 @@ class MessageController extends GetxController {
       }
       var pagination = response.body['pagination'];
       totalPages.value = pagination['totalPages'] ?? 1;
-      currentPage.value++;
+
+
+      if (pagination['nextPage'] != null) {
+        currentPage.value = pagination['nextPage'];
+      } else {
+        currentPage.value = (pagination['currentPage'] as int) + 1;
+      }
     } else {
       Get.snackbar("Error", response.body['message'] ?? "Failed to load chat list.");
     }

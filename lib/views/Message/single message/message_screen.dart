@@ -21,6 +21,7 @@ class MessageScreen extends StatefulWidget {
 class _MessageScreenState extends State<MessageScreen> {
   final MessageController messageController = Get.put(MessageController());
   final TextEditingController searchController = TextEditingController();
+
 @override
   void initState() {
     super.initState();
@@ -147,7 +148,7 @@ class _MessageScreenState extends State<MessageScreen> {
                 textOverflow: TextOverflow.ellipsis,
               ),
               subtitle: CustomTextOne(
-                text: chat["lastMessage"] ?? "..........................................",
+                text: chat["lastMessage"] ?? "........................",
                 fontSize: 12.sp,
                 color: AppColors.textColor.withOpacity(0.5),
                 maxLine: 1,

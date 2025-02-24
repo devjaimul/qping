@@ -1,73 +1,53 @@
 import 'dart:async';
-
-import 'package:qping/helpers/prefs_helper.dart';
 import 'package:qping/services/api_constants.dart';
 import 'package:qping/utils/app_constant.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
+
+import '../helpers/prefs_helper.dart';
+
 
 class SocketServices {
 
   static var token = '';
 
   factory SocketServices() {
-
     return _socketApi;
-  }
-  static void init() async {
-    token = await PrefsHelper.getString(AppConstants.bearerToken);
-    print("Initializing socket with token: $token");
-
-    // Validate token
-    if (token.isEmpty) {
-      print("Error: Token is missing or invalid.");
-      return;
-    }
-
-    // Disconnect existing socket if connected
-    if (socket.connected) {
-      socket.disconnect();
-    }
-
-    // Reinitialize socket
-    socket = IO.io(
-      '${ApiConstants.imageBaseUrl}?token=$token',
-      IO.OptionBuilder().setTransports(['websocket']).enableReconnection().build(),
-    );
-
-    // Setup event listeners
-    socket.onConnect((_) {
-      print('Socket connected successfully');
-    });
-
-    socket.onConnectError((err) {
-      print('Socket connection error: $err');
-    });
-
-    socket.onError((err) {
-      print('Socket error: $err');
-    });
-
-    socket.onDisconnect((reason) {
-      print('Socket disconnected. Reason: $reason');
-    });
-
-
-    socket.connect(); // Connect to the server
   }
 
 
 
   SocketServices._internal();
+
   static final SocketServices _socketApi = SocketServices._internal();
-  static IO.Socket socket = IO.io('${ApiConstants.imageBaseUrl}?token=$token',
-      IO.OptionBuilder().setTransports(['websocket']).build());
-
-  // Fetch the token asynchronously
+  static IO.Socket socket = IO.io(ApiConstants.imageBaseUrl,
+      IO.OptionBuilder().setTransports(['websocket']).setExtraHeaders({"authorization":'Bearer ${token}'}).build());
 
 
 
 
+  static void init() async{
+    token = await PrefsHelper.getString(AppConstants.bearerToken);
+
+
+    print("-------------------------------------------------------------------------------------------Socket call");
+    if (!socket.connected) {
+      socket.onConnect((_) {
+        print('========> socket connected: ${socket.connected}');
+      });
+
+      socket.onConnectError((err) {
+        print('========> socket connect error: $err');
+      });
+
+
+      socket.onDisconnect((_) {
+        print('========> socket disconnected');
+      });
+    } else {
+      print("=======> socket already connected");
+    }
+  }
 
   static Future<dynamic> emitWithAck(String event, dynamic body) async {
     Completer<dynamic> completer = Completer<dynamic>();
@@ -83,15 +63,9 @@ class SocketServices {
 
 
   static emit(String event, dynamic body) {
-    if (socket.connected) {
+    if (body != null) {
       socket.emit(event, body);
-      print('Emit $event with body: $body');
-    } else {
-      print('Socket not connected. Cannot emit event $event.');
-      socket.connect(); // Attempt reconnection
+      print('===========> Emit $event and \n $body');
     }
   }
-
-
-
 }

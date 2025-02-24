@@ -2,6 +2,7 @@ import 'package:qping/helpers/prefs_helper.dart';
 import 'package:qping/routes/app_routes.dart';
 import 'package:qping/routes/exports.dart';
 import 'package:qping/services/api_client.dart';
+import 'package:qping/services/socket_services.dart';
 import 'package:qping/utils/app_constant.dart';
 import 'package:qping/utils/urls.dart';
 
@@ -52,6 +53,7 @@ class SignInController extends GetxController {
           Get.toNamed(AppRoutes.uploadPhotosScreen);
         }
         else {
+          SocketServices.init();
           Get.snackbar("Success", response.body['message'] ?? "Logged In Successfully!");
           Get.offAllNamed(AppRoutes.customNavBar);
           await PrefsHelper.setString(AppConstants.isLogged, "true");

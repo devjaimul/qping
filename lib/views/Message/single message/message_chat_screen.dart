@@ -6,34 +6,43 @@ import 'package:image_picker/image_picker.dart';
 import 'package:qping/Controller/message/message_chat_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/helpers/prefs_helper.dart';
+import 'package:qping/routes/app_routes.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_constant.dart';
 import 'package:qping/utils/app_images.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
 import 'package:qping/views/Message/single%20message/profile_about_screen.dart';
 
-class MessageChatScreen extends StatelessWidget {
+class MessageChatScreen extends StatefulWidget {
   final String image;
   final String name;
   final String conversationId;
-  MessageChatScreen({
+  const MessageChatScreen({
     super.key,
     required this.image,
     required this.name,
     required this.conversationId,
   });
 
+  @override
+  State<MessageChatScreen> createState() => _MessageChatScreenState();
+}
+
+class _MessageChatScreenState extends State<MessageChatScreen> {
   String? userId;
+
   final MessageChatController _controller = Get.put(MessageChatController());
+
   final TextEditingController _messageController = TextEditingController();
+
   final ImagePicker _picker = ImagePicker();
 
-  // This method retrieves your user id and then initializes the chat messages.
   Future<void> getUserIdAndFetchMessages() async {
     userId = await PrefsHelper.getString(AppConstants.userId);
     if (userId != null) {
       _controller.setMyUserId(userId!);
-      await _controller.fetchChatMessages(conversationId);
+      await _controller.fetchChatMessages(widget.conversationId);
+      _controller.initSocketAndJoinConversation(widget.conversationId);
     }
   }
 
@@ -42,7 +51,7 @@ class MessageChatScreen extends StatelessWidget {
       source: fromCamera ? ImageSource.camera : ImageSource.gallery,
     );
     if (pickedFile != null) {
-      _controller.addImageMessage(pickedFile.path);
+      // _controller.addImageMessage(pickedFile.path);
     }
   }
 
@@ -52,7 +61,7 @@ class MessageChatScreen extends StatelessWidget {
       future: getUserIdAndFetchMessages(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
+          return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
@@ -62,23 +71,23 @@ class MessageChatScreen extends StatelessWidget {
             title: InkWell(
               onTap: () {
                 Get.to(ProfileAboutScreen(
-                  conversationId: conversationId,
-                  name: name,
-                  image: image,
+                  conversationId: widget.conversationId,
+                  name: widget.name,
+                  image: widget.image,
                 ));
               },
               child: Row(
                 children: [
                   CircleAvatar(
                     radius: 20.r,
-                    backgroundImage: NetworkImage(image),
+                    backgroundImage: NetworkImage(widget.image),
                   ),
                   SizedBox(width: 10.w),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomTextOne(
-                        text: name,
+                        text: widget.name,
                         fontSize: 15.sp,
                         color: Colors.black,
                         maxLine: 1,
@@ -93,13 +102,17 @@ class MessageChatScreen extends StatelessWidget {
                 ],
               ),
             ),
+            leading: IconButton(onPressed: (){
+
+              Get.offAllNamed(AppRoutes.customNavBar);
+            }, icon: Icon(Icons.arrow_back_outlined)),
           ),
           body: SafeArea(
             child: Column(
               children: [
                 Expanded(
                   child: Obx(
-                        () => ListView.builder(
+                    () => ListView.builder(
                       padding: EdgeInsets.symmetric(
                           horizontal: 20.w, vertical: 10.h),
                       itemCount: _controller.messages.length,
@@ -145,6 +158,19 @@ class MessageChatScreen extends StatelessWidget {
                           ],
                         );
                       },
+                      reverse: true,
+                      controller: ScrollController()
+                        ..addListener(() {
+                          if (_controller.isLoadingMessages.value) return;
+                          if (_controller.currentPage.value <=
+                              _controller.totalPages.value) {
+                            if (MediaQuery.of(context).size.height - 50 <=
+                                MediaQuery.of(context).size.height - 50) {
+                              _controller
+                                  .fetchChatMessages(widget.conversationId);
+                            }
+                          }
+                        }),
                     ),
                   ),
                 ),
@@ -166,14 +192,11 @@ class MessageChatScreen extends StatelessWidget {
                           controller: _messageController,
                           decoration: InputDecoration(
                             hintText: 'Type Your Message',
-                            hintStyle:
-                            const TextStyle(color: Colors.grey),
+                            hintStyle: const TextStyle(color: Colors.grey),
                             border: OutlineInputBorder(
-                              borderRadius:
-                              BorderRadius.circular(20.r),
+                              borderRadius: BorderRadius.circular(20.r),
                               borderSide: BorderSide(
-                                color: AppColors.primaryColor
-                                    .withOpacity(0.5),
+                                color: AppColors.primaryColor.withOpacity(0.5),
                               ),
                             ),
                             contentPadding: EdgeInsets.symmetric(
@@ -185,13 +208,14 @@ class MessageChatScreen extends StatelessWidget {
                       ),
                       IconButton(
                         onPressed: () {
-                          _controller.addTextMessage(
-                              _messageController.text);
+                          _controller.sendMessageToSocket(
+                              widget.conversationId, _messageController.text,
+                              type: 'individual');
                           _messageController.clear();
                         },
                         icon: const Icon(Icons.send,
                             color: AppColors.primaryColor),
-                      ),
+                      )
                     ],
                   ),
                 ),

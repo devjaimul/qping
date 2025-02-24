@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:qping/helpers/prefs_helper.dart';
 import 'package:qping/routes/app_routes.dart';
 import 'package:qping/services/api_client.dart';
+import 'package:qping/services/socket_services.dart';
 import 'package:qping/utils/app_constant.dart';
 import 'package:qping/utils/urls.dart';
 import 'package:flutter/services.dart';
@@ -30,6 +31,7 @@ class OtpVerificationController extends GetxController {
           Get.toNamed(AppRoutes.resetPassScreen);
           await PrefsHelper.setString(AppConstants.isResetPass, "true");
         } else {
+          SocketServices.init();
           Get.toNamed(AppRoutes.registrationScreen);
           await PrefsHelper.setString(AppConstants.isEmailVerified, "true");
         }

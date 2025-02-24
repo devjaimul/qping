@@ -3,12 +3,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:qping/Controller/controller_bindings.dart';
 import 'routes/app_routes.dart';
+import 'services/socket_services.dart';
 import 'themes/light_theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // SocketServices.init();
+  SocketServices.init();
   // runApp(DevicePreview(
   //   enabled: false, // Set to false to disable DevicePreview in production.
   //   builder: (_) => const MyApp(),

@@ -29,7 +29,7 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    groupMessageController.fetchGroupList();
+    groupMessageController.fetchGroupList(isRefresh: true);
   }
 
   @override
