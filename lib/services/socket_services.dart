@@ -26,27 +26,46 @@ class SocketServices {
 
 
 
-  static void init() async{
+  static void init() async {
     token = await PrefsHelper.getString(AppConstants.bearerToken);
+    print("Initializing socket with token: $token");
 
-
-    print("-------------------------------------------------------------------------------------------Socket call");
-    if (!socket.connected) {
-      socket.onConnect((_) {
-        print('========> socket connected: ${socket.connected}');
-      });
-
-      socket.onConnectError((err) {
-        print('========> socket connect error: $err');
-      });
-
-
-      socket.onDisconnect((_) {
-        print('========> socket disconnected');
-      });
-    } else {
-      print("=======> socket already connected");
+    // Validate token
+    if (token.isEmpty || token == null) {
+      print("Error: Token is missing or invalid.");
+      return;
     }
+
+    // Disconnect existing socket if connected
+    if (socket.connected) {
+      socket.disconnect();
+    }
+
+    // Reinitialize socket
+    socket = IO.io(
+      '${ApiConstants.imageBaseUrl}',
+      IO.OptionBuilder().setTransports(['websocket']).setExtraHeaders({"authorization":'Bearer ${token}'}).enableReconnection().build(),
+    );
+
+    // Setup event listeners
+    socket.onConnect((_) {
+      print('Socket connected successfully');
+    });
+
+    socket.onConnectError((err) {
+      print('Socket connection error: $err');
+    });
+
+    socket.onError((err) {
+      print('Socket error: $err');
+    });
+
+    socket.onDisconnect((reason) {
+      print('Socket disconnected. Reason: $reason');
+    });
+
+
+    socket.connect(); // Connect to the server
   }
 
   static Future<dynamic> emitWithAck(String event, dynamic body) async {

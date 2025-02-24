@@ -34,6 +34,7 @@ class GroupMessageController extends GetxController {
         currentPage.value.toString(),
         limit.toString(),
         searchQuery.value,
+        "yes"
       ),
     );
 

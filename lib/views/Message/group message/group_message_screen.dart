@@ -166,7 +166,7 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
                 textOverflow: TextOverflow.ellipsis,
               ),
               subtitle: CustomTextOne(
-                text: chat["lastMessage"] ?? "Iftekar vai Message day nai!!!!",
+                text: chat["lastMessage"] ?? ".......",
                 fontSize: 12.sp,
                 color: AppColors.textColor.withOpacity(0.5),
                 maxLine: 1,
@@ -176,9 +176,10 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
               trailing: Column(
                 children: [
                   CustomTextOne(
-                    text: DateFormat.jm().format(
-                        DateTime.parse(chat["lastActiveAt"].toString())
-                            .toLocal()),
+                    text: chat["lastActiveAt"] != null
+                        ? DateFormat.jm().format(
+                        DateTime.parse(chat["lastActiveAt"].toString()).toLocal())
+                        : "...",
                     color: AppColors.textColor.withOpacity(0.8),
                     fontSize: 12.sp,
                     maxLine: 1,
@@ -186,7 +187,7 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
                     textOverflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 10.w),
-                  if (chat["isUserInvolved"] as bool)
+                  if ((chat["isUserInvolved"] ?? false) == true)
                     CircleAvatar(
                       radius: 5.r,
                       backgroundColor: AppColors.primaryColor,

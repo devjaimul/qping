@@ -148,7 +148,7 @@ class _MessageScreenState extends State<MessageScreen> {
                 textOverflow: TextOverflow.ellipsis,
               ),
               subtitle: CustomTextOne(
-                text: chat["lastMessage"] ?? "........................",
+                text: chat["lastMessage"] ?? ".....",
                 fontSize: 12.sp,
                 color: AppColors.textColor.withOpacity(0.5),
                 maxLine: 1,
@@ -161,7 +161,7 @@ class _MessageScreenState extends State<MessageScreen> {
                     text: chat["lastMessageCreatedAt"] != null
                         ? DateFormat.jm().format(
                         DateTime.parse(chat["lastMessageCreatedAt"].toString()).toLocal())
-                        : "No Date",
+                        : "...",
                     color: AppColors.textColor.withOpacity(0.8),
                     fontSize: 12.sp,
                     maxLine: 1,

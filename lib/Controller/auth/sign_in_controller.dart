@@ -36,7 +36,7 @@ class SignInController extends GetxController {
         // Save these values in shared preferences
         await PrefsHelper.setString(AppConstants.bearerToken, token);
         await PrefsHelper.setString(AppConstants.userId, userId);
-
+        SocketServices.init();
         // await PrefsHelper.setString(
         //     AppConstants.isEmailVerified, isEmailVerified);
         // await PrefsHelper.setString(
@@ -53,10 +53,11 @@ class SignInController extends GetxController {
           Get.toNamed(AppRoutes.uploadPhotosScreen);
         }
         else {
-          SocketServices.init();
+
           Get.snackbar("Success", response.body['message'] ?? "Logged In Successfully!");
           Get.offAllNamed(AppRoutes.customNavBar);
           await PrefsHelper.setString(AppConstants.isLogged, "true");
+
         }
       }
 

@@ -60,7 +60,7 @@ class Urls {
   static const String createGroup = '/conversation';
   static  String leaveGroup(String groupId) => '/conversation/group/$groupId/leave';
   static  String addUserToGroup (String userId)=> '/conversation/group/$userId';
-  static  String showGroupList (String page,limit,searchValue)=> '/conversation?page=$page&limit=$limit&searchTerm=$searchValue';
+  static  String showGroupList (String page,limit,searchValue,involved)=> '/conversation?page=$page&limit=$limit&searchTerm=$searchValue&involved=$involved';
 
 
 
