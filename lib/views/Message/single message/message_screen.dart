@@ -71,10 +71,19 @@ class _MessageScreenState extends State<MessageScreen> {
 
   Widget _buildChatList() {
     return Obx(() {
-      // When loading and no data exists, show a list of shimmer loaders
+      // Check if there's an error
+      if (messageController.errorMessage.isNotEmpty) {
+        return Center(
+          child: CustomTextOne(
+            text: "Server Off!!!!!",
+            fontSize: 18.sp,
+          ),
+        );
+      }
+
+      // Show loader if still loading and no data available yet.
       if (messageController.isLoading.value && messageController.chatData.isEmpty) {
-        final shimmerTheme =
-        Theme.of(context).extension<ShimmerThemeExtension>()!;
+        final shimmerTheme = Theme.of(context).extension<ShimmerThemeExtension>()!;
         return ListView.builder(
           itemCount: 10,
           itemBuilder: (context, index) => Padding(
@@ -104,10 +113,16 @@ class _MessageScreenState extends State<MessageScreen> {
       }
 
       return itemCount == 0
-          ? Center(child: CustomTextOne(text: "No Message Available!!!", fontSize: 18.sp))
+          ? Center(
+        child: CustomTextOne(
+          text: "No Message Available!!!",
+          fontSize: 18.sp,
+        ),
+      )
           : ListView.separated(
         itemCount: itemCount,
-        separatorBuilder: (_, __) => Divider(color: Colors.grey.shade300, thickness: 1),
+        separatorBuilder: (_, __) =>
+            Divider(color: Colors.grey.shade300, thickness: 1),
         itemBuilder: (context, index) {
           // When reaching the extra item, load more data after the current build frame.
           if (index == messageController.chatData.length) {
@@ -122,7 +137,6 @@ class _MessageScreenState extends State<MessageScreen> {
             );
           }
           final chat = messageController.chatData[index];
-          // Provide a default value for isUnread if missing
           final bool isUnread = chat["isUnread"] ?? false;
           return Card(
             color: isUnread
@@ -132,11 +146,14 @@ class _MessageScreenState extends State<MessageScreen> {
             child: ListTile(
               leading: CircleAvatar(
                 backgroundImage: chat["profilePicture"] != null
-                    ? NetworkImage("${ApiConstants.imageBaseUrl}/${chat["profilePicture"]}")
+                    ? NetworkImage(
+                    "${ApiConstants.imageBaseUrl}/${chat["profilePicture"]}")
                     : null,
                 child: chat["profilePicture"] == null
                     ? CustomTextTwo(
-                    text: chat["participantName"][0].toString().toUpperCase())
+                    text: chat["participantName"][0]
+                        .toString()
+                        .toUpperCase())
                     : null,
               ),
               title: CustomTextOne(
@@ -160,7 +177,10 @@ class _MessageScreenState extends State<MessageScreen> {
                   CustomTextOne(
                     text: chat["lastMessageCreatedAt"] != null
                         ? DateFormat.jm().format(
-                        DateTime.parse(chat["lastMessageCreatedAt"].toString()).toLocal())
+                        DateTime.parse(
+                            chat["lastMessageCreatedAt"]
+                                .toString())
+                            .toLocal())
                         : "...",
                     color: AppColors.textColor.withOpacity(0.8),
                     fontSize: 12.sp,
@@ -168,7 +188,6 @@ class _MessageScreenState extends State<MessageScreen> {
                     textAlign: TextAlign.start,
                     textOverflow: TextOverflow.ellipsis,
                   ),
-
                   SizedBox(height: 10.w),
                   if (isUnread)
                     GestureDetector(
@@ -181,7 +200,12 @@ class _MessageScreenState extends State<MessageScreen> {
                 ],
               ),
               onTap: () {
-              Get.to(() => MessageChatScreen(name: chat["participantName"], image: "${ApiConstants.imageBaseUrl}/${chat["profilePicture"]}",conversationId: chat["_id"],));
+                Get.to(() => MessageChatScreen(
+                  name: chat["participantName"],
+                  image:
+                  "${ApiConstants.imageBaseUrl}/${chat["profilePicture"]}",
+                  conversationId: chat["_id"],
+                ));
               },
             ),
           );
@@ -189,4 +213,5 @@ class _MessageScreenState extends State<MessageScreen> {
       );
     });
   }
+
 }

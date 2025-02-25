@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:qping/Controller/message/message%20request/message_request_screen_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_field.dart';
-import 'package:qping/global_widgets/shimmer_loading.dart';
 import 'package:qping/services/api_constants.dart';
 import 'package:qping/themes/light_theme.dart';
 import 'package:qping/utils/app_colors.dart';
@@ -68,6 +67,14 @@ class _MessageRequestScreenState extends State<MessageRequestScreen> {
 
   Widget _buildChatList() {
     return Obx(() {
+      // if (messageRequestController.errorMessage.isNotEmpty) {
+      //   return Center(
+      //     child: CustomTextOne(
+      //       text: "Server Off!!!!!",
+      //       fontSize: 18.sp,
+      //     ),
+      //   );
+      // }
       // When loading and no data exists, show a list of shimmer loaders
       if (messageRequestController.isLoading.value && messageRequestController.chatData.isEmpty) {
         final shimmerTheme =

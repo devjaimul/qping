@@ -60,6 +60,7 @@ dependencies:
   readmore: ^3.0.0
   cached_network_image: ^3.4.1
 
+
   path_provider: any
   http: any
   http_parser: any

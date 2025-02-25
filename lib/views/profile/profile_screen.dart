@@ -4,8 +4,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/dialog.dart';
+import 'package:qping/helpers/prefs_helper.dart';
 import 'package:qping/routes/app_routes.dart';
 import 'package:qping/utils/app_colors.dart';
+import 'package:qping/utils/app_constant.dart';
 import 'package:qping/utils/app_icons.dart';
 import 'package:qping/utils/app_images.dart';
 import 'package:qping/views/profile/profile_information.dart';
@@ -116,9 +118,21 @@ class ProfileScreen extends StatelessWidget {
                     onCancel: () {
                   Get.back();
                     },
-                    onConfirm: () {
-                      // Perform logout logic
+                    onConfirm: () async{
+
+                      await PrefsHelper.remove(AppConstants.bearerToken);
+                      await PrefsHelper.remove(AppConstants.isLogged);
+                      await PrefsHelper.remove(AppConstants.isEmailVerified);
+                      await PrefsHelper.remove(AppConstants.isResetPass);
+                      await PrefsHelper.remove(AppConstants.isProfileID);
+                      await PrefsHelper.remove(AppConstants.isProfilePicture);
+                      await PrefsHelper.remove(AppConstants.userId);
+                      await PrefsHelper.remove(AppConstants.email);
+
+
                      Get.offAllNamed(AppRoutes.signInScreen);
+
+
                     },
                   );
                 },
