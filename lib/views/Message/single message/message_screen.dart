@@ -108,6 +108,11 @@ class _MessageScreenState extends State<MessageScreen> {
           ),
         );
       }
+      // Ensure that the socket initialization happens after data is available
+      if (messageController.chatData.isNotEmpty) {
+        final firstChat = messageController.chatData.first;
+        messageChatController.initSocketAndJoinConversation(firstChat["_id"], firstChat["participantName"]);
+      }
 
       // Determine the item count and add one extra item if more pages are available
       int itemCount = messageController.chatData.length;
