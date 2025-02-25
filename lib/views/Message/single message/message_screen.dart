@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:qping/Controller/message/message_chat_controller.dart';
 import 'package:qping/Controller/message/message_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_field.dart';
@@ -20,13 +21,15 @@ class MessageScreen extends StatefulWidget {
 
 class _MessageScreenState extends State<MessageScreen> {
   final MessageController messageController = Get.put(MessageController());
+  final MessageChatController messageChatController = Get.put(MessageChatController());
   final TextEditingController searchController = TextEditingController();
 
-@override
+  @override
   void initState() {
     super.initState();
-   messageController.getAcceptChatList(type: 'accepted');
+    messageController.getAcceptChatList(type: 'accepted');
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

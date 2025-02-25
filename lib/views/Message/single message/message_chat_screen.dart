@@ -36,13 +36,26 @@ class _MessageChatScreenState extends State<MessageChatScreen> {
   final TextEditingController _messageController = TextEditingController();
 
   final ImagePicker _picker = ImagePicker();
+  @override
+  void initState() {
+    super.initState();
+    _controller.isInInbox.value = false; // Set the flag when in inbox
+    _controller.initSocketAndJoinConversation(widget.conversationId, widget.name);
+  }
+
+  @override
+  void dispose() {
+    print("========================100%");
+    super.dispose();
+    _controller.isInInbox.value = true; // Reset flag when leaving inbox
+  }
 
   Future<void> getUserIdAndFetchMessages() async {
     userId = await PrefsHelper.getString(AppConstants.userId);
     if (userId != null) {
       _controller.setMyUserId(userId!);
       await _controller.fetchChatMessages(widget.conversationId);
-      _controller.initSocketAndJoinConversation(widget.conversationId);
+      _controller.initSocketAndJoinConversation(widget.conversationId,widget.name);
     }
   }
 
@@ -102,10 +115,10 @@ class _MessageChatScreenState extends State<MessageChatScreen> {
                 ],
               ),
             ),
-            leading: IconButton(onPressed: (){
-
-              Get.offAllNamed(AppRoutes.customNavBar);
-            }, icon: Icon(Icons.arrow_back_outlined)),
+            // leading: IconButton(onPressed: (){
+            //
+            //   Get.offAllNamed(AppRoutes.customNavBar);
+            // }, icon: Icon(Icons.arrow_back_outlined)),
           ),
           body: SafeArea(
             child: Column(

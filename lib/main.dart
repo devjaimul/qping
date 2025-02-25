@@ -5,16 +5,12 @@ import 'package:qping/Controller/controller_bindings.dart';
 import 'routes/app_routes.dart';
 import 'services/socket_services.dart';
 import 'themes/light_theme.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-
   SocketServices.init();
-  // runApp(DevicePreview(
-  //   enabled: false, // Set to false to disable DevicePreview in production.
-  //   builder: (_) => const MyApp(),
-  // ));
-
   runApp(const MyApp());
 }
 
@@ -34,8 +30,18 @@ class MyApp extends StatelessWidget {
           getPages: AppRoutes.routes,
           initialRoute: AppRoutes.splashScreen,
           initialBinding: ControllerBindings(),
-          // builder: DevicePreview.appBuilder, // Add this line to wrap the app in DevicePreview.
-          // locale: DevicePreview.locale(context), // Adds support for locale preview.
+          builder: (context, child) {
+            // Initialize local notifications
+            final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+            const InitializationSettings initializationSettings = InitializationSettings(
+              android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+             // iOS: IOSInitializationSettings(),
+            );
+
+            flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+            return child!;
+          },
         );
       },
     );

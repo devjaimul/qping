@@ -1,26 +1,23 @@
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:qping/services/api_client.dart';
 import 'package:qping/services/socket_services.dart';
+import 'package:qping/services/api_client.dart';
 import 'package:qping/utils/urls.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class MessageChatController extends GetxController {
   RxList<Map<String, dynamic>> messages = <Map<String, dynamic>>[].obs;
-
-  // Pagination properties
   RxInt currentPage = 1.obs;
   RxInt totalPages = 1.obs;
   static const int limit = 10;
   RxBool isLoadingMessages = false.obs;
-
-  // Store your user id for determining if a message is sent by you
   String? myUserId;
+  var isInInbox = true.obs; // Make it observable
+
   void setMyUserId(String id) {
     myUserId = id;
   }
 
-
-  // fetch chat messages
   Future<void> fetchChatMessages(String conversationId,
       {String type = 'individual', bool refresh = false}) async {
     if (refresh) {
@@ -28,7 +25,6 @@ class MessageChatController extends GetxController {
       messages.clear();
     }
 
-    // Prevent fetching if there are no more pages to load
     if (currentPage.value > totalPages.value) {
       return;
     }
@@ -48,7 +44,6 @@ class MessageChatController extends GetxController {
         var data = response.body['data'];
         var pagination = response.body['pagination'];
 
-        // Map API messages into your local format
         List<Map<String, dynamic>> newMessages = (data as List).map((msg) {
           return {
             'type': msg['attachments'] != null &&
@@ -65,7 +60,6 @@ class MessageChatController extends GetxController {
           };
         }).toList();
 
-        // Add new messages and update pagination info
         messages.addAll(newMessages);
         totalPages.value = pagination['totalPages'];
         currentPage.value = pagination['currentPage'] + 1;
@@ -79,19 +73,15 @@ class MessageChatController extends GetxController {
     }
   }
 
-
-  ///  Initialize the socket connection and join a conversation
-  void initSocketAndJoinConversation(String conversationId) {
+  void initSocketAndJoinConversation(String conversationId, senderName) {
     SocketServices.emit('join', {
       'groupId': conversationId,
     });
 
-    listenForIncomingMessages(conversationId);
+    listenForIncomingMessages(conversationId, senderName);
   }
 
-  /// Listen for messages from the socket
-  void listenForIncomingMessages(String conversationId) {
-
+  void listenForIncomingMessages(String conversationId, senderName) {
     SocketServices.socket.on('conversation-$conversationId', (data) {
       if (data != null) {
         final bool isSentByMe = data['sender'] == myUserId;
@@ -104,11 +94,39 @@ class MessageChatController extends GetxController {
           'isSentByMe': isSentByMe,
           'time': DateFormat('h.mm a').format(DateTime.now().toLocal()),
         });
+
+        // If not in inbox, show notification
+        print("hlegb================================${isInInbox.value}");
+        if (isInInbox.value) {
+
+          _showNotification(
+            "New Message from $senderName",
+            content,
+          );
+        }
       }
     });
   }
 
-  /// Send a message over the socket
+  Future<void> _showNotification(String title, String body) async {
+    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    const notificationDetails = NotificationDetails(
+      android: AndroidNotificationDetails(
+        'chat_channel',
+        'Chat Notifications',
+        importance: Importance.max,
+        priority: Priority.high,
+      ),
+    );
+
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      title,
+      body,
+      notificationDetails,
+    );
+  }
+
   void sendMessageToSocket(String conversationId, String content, {String type = 'individual'}) {
     final body = {
       'groupId': conversationId,
@@ -118,6 +136,4 @@ class MessageChatController extends GetxController {
 
     SocketServices.emit('send-message', body);
   }
-
-
 }
