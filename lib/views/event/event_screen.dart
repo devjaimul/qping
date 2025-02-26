@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_button.dart';
+import 'package:qping/global_widgets/dialog.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/views/event/event_create_screen.dart';
 import 'package:readmore/readmore.dart';
@@ -97,7 +98,7 @@ class EventScreen extends StatelessWidget {
                 if (controller.isLoading.value && index == controller.events.length) {
                   return Padding(
                     padding: EdgeInsets.all(16.r),
-                    child: Center(child: CircularProgressIndicator()),
+                    child: const Center(child: CircularProgressIndicator()),
                   );
                 }
 
@@ -114,13 +115,14 @@ class EventScreen extends StatelessWidget {
                 if (event['eventTime'] != null) {
                   formattedTime = event['eventTime'];
                 }
-
+                GlobalKey iconKey = GlobalKey();
                 return Card(
                   color: Colors.white,
                   child: Padding(
                     padding: EdgeInsets.all(15.r),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 5.h,
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -132,7 +134,13 @@ class EventScreen extends StatelessWidget {
                                 textAlign: TextAlign.start,
                               ),
                             ),
-                            IconButton(onPressed: (){}, icon: Icon(Icons.more_vert_outlined))
+                            IconButton(
+                              key: iconKey, // Set the key for the IconButton
+                              icon: const Icon(Icons.more_vert_outlined),
+                              onPressed: () {
+                                _showPopupMenu(context, event, iconKey);  // Pass the key along with event data
+                              },
+                            ),
                           ],
                         ),
                         CustomTextTwo(
@@ -162,7 +170,10 @@ class EventScreen extends StatelessWidget {
                         ),
                         CustomTextButton(
                           text: "Join",
-                          onTap: () {},
+                          onTap: () {
+
+                            controller.joinEvent(event['_id']);
+                          },
                           fontSize: 14.sp,
                           padding: 4.r,
                         ),
@@ -185,7 +196,62 @@ class EventScreen extends StatelessWidget {
       ),
     );
   }
+
+  // Method to show the popup menu
+  void _showPopupMenu(BuildContext context, Map<String, dynamic> event, GlobalKey iconKey) async {
+    // Find the position of the icon button using RenderBox
+    final RenderBox? renderBox = iconKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null) {
+      final position = renderBox.localToGlobal(Offset.zero);
+      final width = renderBox.size.width;
+
+      // Show the menu near the icon button
+      await showMenu(
+        context: context,
+        position: RelativeRect.fromLTRB(position.dx + width, position.dy, 0, 0), // Position right next to the icon
+        items: [
+          const PopupMenuItem(
+            value: 'edit',
+            child: Text('Edit'),
+          ),
+          const PopupMenuItem(
+            value: 'delete',
+            child: Text('Delete'),
+          ),
+        ],
+        elevation: 8.0,
+      ).then((value) {
+        if (value == 'edit') {
+          _onEditEvent(event);  // Trigger edit functionality
+        } else if (value == 'delete') {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return CustomDialog(
+                title: "Are you sure you want to delete this event?",
+                confirmButtonText: "Delete Event",
+                onCancel: () {
+                  Get.back();
+                },
+                onConfirm: () async {
+                  await EventController().deleteEvent(event['_id']);
+                  Get.back();
+                },
+              );
+            },
+          );
+        }
+      });
+    }
+  }
+
+
+
+  // Edit event function
+  void _onEditEvent(Map<String, dynamic> event) {
+    // You can navigate to the event update screen or handle editing directly
+    Get.to(() => EventCreateScreen(eventData: event, eventId: event['_id']));  // Pass the event data to the create/update screen
+  }
+
+
 }
-
-
-

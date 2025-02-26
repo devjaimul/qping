@@ -68,5 +68,7 @@ class Urls {
   static  String getEvents (String page,limit)=> '/events?page=$page&limit=$limit';
   static const String createEvents= '/events';
   static  String updateEvents(String eventId)=> '/events/$eventId';
+  static  String deleteEvents(String eventId)=> '/events/$eventId';
+  static  String joinEvents(String eventId)=> '/events/$eventId';
 
 }

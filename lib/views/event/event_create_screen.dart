@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_button.dart';
 import 'package:qping/global_widgets/custom_text_field.dart';
@@ -8,7 +9,9 @@ import 'package:qping/utils/app_colors.dart';
 import 'package:qping/Controller/event/event_controller.dart';
 
 class EventCreateScreen extends StatelessWidget {
-  const EventCreateScreen({super.key});
+  final String? eventId;
+  final Map<String, dynamic>? eventData;  // Optional parameter for editing an event
+  const EventCreateScreen({super.key, this.eventData, this.eventId});
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +23,19 @@ class EventCreateScreen extends StatelessWidget {
     TextEditingController timeTEController = TextEditingController();
     TextEditingController locationTEController = TextEditingController();
     TextEditingController descriptionTEController = TextEditingController();
+
+    // If eventData is provided, pre-fill the form
+    if (eventData != null) {
+      titleTEController.text = eventData!['eventName'] ?? '';
+
+      // Parse eventDate string and format
+      DateTime eventDate = DateFormat('yyyy-MM-dd').parse(eventData!['eventDate']);
+      dateTEController.text = DateFormat('dd MMM yyyy').format(eventDate);  // Format as dd MMM yyyy
+
+      timeTEController.text = eventData!['eventTime'] ?? '';
+      locationTEController.text = eventData!['eventLocation'] ?? '';
+      descriptionTEController.text = eventData!['eventDescription'] ?? '';
+    }
 
     // Global key for form validation
     final _formKey = GlobalKey<FormState>();
@@ -51,7 +67,7 @@ class EventCreateScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: CustomTextOne(
-          text: "Create Event",
+          text: eventData != null ? "Edit Event" : "Create Event", // Change title if it's edit mode
           fontSize: 18.sp,
         ),
       ),
@@ -148,10 +164,24 @@ class EventCreateScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 15.h),
                 CustomTextButton(
-                  text: "Save",
-                  onTap: () {
+                  text: eventData != null ? "Update Event" : "Save", // Change button text
+                  onTap: eventData != null
+                      ? () {
                     if (_formKey.currentState?.validate() ?? false) {
-                      // If the form is valid, call createEvent method
+                      // If the form is valid, call updateEvent method
+                      controller.updateEvent(
+                        eventId: eventId ?? '',
+                        eventName: titleTEController.text,
+                        eventDescription: descriptionTEController.text,
+                        eventTime: timeTEController.text,
+                        eventDate: dateTEController.text,
+                        eventLocation: locationTEController.text,
+                      );
+                      Get.back();  // Close the screen after event is updated
+                    }
+                  }
+                      : () {
+                    if (_formKey.currentState?.validate() ?? false) {
                       controller.createEvent(
                         eventName: titleTEController.text,
                         eventDescription: descriptionTEController.text,

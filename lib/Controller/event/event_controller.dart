@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:qping/routes/app_routes.dart';
 import 'package:qping/services/api_client.dart';
 import 'package:qping/utils/urls.dart';
 
@@ -70,4 +71,76 @@ class EventController extends GetxController {
 
     isLoading.value = false;
   }
+
+  Future<void> updateEvent({
+    required String eventName,
+    required String eventId,
+    required String eventDescription,
+    required String eventTime,
+    required String eventDate,
+    required String eventLocation,
+  }) async {
+    isLoading.value = true;
+
+    final response = await ApiClient.patch(
+      Urls.updateEvents(eventId),
+      {
+        "eventName": eventName,
+        "eventDescription": eventDescription,
+        "eventTime": eventTime,
+        "eventDate": eventDate,
+        "eventLocation": eventLocation,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      Get.snackbar("Success", "Event Updated Successfully.");
+    } else {
+      print('Error creating event: ${response.statusText}');
+    }
+
+    isLoading.value = false;
+  }
+
+  // Delete event with DELETE request
+  Future<void> deleteEvent(String eventId) async {
+    isLoading.value = true;
+
+    final response = await ApiClient.deleteData(Urls.deleteEvents(eventId));
+
+    if (response.statusCode == 200) {
+      fetchEvents(page: currentPage.value, limit: 10);
+
+
+      Future.delayed(const Duration(seconds: 1), () {
+        Get.back();
+        Get.snackbar("Success", "Event deleted successfully!");
+      });
+    } else {
+      print('Error deleting event: ${response.statusText}');
+    }
+
+    isLoading.value = false;
+  }
+
+
+  Future<void> joinEvent(String eventId) async {
+    try {
+      final response = await ApiClient.postData(
+        Urls.joinEvents(eventId),
+        {},
+      );
+
+      if (response.statusCode == 200) {
+        Get.back();
+        Get.snackbar("Success", response.body['message']);
+fetchEvents();
+      } else {
+        Get.snackbar("Error", response.body['message'] ?? "Failed");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "An unexpected error occurred: $e");
+    }
+  }
+
 }
