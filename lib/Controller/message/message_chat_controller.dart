@@ -74,12 +74,15 @@ class MessageChatController extends GetxController {
   }
 
   void initSocketAndJoinConversation(String conversationId, senderName) {
+
+    SocketServices.socket.off('conversation-$conversationId');
     SocketServices.emit('join', {
       'groupId': conversationId,
     });
 
     listenForIncomingMessages(conversationId, senderName);
   }
+
 
   void listenForIncomingMessages(String conversationId, senderName) {
     SocketServices.socket.on('conversation-$conversationId', (data) {
@@ -100,7 +103,7 @@ class MessageChatController extends GetxController {
         if (isInInbox.value) {
 
           _showNotification(
-            "New Message from $senderName",
+            "$senderName",
             content,
           );
         }

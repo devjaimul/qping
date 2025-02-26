@@ -21,7 +21,6 @@ class MessageScreen extends StatefulWidget {
 
 class _MessageScreenState extends State<MessageScreen> {
   final MessageController messageController = Get.put(MessageController());
-  final MessageChatController messageChatController = Get.put(MessageChatController());
   final TextEditingController searchController = TextEditingController();
 
   @override
@@ -109,10 +108,10 @@ class _MessageScreenState extends State<MessageScreen> {
         );
       }
       // Ensure that the socket initialization happens after data is available
-      if (messageController.chatData.isNotEmpty) {
-        final firstChat = messageController.chatData.first;
-        messageChatController.initSocketAndJoinConversation(firstChat["_id"], firstChat["participantName"]);
-      }
+      // if (messageController.chatData.isNotEmpty) {
+      //   final firstChat = messageController.chatData.first;
+      //   messageChatController.initSocketAndJoinConversation(firstChat["_id"], firstChat["participantName"]);
+      // }
 
       // Determine the item count and add one extra item if more pages are available
       int itemCount = messageController.chatData.length;

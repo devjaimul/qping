@@ -45,9 +45,10 @@ class _MessageChatScreenState extends State<MessageChatScreen> {
 
   @override
   void dispose() {
-    print("========================100%");
+    print("==========${_controller.isInInbox.value}==============100%");
     super.dispose();
     _controller.isInInbox.value = true; // Reset flag when leaving inbox
+    print("==========${_controller.isInInbox.value}==============100%");
   }
 
   Future<void> getUserIdAndFetchMessages() async {
@@ -55,7 +56,7 @@ class _MessageChatScreenState extends State<MessageChatScreen> {
     if (userId != null) {
       _controller.setMyUserId(userId!);
       await _controller.fetchChatMessages(widget.conversationId);
-      _controller.initSocketAndJoinConversation(widget.conversationId,widget.name);
+     _controller.initSocketAndJoinConversation(widget.conversationId,widget.name);
     }
   }
 
