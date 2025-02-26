@@ -64,5 +64,9 @@ class Urls {
   static  String showGroupList (String page,limit,searchValue,involved)=> '/conversation?page=$page&limit=$limit&searchTerm=$searchValue&involved=$involved';
 
 
+  //event
+  static  String getEvents (String page,limit)=> '/events?page=$page&limit=$limit';
+  static const String createEvents= '/events';
+  static  String updateEvents(String eventId)=> '/events/$eventId';
 
 }

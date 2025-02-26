@@ -5,17 +5,24 @@ import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_button.dart';
 import 'package:qping/global_widgets/custom_text_field.dart';
 import 'package:qping/utils/app_colors.dart';
+import 'package:qping/Controller/event/event_controller.dart';
 
 class EventCreateScreen extends StatelessWidget {
   const EventCreateScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final EventController controller = Get.put(EventController());
+
+    // Controllers for form fields
     TextEditingController titleTEController = TextEditingController();
     TextEditingController dateTEController = TextEditingController();
     TextEditingController timeTEController = TextEditingController();
     TextEditingController locationTEController = TextEditingController();
     TextEditingController descriptionTEController = TextEditingController();
+
+    // Global key for form validation
+    final _formKey = GlobalKey<FormState>();
 
     // Date Picker Function
     Future<void> _selectDate(BuildContext context) async {
@@ -51,67 +58,113 @@ class EventCreateScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16.r),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 10.h,
-            children: [
-              CustomTextTwo(
-                text: "Event name",
-                fontSize: 16.sp,
-              ),
-              CustomTextField(
-                controller: titleTEController,
-                hintText: "Enter Event name here..",
-              ),
-              CustomTextTwo(
-                text: "Event Date",
-                fontSize: 16.sp,
-              ),
-              CustomTextField(
-                onTap: () {
-                  _selectDate(context);
-                },
-                readOnly: true,
-                controller: dateTEController,
-                hintText: "Enter Event Date here..",
-                suffixIcon: Icon(Icons.calendar_month, color: AppColors.primaryColor),
-              ),
-              CustomTextTwo(
-                text: "Event Time",
-                fontSize: 16.sp,
-              ),
-              CustomTextField(
-                onTap: () {
-                  _selectTime(context);
-                },
-                readOnly: true,
-                controller: timeTEController,
-                hintText: "Enter Event Time here..",
-                suffixIcon: Icon(Icons.access_time_filled, color: AppColors.primaryColor),
-              ),
-              CustomTextTwo(
-                text: "Event Location",
-                fontSize: 16.sp,
-              ),
-              CustomTextField(
-                controller: locationTEController,
-                hintText: "Enter Event Location here..",
-              ),
-              CustomTextTwo(
-                text: "Event Description",
-                fontSize: 16.sp,
-              ),
-              CustomTextField(
-                controller: descriptionTEController,
-                hintText: "Enter Event Description here..",
-                maxLine: 6,
-              ),
-              SizedBox(height: 15.h,),
-              CustomTextButton(text: "Save", onTap: (){
-                Get.back();
-              })
-            ],
+          child: Form(
+            key: _formKey, // Form key for validation
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 10.h,
+              children: [
+                CustomTextTwo(
+                  text: "Event name",
+                  fontSize: 16.sp,
+                ),
+                CustomTextField(
+                  controller: titleTEController,
+                  hintText: "Enter Event name here..",
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Event name is required';
+                    }
+                    return null;
+                  },
+                ),
+                CustomTextTwo(
+                  text: "Event Date",
+                  fontSize: 16.sp,
+                ),
+                CustomTextField(
+                  onTap: () {
+                    _selectDate(context);
+                  },
+                  readOnly: true,
+                  controller: dateTEController,
+                  hintText: "Enter Event Date here..",
+                  suffixIcon: Icon(Icons.calendar_month, color: AppColors.primaryColor),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Event date is required';
+                    }
+                    return null;
+                  },
+                ),
+                CustomTextTwo(
+                  text: "Event Time",
+                  fontSize: 16.sp,
+                ),
+                CustomTextField(
+                  onTap: () {
+                    _selectTime(context);
+                  },
+                  readOnly: true,
+                  controller: timeTEController,
+                  hintText: "Enter Event Time here..",
+                  suffixIcon: Icon(Icons.access_time_filled, color: AppColors.primaryColor),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Event time is required';
+                    }
+                    return null;
+                  },
+                ),
+                CustomTextTwo(
+                  text: "Event Location",
+                  fontSize: 16.sp,
+                ),
+                CustomTextField(
+                  controller: locationTEController,
+                  hintText: "Enter Event Location here..",
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Event location is required';
+                    }
+                    return null;
+                  },
+                ),
+                CustomTextTwo(
+                  text: "Event Description",
+                  fontSize: 16.sp,
+                ),
+                CustomTextField(
+                  controller: descriptionTEController,
+                  hintText: "Enter Event Description here..",
+                  maxLine: 6,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Event description is required';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 15.h),
+                CustomTextButton(
+                  text: "Save",
+                  onTap: () {
+                    if (_formKey.currentState?.validate() ?? false) {
+                      // If the form is valid, call createEvent method
+                      controller.createEvent(
+                        eventName: titleTEController.text,
+                        eventDescription: descriptionTEController.text,
+                        eventTime: timeTEController.text,
+                        eventDate: dateTEController.text,
+                        eventLocation: locationTEController.text,
+                      );
+                      Get.back();  // Close the screen after event is created
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
