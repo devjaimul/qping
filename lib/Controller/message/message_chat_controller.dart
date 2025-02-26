@@ -74,7 +74,6 @@ class MessageChatController extends GetxController {
   }
 
   void initSocketAndJoinConversation(String conversationId, senderName) {
-
     SocketServices.socket.off('conversation-$conversationId');
     SocketServices.emit('join', {
       'groupId': conversationId,
@@ -82,7 +81,6 @@ class MessageChatController extends GetxController {
 
     listenForIncomingMessages(conversationId, senderName);
   }
-
 
   void listenForIncomingMessages(String conversationId, senderName) {
     SocketServices.socket.on('conversation-$conversationId', (data) {
