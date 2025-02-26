@@ -8,7 +8,7 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterL
 Future<void> initializeBackgroundService() async {
   await flutterLocalNotificationsPlugin.initialize(InitializationSettings(
     android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-    //iOS: IOSInitializationSettings(),
+    iOS: DarwinInitializationSettings(),
   ));
 
   final service = FlutterBackgroundService();
@@ -17,6 +17,7 @@ Future<void> initializeBackgroundService() async {
     androidConfiguration: AndroidConfiguration(
       onStart: onStart,
       isForegroundMode: true,
+      autoStart: true,
       notificationChannelId: 'default_notification_channel',
       initialNotificationTitle: 'Running in the Background',
       initialNotificationContent: 'Real-time messaging is active.',

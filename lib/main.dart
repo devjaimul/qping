@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
             final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
             const InitializationSettings initializationSettings = InitializationSettings(
               android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-             // iOS: IOSInitializationSettings(),
+              iOS: DarwinInitializationSettings(),
             );
 
             flutterLocalNotificationsPlugin.initialize(initializationSettings);

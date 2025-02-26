@@ -2,10 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:qping/Controller/profile/profile_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/dialog.dart';
 import 'package:qping/helpers/prefs_helper.dart';
 import 'package:qping/routes/app_routes.dart';
+import 'package:qping/services/api_constants.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_constant.dart';
 import 'package:qping/utils/app_icons.dart';
@@ -22,50 +24,57 @@ class ProfileScreen extends StatelessWidget {
     final sizeH = MediaQuery.sizeOf(context).height;
     final sizeW = MediaQuery.sizeOf(context).width;
 
-
+    final ProfileController controller = Get.put(ProfileController());
+    controller.fetchProfile();
     return Scaffold(
-    
+
       body:Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(height: sizeH * .05),
           // Profile picture
-          Container(
-            width: 120.r,
-            height: 120.r,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.3),
-                  blurRadius: 10.r,
-                  offset: const Offset(0, 5),
+          Obx(() {
+            // Show profile picture or a default image
+            String profileImage ="${ApiConstants.imageBaseUrl}/${controller.profile['profilePicture'] }"?? AppImages.model;
+            return Container(
+              width: 120.r,
+              height: 120.r,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    blurRadius: 10.r,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+                border: Border.all(
+                  color: AppColors.primaryColor.withOpacity(0.5), // Outer blue border
+                  width: 2.w,
                 ),
-              ],
-              border: Border.all(
-                color: AppColors.primaryColor.withOpacity(0.5), // Outer blue border
-                width: 2.w,
               ),
-            ),
-            child: CircleAvatar(
-              radius: 50.r,
-              backgroundColor: Colors.grey[300],
-              backgroundImage: const AssetImage(AppImages.model),
-            ),
-          ),
+              child: CircleAvatar(
+                radius: 50.r,
+                backgroundColor: Colors.grey[300],
+                backgroundImage: NetworkImage(profileImage),  // Load image from network
+              ),
+            );
+          }),
 
           SizedBox(height: sizeH * .02),
           // Name
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 25.w),
-            child: CustomTextOne(
-              text: "Lucy",
-              fontSize: 18.sp,
-              color: AppColors.textColor,
-              maxLine: 1,
-              textOverflow: TextOverflow.ellipsis,
-            ),
-          ),
+          Obx(() {
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 25.w),
+              child: CustomTextOne(
+                text: controller.profile['fullName'] ?? 'Loading...',
+                fontSize: 18.sp,
+                color: AppColors.textColor,
+                maxLine: 1,
+                textOverflow: TextOverflow.ellipsis,
+              ),
+            );
+          }),
 
 
           SizedBox(height: sizeH * .016),
@@ -184,7 +193,7 @@ class ProfileScreen extends StatelessWidget {
       ),
     );
   }
-  
+
 
 
 }

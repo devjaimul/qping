@@ -1,14 +1,14 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:qping/Controller/profile/profile_controller.dart';
 import 'dart:io';
-
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_button.dart';
 import 'package:qping/global_widgets/custom_text_field.dart';
+import 'package:qping/services/api_constants.dart';
 import 'package:qping/utils/app_colors.dart';
-import 'package:qping/utils/app_images.dart';
 
 
 class ProfileUpdate extends StatefulWidget {
@@ -26,20 +26,17 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
   final TextEditingController addressController = TextEditingController();
   final TextEditingController genderController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
-  final TextEditingController heightController = TextEditingController();
-  final TextEditingController weightController = TextEditingController();
+  final ProfileController controller = Get.put(ProfileController());
 
   @override
   void initState() {
     super.initState();
-
+    controller.fetchProfile();
     // Initialize controllers with default values
-    nameController.text = "Lucy";
-    addressController.text = "lucyhuntstreasure@hmail.com";
-    genderController.text = "Female";
-    ageController.text = "24 yrs";
-    heightController.text = "5'6\""; // Example default value
-    weightController.text = "65 kg"; // Example default value
+    nameController.text = controller.profile['fullName'] ?? '';
+    addressController.text = controller.profile['email'] ?? '';
+    genderController.text = controller.profile['gender'] ?? '';
+    ageController.text = controller.profile['age']?.toString() ?? '';
   }
 
   Future<void> _pickImage() async {
@@ -52,8 +49,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
               leading: const Icon(Icons.photo_library),
               title: const Text("Pick from Gallery"),
               onTap: () async {
-                final XFile? image =
-                await _picker.pickImage(source: ImageSource.gallery);
+                final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
                 if (image != null) {
                   setState(() {
                     _profileImage = File(image.path);
@@ -66,8 +62,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
               leading: const Icon(Icons.camera_alt),
               title: const Text("Take a Photo"),
               onTap: () async {
-                final XFile? image =
-                await _picker.pickImage(source: ImageSource.camera);
+                final XFile? image = await _picker.pickImage(source: ImageSource.camera);
                 if (image != null) {
                   setState(() {
                     _profileImage = File(image.path);
@@ -124,9 +119,9 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                       child: CircleAvatar(
                         radius: 50.r,
                         backgroundColor: Colors.grey[300],
-                        backgroundImage: _profileImage != null
-                            ? FileImage(_profileImage!) as ImageProvider
-                            : const AssetImage(AppImages.model),
+                        backgroundImage: _profileImage == null
+                            ? NetworkImage("${ApiConstants.imageBaseUrl}/${controller.profile['profilePicture']}")
+                            : FileImage(_profileImage!) as ImageProvider,
                       ),
                     ),
                     Container(
@@ -163,6 +158,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
               ),
               const CustomTextTwo(text: "Gender"),
               CustomTextField(
+                readOnly: true,
                 controller: genderController,
                 hintText: "Enter your gender",
                 filColor: Colors.transparent,
@@ -170,6 +166,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
               ),
               const CustomTextTwo(text: "Age"),
               CustomTextField(
+                readOnly: true,
                 controller: ageController,
                 hintText: "Enter your age",
                 filColor: Colors.transparent,
@@ -178,11 +175,14 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
               SizedBox(
                 height: 20.h,
               ),
-              // Edit Profile Button
+              // Update Profile Button
               CustomTextButton(
-                text: 'Update Profile',
+                text: controller.isLoading.value? 'Updating...':"Update Profile",
                 onTap: () async {
-                  // Implement profile update logic
+                  await controller.updateProfile(
+                    name: nameController.text,
+                    imageFile: _profileImage,
+                  );
                 },
               ),
             ],
@@ -192,4 +192,3 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
     );
   }
 }
-

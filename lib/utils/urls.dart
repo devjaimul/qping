@@ -24,10 +24,10 @@ class Urls {
 
 
 //common
-  static const String getProfile = '/user/my-profile';
-  static const String updateProfile = '/user/profile-update';
+  static const String getProfile = '/users/info/me';
+  static const String updateProfile = '/users/info/me';
   static const String verifyProfile = '/user/verify-profile-request';
-  static const String notification = '/notification';
+  static  String notification(String page,limit) => '/notifications?page=$page&limit=$limit';
   static const String notificationBadge = '/notification/badge-count';
   static const String payments = '/purchase';
   static const String hostFeatureMode = '/user/guest-mode';
