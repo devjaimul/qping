@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:qping/services/api_client.dart';
+import 'package:qping/services/socket_services.dart';
 import 'package:qping/utils/urls.dart';
 
 class MessageController extends GetxController {
@@ -14,11 +15,31 @@ class MessageController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
     // Debounce search input so that the API call is triggered only after 500ms of no changes
     debounce(searchQuery, (_) {
       getAcceptChatList(isRefresh: true, type: 'accepted');
     }, time: const Duration(milliseconds: 500));
+
+    // Listen to 'active-users' socket event
+    SocketServices.socket.on('active-users', (data) {
+      print("================= 'active-users' event received ================");
+      print(data); // For debugging
+      if (data != null) {
+        // Get the active status and the user id from the socket event.
+        bool isActive = data["isActive"] is bool ? data["isActive"] : false;
+        String userId = data["id"];
+        print("User $userId => Active: $isActive");
+
+        // Update only the conversation where receiverID matches the socket id.
+        for (var c in chatData) {
+          if (c["receiverID"] == userId) {
+            c["isActive"] = isActive;
+          }
+        }
+        chatData.refresh();
+      }
+    });
+
   }
 
   Future<void> getAcceptChatList({bool isRefresh = false, required String type}) async {
@@ -27,7 +48,6 @@ class MessageController extends GetxController {
       totalPages.value = 1;
       chatData.clear();
     }
-
 
     if (currentPage.value > totalPages.value) {
       return;

@@ -107,11 +107,6 @@ class _MessageScreenState extends State<MessageScreen> {
           ),
         );
       }
-      // Ensure that the socket initialization happens after data is available
-      // if (messageController.chatData.isNotEmpty) {
-      //   final firstChat = messageController.chatData.first;
-      //   messageChatController.initSocketAndJoinConversation(firstChat["_id"], firstChat["participantName"]);
-      // }
 
       // Determine the item count and add one extra item if more pages are available
       int itemCount = messageController.chatData.length;
@@ -128,8 +123,7 @@ class _MessageScreenState extends State<MessageScreen> {
       )
           : ListView.separated(
         itemCount: itemCount,
-        separatorBuilder: (_, __) =>
-            Divider(color: Colors.grey.shade300, thickness: 1),
+        separatorBuilder: (_, __) => Divider(color: Colors.grey.shade300, thickness: 1),
         itemBuilder: (context, index) {
           // When reaching the extra item, load more data after the current build frame.
           if (index == messageController.chatData.length) {
@@ -153,14 +147,11 @@ class _MessageScreenState extends State<MessageScreen> {
             child: ListTile(
               leading: CircleAvatar(
                 backgroundImage: chat["profilePicture"] != null
-                    ? NetworkImage(
-                    "${ApiConstants.imageBaseUrl}/${chat["profilePicture"]}")
+                    ? NetworkImage("${ApiConstants.imageBaseUrl}/${chat["profilePicture"]}")
                     : null,
                 child: chat["profilePicture"] == null
                     ? CustomTextTwo(
-                    text: chat["participantName"][0]
-                        .toString()
-                        .toUpperCase())
+                    text: chat["participantName"][0].toString().toUpperCase())
                     : null,
               ),
               title: CustomTextOne(
@@ -171,8 +162,9 @@ class _MessageScreenState extends State<MessageScreen> {
                 textAlign: TextAlign.start,
                 textOverflow: TextOverflow.ellipsis,
               ),
+              // Show lastMessage
               subtitle: CustomTextOne(
-                text: chat["lastMessage"] ?? ".....",
+                text: "${chat["lastMessage"] ?? "....."}  ",
                 fontSize: 12.sp,
                 color: AppColors.textColor.withOpacity(0.5),
                 maxLine: 1,
@@ -180,14 +172,12 @@ class _MessageScreenState extends State<MessageScreen> {
                 textOverflow: TextOverflow.ellipsis,
               ),
               trailing: Column(
+                spacing: 10.h,
                 children: [
                   CustomTextOne(
                     text: chat["lastMessageCreatedAt"] != null
                         ? DateFormat.jm().format(
-                        DateTime.parse(
-                            chat["lastMessageCreatedAt"]
-                                .toString())
-                            .toLocal())
+                        DateTime.parse(chat["lastMessageCreatedAt"].toString()).toLocal())
                         : "...",
                     color: AppColors.textColor.withOpacity(0.8),
                     fontSize: 12.sp,
@@ -195,22 +185,30 @@ class _MessageScreenState extends State<MessageScreen> {
                     textAlign: TextAlign.start,
                     textOverflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: 10.w),
-                  if (isUnread)
-                    GestureDetector(
-                      onTap: () => messageController.markAsRead(index),
-                      child: CircleAvatar(
-                        radius: 5.r,
-                        backgroundColor: AppColors.primaryColor,
-                      ),
+                  // Show active status indicator based on each chat's isActive field
+                  Container(
+                    height: 10.h,
+                    width: 10.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: (chat["isActive"] == true) ? Colors.green : Colors.grey,
                     ),
+                  ),
+                  // SizedBox(height: 10.w),
+                  // if (isUnread)
+                  //   GestureDetector(
+                  //     onTap: () => messageController.markAsRead(index),
+                  //     child: CircleAvatar(
+                  //       radius: 5.r,
+                  //       backgroundColor: AppColors.primaryColor,
+                  //     ),
+                  //   ),
                 ],
               ),
               onTap: () {
                 Get.to(() => MessageChatScreen(
                   name: chat["participantName"],
-                  image:
-                  "${ApiConstants.imageBaseUrl}/${chat["profilePicture"]}",
+                  image: "${ApiConstants.imageBaseUrl}/${chat["profilePicture"]}",
                   conversationId: chat["_id"],
                 ));
               },
@@ -220,5 +218,4 @@ class _MessageScreenState extends State<MessageScreen> {
       );
     });
   }
-
 }

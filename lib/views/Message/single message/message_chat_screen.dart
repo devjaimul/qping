@@ -4,9 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:qping/Controller/message/message_chat_controller.dart';
+import 'package:qping/Controller/message/message_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/helpers/prefs_helper.dart';
-import 'package:qping/routes/app_routes.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_constant.dart';
 import 'package:qping/utils/app_images.dart';
@@ -90,32 +90,56 @@ class _MessageChatScreenState extends State<MessageChatScreen> {
                   image: widget.image,
                 ));
               },
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 20.r,
-                    backgroundImage: NetworkImage(widget.image),
-                  ),
-                  SizedBox(width: 10.w),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomTextOne(
-                        text: widget.name,
-                        fontSize: 15.sp,
-                        color: Colors.black,
-                        maxLine: 1,
-                        textOverflow: TextOverflow.ellipsis,
-                      ),
-                      CustomTextTwo(
-                        text: 'Active 2 hours ago',
-                        fontSize: 12.sp,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              child: Obx(() {
+                final mc = Get.find<MessageController>();
+                // Find the conversation by matching the conversation _id.
+                final conversation = mc.chatData.firstWhere(
+                      (c) => c["_id"] == widget.conversationId,
+                  orElse: () => {},
+                );
+                // Use the active status if available, otherwise default to false.
+                bool isActive = conversation["isActive"] ?? false;
+                return Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 20.r,
+                      backgroundImage: NetworkImage(widget.image),
+                    ),
+                    SizedBox(width: 10.w),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomTextOne(
+                          text: widget.name,
+                          fontSize: 15.sp,
+                          color: Colors.black,
+                          maxLine: 1,
+                          textOverflow: TextOverflow.ellipsis,
+                        ),
+                        Row(
+                          children: [
+                            Container(
+                              height: 10.h,
+                              width: 10.w,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color:isActive? Colors.green : Colors.grey,
+                              ),
+                            ),
+                            SizedBox(width: 5.w,),
+                            CustomTextTwo(
+                              text: isActive ? "Active" : "Offline",
+                              fontSize: 12.sp,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              }),
             ),
+
             // leading: IconButton(onPressed: (){
             //
             //   Get.offAllNamed(AppRoutes.customNavBar);
