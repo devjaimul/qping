@@ -128,19 +128,26 @@ class EventScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
-                              child: CustomTextOne(
-                                text: event['eventName'] ?? 'No name',
-                                fontSize: 16.sp,
-                                textAlign: TextAlign.start,
+                              child: Row(
+                                children: [
+                                  CustomTextOne(
+                                    text: event['eventName'] ?? 'No name',
+                                    fontSize: 16.sp,
+                                    textAlign: TextAlign.start,
+                                  ),
+                                  event['isMyEvent'] == true?Icon(Icons.person,size: 18.h,):const SizedBox.shrink()
+                                ],
                               ),
                             ),
-                            IconButton(
-                              key: iconKey, // Set the key for the IconButton
-                              icon: const Icon(Icons.more_vert_outlined),
-                              onPressed: () {
-                                _showPopupMenu(context, event, iconKey);  // Pass the key along with event data
-                              },
-                            ),
+                            // Show options only if this is the user's event
+                            if (event['isMyEvent'] == true)
+                              IconButton(
+                                key: iconKey, // Set the key for the IconButton
+                                icon: const Icon(Icons.more_vert_outlined),
+                                onPressed: () {
+                                  _showPopupMenu(context, event, iconKey);  // Pass the key along with event data
+                                },
+                              ),
                           ],
                         ),
                         CustomTextTwo(
@@ -171,7 +178,6 @@ class EventScreen extends StatelessWidget {
                         CustomTextButton(
                           text: "Join",
                           onTap: () {
-
                             controller.joinEvent(event['_id']);
                           },
                           fontSize: 14.sp,
@@ -245,13 +251,9 @@ class EventScreen extends StatelessWidget {
     }
   }
 
-
-
   // Edit event function
   void _onEditEvent(Map<String, dynamic> event) {
     // You can navigate to the event update screen or handle editing directly
     Get.to(() => EventCreateScreen(eventData: event, eventId: event['_id']));  // Pass the event data to the create/update screen
   }
-
-
 }

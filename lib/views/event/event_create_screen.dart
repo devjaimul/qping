@@ -52,22 +52,36 @@ class EventCreateScreen extends StatelessWidget {
         dateTEController.text = '${selectedDate.toLocal()}'.split(' ')[0]; // Format date
       }
     }
-
-    // Time Picker Function
+// Time Picker Function forcing 12-hour mode
     Future<void> _selectTime(BuildContext context) async {
       TimeOfDay? selectedTime = await showTimePicker(
         context: context,
         initialTime: TimeOfDay.now(),
+        builder: (BuildContext context, Widget? child) {
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+            child: Localizations.override(
+              context: context,
+              locale: const Locale('en', 'US'),
+              child: child!,
+            ),
+          );
+        },
       );
       if (selectedTime != null) {
-        timeTEController.text = selectedTime.format(context);
+
+        final now = DateTime.now();
+        final dt = DateTime(now.year, now.month, now.day, selectedTime.hour, selectedTime.minute);
+        final formattedTime = DateFormat('hh:mm a').format(dt);
+        timeTEController.text = formattedTime;
       }
     }
+
 
     return Scaffold(
       appBar: AppBar(
         title: CustomTextOne(
-          text: eventData != null ? "Edit Event" : "Create Event", // Change title if it's edit mode
+          text: eventData != null ? "Edit Event" : "Create Event",
           fontSize: 18.sp,
         ),
       ),
@@ -106,7 +120,7 @@ class EventCreateScreen extends StatelessWidget {
                   readOnly: true,
                   controller: dateTEController,
                   hintText: "Enter Event Date here..",
-                  suffixIcon: Icon(Icons.calendar_month, color: AppColors.primaryColor),
+                  suffixIcon: const Icon(Icons.calendar_month, color: AppColors.primaryColor),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Event date is required';
@@ -125,7 +139,7 @@ class EventCreateScreen extends StatelessWidget {
                   readOnly: true,
                   controller: timeTEController,
                   hintText: "Enter Event Time here..",
-                  suffixIcon: Icon(Icons.access_time_filled, color: AppColors.primaryColor),
+                  suffixIcon: const Icon(Icons.access_time_filled, color: AppColors.primaryColor),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Event time is required';
@@ -168,7 +182,6 @@ class EventCreateScreen extends StatelessWidget {
                   onTap: eventData != null
                       ? () {
                     if (_formKey.currentState?.validate() ?? false) {
-                      // If the form is valid, call updateEvent method
                       controller.updateEvent(
                         eventId: eventId ?? '',
                         eventName: titleTEController.text,
@@ -177,7 +190,7 @@ class EventCreateScreen extends StatelessWidget {
                         eventDate: dateTEController.text,
                         eventLocation: locationTEController.text,
                       );
-                      Get.back();  // Close the screen after event is updated
+                      Get.back();
                     }
                   }
                       : () {
@@ -189,7 +202,7 @@ class EventCreateScreen extends StatelessWidget {
                         eventDate: dateTEController.text,
                         eventLocation: locationTEController.text,
                       );
-                      Get.back();  // Close the screen after event is created
+                      Get.back();
                     }
                   },
                 ),

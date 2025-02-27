@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:qping/routes/app_routes.dart';
 import 'package:qping/services/api_client.dart';
 import 'package:qping/utils/urls.dart';
 
@@ -26,7 +25,6 @@ class EventController extends GetxController {
         currentPage.value = pagination['currentPage'] ?? 1;
         totalPages.value = pagination['totalPages'] ?? 1;
       }
-
 
       if (page == 1) {
         events.value = data.map((event) => event as Map<String, dynamic>).toList();
@@ -110,8 +108,7 @@ class EventController extends GetxController {
 
     if (response.statusCode == 200) {
       fetchEvents(page: currentPage.value, limit: 10);
-
-
+update();
       Future.delayed(const Duration(seconds: 1), () {
         Get.back();
         Get.snackbar("Success", "Event deleted successfully!");
@@ -123,7 +120,6 @@ class EventController extends GetxController {
     isLoading.value = false;
   }
 
-
   Future<void> joinEvent(String eventId) async {
     try {
       final response = await ApiClient.postData(
@@ -134,7 +130,7 @@ class EventController extends GetxController {
       if (response.statusCode == 200) {
         Get.back();
         Get.snackbar("Success", response.body['message']);
-fetchEvents();
+        fetchEvents();
       } else {
         Get.snackbar("Error", response.body['message'] ?? "Failed");
       }
@@ -142,5 +138,4 @@ fetchEvents();
       Get.snackbar("Error", "An unexpected error occurred: $e");
     }
   }
-
 }
