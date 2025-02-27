@@ -128,8 +128,9 @@ class ProfileScreen extends StatelessWidget {
                   Get.back();
                     },
                     onConfirm: () async{
-
+print("beafore remove token===========================================${AppConstants.bearerToken}");
                       await PrefsHelper.remove(AppConstants.bearerToken);
+print("remove token===========================================${AppConstants.bearerToken}");
                       await PrefsHelper.remove(AppConstants.isLogged);
                       await PrefsHelper.remove(AppConstants.isEmailVerified);
                       await PrefsHelper.remove(AppConstants.isResetPass);

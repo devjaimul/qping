@@ -55,14 +55,14 @@ void showGroupDialog(BuildContext context, String groupName, String groupType, L
                     ),
                   ),
                 ),
-                SizedBox(height: 20.h),
+                SizedBox(height: 10.h),
                 CustomTextField(
                   contentPaddingVertical: 2.h,
                   controller: groupNameController,
                   hintText: "Enter Group Name",
                   filColor: Colors.transparent,
                 ),
-                SizedBox(height: 10.h),
+                SizedBox(height: 5.h),
                 CustomTextField(
 
                   contentPaddingVertical: 2.h,
@@ -70,7 +70,7 @@ void showGroupDialog(BuildContext context, String groupName, String groupType, L
                   hintText: "Enter Group Description",
                   filColor: Colors.transparent,
                 ),
-                SizedBox(height: 10.h),
+                SizedBox(height: 5.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
