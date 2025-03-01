@@ -31,6 +31,7 @@ class Urls {
   static const String notificationBadge = '/notification/badge-count';
   static const String payments = '/purchase';
   static const String hostFeatureMode = '/user/guest-mode';
+  static const String sendImage = '/messages';
 
   //individual message
   static  String createChat(String userId) => '/chat?participant=$userId';

@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:qping/services/api_constants.dart';
 import 'package:qping/services/socket_services.dart';
 import 'package:qping/services/api_client.dart';
 import 'package:qping/utils/urls.dart';
@@ -87,7 +90,14 @@ class MessageChatController extends GetxController {
       if (data != null) {
         final bool isSentByMe = data['sender'] == myUserId;
         final String messageType = data['type'] ?? 'text';
-        final String content = data['content'] ?? '';
+        String content = '';
+        if (messageType == 'image') {
+          if (data['attachments'] != null && (data['attachments'] as List).isNotEmpty) {
+            content = data['attachments'][0]['fileUrl'];
+          }
+        } else {
+          content = data['content'] ?? '';
+        }
 
         messages.insert(0, {
           'type': messageType == 'image' ? 'image' : 'text',
@@ -97,17 +107,13 @@ class MessageChatController extends GetxController {
         });
 
         // If not in inbox, show notification
-        print("hlegb================================${isInInbox.value}");
         if (isInInbox.value) {
-
-          _showNotification(
-            "$senderName",
-            content,
-          );
+          _showNotification("$senderName", content);
         }
       }
     });
   }
+
 
   Future<void> _showNotification(String title, String body) async {
     final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -136,5 +142,20 @@ class MessageChatController extends GetxController {
     };
 
     SocketServices.emit('send-message', body);
+  }
+
+  /// =========================================> Send Message With Image ========================================>
+  sendMessageWithImage(String conversationID,File? files,)async{
+    List<MultipartBody> multipartBody = files == null ? [] : [MultipartBody("files", files)];
+    var body = {
+      "conversationID": '$conversationID',
+      "messageOn": 'individual',
+      "files": '$files',
+    };
+    var response = await ApiClient.postMultipartData(
+      Urls.sendImage,
+      body,
+      multipartBody: multipartBody,
+    );
   }
 }

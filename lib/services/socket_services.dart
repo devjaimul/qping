@@ -49,19 +49,19 @@ class SocketServices {
 
     // Setup event listeners
     socket.onConnect((_) {
-      print('Socket connected successfully');
+      print('✅Socket connected successfully');
     });
 
     socket.onConnectError((err) {
-      print('Socket connection error: $err');
+      print('❌Socket connection error: $err');
     });
 
     socket.onError((err) {
-      print('Socket error: $err');
+      print('❌Socket error: $err');
     });
 
     socket.onDisconnect((reason) {
-      print('Socket disconnected. Reason: $reason');
+      print('⚠️Socket disconnected. Reason: $reason');
     });
 
 

@@ -58,6 +58,7 @@ dependencies:
   cached_network_image: ^3.4.1
   flutter_local_notifications: ^18.0.1
   flutter_background_service: ^5.0.10
+  logger: ^2.5.0
 
 
   path_provider: any

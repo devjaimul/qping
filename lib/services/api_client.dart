@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
 import 'package:http/http.dart' as http;
@@ -10,6 +9,10 @@ import '../helpers/prefs_helper.dart';
 import '../utils/app_constant.dart';
 import 'api_constants.dart';
 import 'error_response.dart';
+import 'logger.dart';
+
+
+final log = logger(ApiClient);
 
 class ApiClient extends GetxService {
   static var client = http.Client();
@@ -17,7 +20,7 @@ class ApiClient extends GetxService {
   static const int timeoutInSeconds = 60;
   static String bearerToken = "";
 
-//==========================================> Get Data <======================================
+  //==========================================> Get Data <======================================
   static Future<Response> getData(String uri,
       {Map<String, String>? headers}) async {
     bearerToken = await PrefsHelper.getString(AppConstants.bearerToken);
@@ -27,7 +30,10 @@ class ApiClient extends GetxService {
       'Authorization': 'Bearer $bearerToken'
     };
     try {
-      debugPrint('====> API Call: $uri\nHeader: ${headers ?? mainHeaders}');
+      log.i(
+          '|📍📍📍|-----------------[[ GET ]] method details start -----------------|📍📍📍|');
+      log.i('URL: $uri');
+      log.i('Headers: ${headers ?? mainHeaders}');
 
       http.Response response = await client
           .get(
@@ -35,15 +41,16 @@ class ApiClient extends GetxService {
         headers: headers ?? mainHeaders,
       )
           .timeout(const Duration(seconds: timeoutInSeconds));
+
       return handleResponse(response, uri);
     } catch (e, s) {
-      debugPrint('------------${e.toString()}');
-      debugPrint('----------- s-${s.toString()}');
+      log.e('🐞🐞🐞 Error in getData: ${e.toString()}');
+      log.e('Stacktrace: ${s.toString()}');
       return const Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
 
-//==========================================> Post Data <======================================
+  //==========================================> Post Data <======================================
   static Future<Response> postData(String uri, dynamic body,
       {Map<String, String>? headers}) async {
     String bearerToken = await PrefsHelper.getString(AppConstants.bearerToken);
@@ -51,12 +58,14 @@ class ApiClient extends GetxService {
     var mainHeaders = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $bearerToken',
-
     };
 
     try {
-      print('====> API Call: $uri\nHeader: $mainHeaders');
-      print('====> API Body: $body');
+      log.i(
+          '|📍📍📍|-----------------[[ POST ]] method details start -----------------|📍📍📍|');
+      log.i('URL: $uri');
+      log.i('Headers: $mainHeaders');
+      log.i('API Body: $body');
 
       http.Response response = await client.post(
         Uri.parse(ApiConstants.baseUrl + uri),
@@ -64,18 +73,16 @@ class ApiClient extends GetxService {
         headers: headers ?? mainHeaders,
       ).timeout(const Duration(seconds: timeoutInSeconds));
 
-      print("==========> Response Post Method : ${response.statusCode}");
+      log.i("==========> Response Post Method: ${response.statusCode}");
       return handleResponse(response, uri);
-    } catch (e,s ) {
-      print("===> Error in postData: $e");
-      print("===> Error in postData s: $s");
+    } catch (e, s) {
+      log.e("🐞🐞🐞 Error in postData: ${e.toString()}");
+      log.e("Stacktrace: ${s.toString()}");
       return const Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
 
-
-
-  //==========================================> patch<======================================
+  //==========================================> Patch Data <======================================
   static Future<Response> patch(String uri, var body,
       {Map<String, String>? headers}) async {
     bearerToken = await PrefsHelper.getString(AppConstants.bearerToken);
@@ -85,8 +92,11 @@ class ApiClient extends GetxService {
       'Authorization': 'Bearer $bearerToken'
     };
     try {
-      debugPrint('====> API Call: $uri\nHeader: ${headers ?? mainHeaders}');
-      debugPrint('====> API Body: $body');
+      log.i(
+          '|📍📍📍|-----------------[[ PATCH ]] method details start -----------------|📍📍📍|');
+      log.i('URL: $uri');
+      log.i('Headers: ${headers ?? mainHeaders}');
+      log.i('API Body: $body');
 
       http.Response response = await client
           .patch(
@@ -95,22 +105,22 @@ class ApiClient extends GetxService {
         headers: headers ?? mainHeaders,
       )
           .timeout(const Duration(seconds: timeoutInSeconds));
-      debugPrint(
-          "==========> Response Post Method :------ : ${response.statusCode}");
+
+      log.i(
+          "==========> Response Patch Method: ${response.statusCode}");
       return handleResponse(response, uri);
     } catch (e) {
-      print("===> $e");
+      log.e("🐞🐞🐞 Error in patch: ${e.toString()}");
       return const Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
-
-
 
   //==========================================> Post Multipart Data <======================================
   static Future<Response> postMultipartData(
       String uri,
       Map<dynamic, dynamic> body, // Map for form fields
-          {required List<MultipartBody> multipartBody, Map<String, String>? headers}) async {
+          {required List<MultipartBody> multipartBody,
+        Map<String, String>? headers}) async {
     try {
       // Fetch Bearer Token
       bearerToken = await PrefsHelper.getString(AppConstants.bearerToken);
@@ -121,8 +131,11 @@ class ApiClient extends GetxService {
       };
 
       // Log API Call
-      debugPrint('====> API Call: $uri\nHeader: ${headers ?? mainHeaders}');
-      debugPrint('====> API Body: $body with ${multipartBody.length} files');
+      log.i(
+          '|📍📍📍|-----------------[[ POST MULTIPART ]] method details start -----------------|📍📍📍|');
+      log.i('URL: $uri');
+      log.i('Headers: ${headers ?? mainHeaders}');
+      log.i('API Body: $body with ${multipartBody.length} files');
 
       // Create Multipart Request
       var request = http.MultipartRequest('POST', Uri.parse(ApiConstants.baseUrl + uri));
@@ -145,7 +158,7 @@ class ApiClient extends GetxService {
             contentType: MediaType.parse(mimeType),
           ));
         } else {
-          debugPrint('MIME type not found for file: ${element.file.path}');
+          log.e('MIME type not found for file: ${element.file.path}');
         }
       }
 
@@ -158,15 +171,13 @@ class ApiClient extends GetxService {
       // Handle Response
       return handleResponse(httpResponse, uri);
     } catch (e, s) {
-      // Log Errors
-      debugPrint("Error in postMultipartData: $e");
-      debugPrint("Stacktrace: $s");
+      log.e("🐞🐞🐞 Error in postMultipartData: ${e.toString()}");
+      log.e("Stacktrace: ${s.toString()}");
       return const Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
 
-
-//==========================================> Put Data <======================================
+  //==========================================> Put Data <======================================
   Future<Response> putData(String uri, dynamic body,
       {Map<String, String>? headers}) async {
     bearerToken = await PrefsHelper.getString(AppConstants.bearerToken);
@@ -176,8 +187,11 @@ class ApiClient extends GetxService {
       'Authorization': 'Bearer $bearerToken'
     };
     try {
-      debugPrint('====> API Call: $uri\nHeader: ${headers ?? mainHeaders}');
-      debugPrint('====> API Body: $body');
+      log.i(
+          '|📍📍📍|-----------------[[ PUT ]] method details start -----------------|📍📍📍|');
+      log.i('URL: $uri');
+      log.i('Headers: ${headers ?? mainHeaders}');
+      log.i('API Body: $body');
 
       http.Response response = await http
           .put(
@@ -188,22 +202,19 @@ class ApiClient extends GetxService {
           .timeout(const Duration(seconds: timeoutInSeconds));
       return handleResponse(response, uri);
     } catch (e) {
+      log.e("🐞🐞🐞 Error in putData: ${e.toString()}");
       return const Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
 
   //==========================================> Put Multipart Data <======================================
-
-
   static Future<Response> putMultipartData(
       String uri,
-      Map<String, String> body,
-      {
+      Map<String, String> body, {
         List<MultipartBody>? multipartBody,
         List<MultipartListBody>? multipartListBody,
-        Map<String, String>? headers
-      }
-      ) async {
+        Map<String, String>? headers,
+      }) async {
     try {
       // Fetch bearer token from preferences
       bearerToken = await PrefsHelper.getString(AppConstants.bearerToken);
@@ -215,8 +226,11 @@ class ApiClient extends GetxService {
       };
 
       // Log API Call details for debugging
-      debugPrint('====> API Call: $uri\nHeader: ${headers ?? mainHeaders}');
-      debugPrint('====> API Body: $body with ${multipartBody?.length ?? 0} picture');
+      log.i(
+          '|📍📍📍|-----------------[[ PUT MULTIPART ]] method details start -----------------|📍📍📍|');
+      log.i('URL: $uri');
+      log.i('Headers: ${headers ?? mainHeaders}');
+      log.i('API Body: $body with ${multipartBody?.length ?? 0} file(s)');
 
       // Create a MultipartRequest for PUT
       var request = http.MultipartRequest('PUT', Uri.parse(ApiConstants.baseUrl + uri));
@@ -225,18 +239,16 @@ class ApiClient extends GetxService {
       // Check if multipartBody exists and is not empty
       if (multipartBody != null && multipartBody.isNotEmpty) {
         for (var element in multipartBody) {
-          debugPrint("path : ${element.file.path}");
-          // Check if the file exists
+          log.i("File path: ${element.file.path}");
           if (element.file.existsSync()) {
             String? mimeType = mime(element.file.path);
-            // Add file to the multipart request
             request.files.add(await http.MultipartFile.fromPath(
               element.key,
               element.file.path,
               contentType: MediaType.parse(mimeType!),
             ));
           } else {
-            debugPrint("File does not exist: ${element.file.path}");
+            log.e("File does not exist: ${element.file.path}");
           }
         }
       }
@@ -246,22 +258,19 @@ class ApiClient extends GetxService {
 
       // Send the request and get the streamed response
       http.StreamedResponse response = await request.send();
-      // Convert streamed response to a string
       final content = await response.stream.bytesToString();
 
-      // Log API response details
-      debugPrint('====> API Response: [${response.statusCode}] $uri\n$content');
+      log.i('====> API Response: [${response.statusCode}] $uri');
+      log.i(content);
 
-      // Return response with status code, body, and other details
       return Response(
         statusCode: response.statusCode,
         statusText: response.statusCode == 200 ? 'Success' : noInternetMessage,
         body: json.decode(content),
       );
     } catch (e, s) {
-      // Handle any exceptions and print error details
-      print("==================================== Error: $e");
-      print("==================================== Stacktrace: $s");
+      log.e("==================================== Error in putMultipartData: ${e.toString()}");
+      log.e("Stacktrace: ${s.toString()}");
       return const Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
@@ -274,22 +283,25 @@ class ApiClient extends GetxService {
         Map<String, String>? headers}) async {
     try {
       bearerToken = await PrefsHelper.getString(AppConstants.bearerToken);
-      // bearerToken = PrefsHelper.token;
 
       var mainHeaders = {
-        // 'Content-Type': 'application/json',
+        //'Content-Type': 'application/json',
         'Authorization': 'Bearer $bearerToken'
       };
 
-      debugPrint('====> API Call: $uri\nHeader: ${headers ?? mainHeaders}');
-      debugPrint('====> API Body: $body with ${multipartBody?.length} picture');
+      log.i(
+          '|📍📍📍|-----------------[[ PATCH MULTIPART ]] method details start -----------------|📍📍📍|');
+      log.i('URL: $uri');
+      log.i('Headers: ${headers ?? mainHeaders}');
+      log.i('API Body: $body with ${multipartBody?.length ?? 0} file(s)');
+
       var request =
       http.MultipartRequest('PATCH', Uri.parse(ApiConstants.baseUrl + uri));
       request.fields.addAll(body);
 
-      if (multipartBody!.isNotEmpty) {
-        multipartBody.forEach((element) async {
-          debugPrint("path : ${element.file.path}");
+      if (multipartBody != null && multipartBody.isNotEmpty) {
+        for (var element in multipartBody) {
+          log.i("File path: ${element.file.path}");
           String? mimeType = mime(element.file.path);
           request.files.add(http.MultipartFile(
             element.key,
@@ -298,20 +310,20 @@ class ApiClient extends GetxService {
             filename: element.file.path.split('/').last,
             contentType: MediaType.parse(mimeType!),
           ));
-        });
+        }
       }
       request.headers.addAll(mainHeaders);
       http.StreamedResponse response = await request.send();
       final content = await response.stream.bytesToString();
-      debugPrint(
-          '====> API Response: [${response.statusCode}}] $uri\n$content');
+      log.i('====> API Response: [${response.statusCode}] $uri');
+      log.i(content);
 
       return Response(
           statusCode: response.statusCode,
           statusText: noInternetMessage,
           body: json.decode(content));
     } catch (e) {
-      print("====================================e $e");
+      log.e("==================================== Error in patchMultipartData: ${e.toString()}");
       return const Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
@@ -326,8 +338,11 @@ class ApiClient extends GetxService {
       'Authorization': 'Bearer $bearerToken'
     };
     try {
-      debugPrint('====> API Call: $uri\nHeader: ${headers ?? mainHeaders}');
-      debugPrint('====> API Call: $uri\n Body: $body');
+      log.i(
+          '|📍📍📍|-----------------[[ DELETE ]] method details start -----------------|📍📍📍|');
+      log.i('URL: $uri');
+      log.i('Headers: ${headers ?? mainHeaders}');
+      log.i('Body: $body');
 
       http.Response response = await http
           .delete(Uri.parse(ApiConstants.baseUrl + uri),
@@ -335,6 +350,7 @@ class ApiClient extends GetxService {
           .timeout(const Duration(seconds: timeoutInSeconds));
       return handleResponse(response, uri);
     } catch (e) {
+      log.e("🐞🐞🐞 Error in deleteData: ${e.toString()}");
       return const Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
@@ -345,7 +361,7 @@ class ApiClient extends GetxService {
     try {
       body = jsonDecode(response.body);
     } catch (e) {
-      debugPrint(e.toString());
+      log.e(e.toString());
     }
     Response response0 = Response(
       body: body ?? response.body,
@@ -370,7 +386,7 @@ class ApiClient extends GetxService {
       response0 = const Response(statusCode: 0, statusText: noInternetMessage);
     }
 
-    debugPrint(
+    log.i(
         '====> API Response: [${response0.statusCode}] $uri\n${response0.body}');
     return response0;
   }

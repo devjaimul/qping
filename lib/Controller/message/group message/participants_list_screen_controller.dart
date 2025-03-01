@@ -1,6 +1,7 @@
 import 'package:qping/routes/exports.dart';
 import 'package:qping/services/api_client.dart';
 import 'package:qping/utils/urls.dart';
+import 'package:qping/views/Message/single%20message/message_chat_screen.dart';
 
 class ParticipantsListScreenController extends GetxController {
   var participantsList = <dynamic>[].obs;
@@ -103,7 +104,13 @@ class ParticipantsListScreenController extends GetxController {
       if (response.statusCode == 200) {
         Get.snackbar("Success", response.body['message']);
         Get.offAll(()=>const CustomNavBar());
-      } else {
+      }
+      else if (response.statusCode == 409) {
+        Get.snackbar("Success", response.body['message']);
+        //Get.to(()=> MessageChatScreen(image: image, name: name, conversationId: conversationId));
+      }
+
+      else {
         Get.snackbar("!!!!!", response.body['message'] ?? "Failed.");
       }
     } catch (e) {

@@ -7,6 +7,7 @@ import 'package:qping/Controller/message/message_chat_controller.dart';
 import 'package:qping/Controller/message/message_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/helpers/prefs_helper.dart';
+import 'package:qping/services/api_constants.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_constant.dart';
 import 'package:qping/utils/app_images.dart';
@@ -32,10 +33,9 @@ class _MessageChatScreenState extends State<MessageChatScreen> {
   String? userId;
 
   final MessageChatController _controller = Get.put(MessageChatController());
-
   final TextEditingController _messageController = TextEditingController();
-
   final ImagePicker _picker = ImagePicker();
+
   @override
   void initState() {
     super.initState();
@@ -56,16 +56,54 @@ class _MessageChatScreenState extends State<MessageChatScreen> {
     if (userId != null) {
       _controller.setMyUserId(userId!);
       await _controller.fetchChatMessages(widget.conversationId);
-     _controller.initSocketAndJoinConversation(widget.conversationId,widget.name);
+      _controller.initSocketAndJoinConversation(widget.conversationId, widget.name);
     }
   }
 
+  /// Show a bottom sheet with options for Camera and Gallery
+  void _showImageSourceOptions() {
+    Get.bottomSheet(
+      Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text("Camera"),
+              onTap: () {
+                Get.back();
+                _pickImage(true);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text("Gallery"),
+              onTap: () {
+                Get.back();
+                _pickImage(false);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Pick an image from the specified source and send it via API
   Future<void> _pickImage(bool fromCamera) async {
     final pickedFile = await _picker.pickImage(
       source: fromCamera ? ImageSource.camera : ImageSource.gallery,
     );
     if (pickedFile != null) {
-      // _controller.addImageMessage(pickedFile.path);
+      File imageFile = File(pickedFile.path);
+      // Call your controller's method to send the image message
+      await _controller.sendMessageWithImage(widget.conversationId, imageFile);
     }
   }
 
@@ -123,10 +161,10 @@ class _MessageChatScreenState extends State<MessageChatScreen> {
                               width: 10.w,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color:isActive? Colors.green : Colors.grey,
+                                color: isActive ? Colors.green : Colors.grey,
                               ),
                             ),
-                            SizedBox(width: 5.w,),
+                            SizedBox(width: 5.w),
                             CustomTextTwo(
                               text: isActive ? "Active" : "Offline",
                               fontSize: 12.sp,
@@ -140,17 +178,14 @@ class _MessageChatScreenState extends State<MessageChatScreen> {
               }),
             ),
 
-            // leading: IconButton(onPressed: (){
-            //
-            //   Get.offAllNamed(AppRoutes.customNavBar);
-            // }, icon: Icon(Icons.arrow_back_outlined)),
+
           ),
           body: SafeArea(
             child: Column(
               children: [
                 Expanded(
                   child: Obx(
-                    () => ListView.builder(
+                        () => ListView.builder(
                       padding: EdgeInsets.symmetric(
                           horizontal: 20.w, vertical: 10.h),
                       itemCount: _controller.messages.length,
@@ -175,14 +210,21 @@ class _MessageChatScreenState extends State<MessageChatScreen> {
                                 ),
                               ),
                             if (message['type'] == 'image')
-                              BubbleNormalImage(
-                                id: index.toString(),
-                                image: Image.file(
-                                  File(message['content']),
-                                  fit: BoxFit.cover,
-                                ),
-                                isSender: message['isSentByMe'],
-                                color: Colors.transparent,
+                              Builder(
+                                builder: (context) {
+                                  final imageUrl = message['content'].toString().startsWith('http')
+                                      ? message['content']
+                                      : '${ApiConstants.imageBaseUrl}/${message['content']}';
+                                  return BubbleNormalImage(
+                                    id: index.toString(),
+                                    image: Image.network(
+                                      imageUrl,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    isSender: message['isSentByMe'],
+                                    color: Colors.transparent,
+                                  );
+                                },
                               ),
                             SizedBox(height: 5.h),
                             Text(
@@ -193,6 +235,8 @@ class _MessageChatScreenState extends State<MessageChatScreen> {
                               ),
                             ),
                             SizedBox(height: 10.h),
+
+
                           ],
                         );
                       },
@@ -216,8 +260,9 @@ class _MessageChatScreenState extends State<MessageChatScreen> {
                   padding: EdgeInsets.all(10.w),
                   child: Row(
                     children: [
+                      // Changed onTap to show bottom sheet options
                       InkWell(
-                        onTap: () => _pickImage(false),
+                        onTap: _showImageSourceOptions,
                         child: Image.asset(
                           AppImages.attach,
                           height: 35.h,
