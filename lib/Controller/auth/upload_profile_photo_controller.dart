@@ -47,6 +47,7 @@ class UploadProfilePhotoController extends GetxController {
       if (response.statusCode == 200) {
         Get.snackbar("Success", response.body['message'] ?? "Profile Picture Uploaded Successfully!");
         await PrefsHelper.setString(AppConstants.isProfilePicture,"true");
+        await PrefsHelper.setString(AppConstants.isLogged, "true");
         Get.offAllNamed(AppRoutes.customNavBar); // Navigate to home or desired route
       } else {
         final errorMessage = response.body['message'] ?? "Failed to upload profile picture.";

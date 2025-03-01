@@ -18,17 +18,15 @@ class EventScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final EventController controller = Get.put(EventController());
 
-    // Initial fetch of events (first page)
-    controller.fetchEvents(page: 1, limit: 15);
 
-    // ScrollController to listen for when the user reaches the bottom
+    controller.fetchEvents(page: 1, limit: 10);
+
     ScrollController scrollController = ScrollController();
 
-    // Add listener to scrollController
     scrollController.addListener(() {
-      // Check if the user has reached the bottom of the list
+
       if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
-        // Fetch more events if there are more pages
+
         if (controller.currentPage.value < controller.totalPages.value && !controller.isLoading.value) {
           controller.fetchEvents(page: controller.currentPage.value + 1, limit: 15);
         }
@@ -43,7 +41,7 @@ class EventScreen extends StatelessWidget {
             await controller.fetchEvents(page: 1, limit: 10);
           },
           child: Obx(() {
-            // Show shimmer effect while loading
+
             if (controller.isLoading.value && controller.events.isEmpty) {
               return ListView.builder(
                 itemCount: 10,
@@ -92,8 +90,8 @@ class EventScreen extends StatelessWidget {
 
             // Display events
             return ListView.builder(
-              controller: scrollController,  // Add scroll controller here
-              itemCount: controller.events.length + (controller.isLoading.value ? 1 : 0),  // Add 1 more for loading indicator
+              controller: scrollController,
+              itemCount: controller.events.length + (controller.isLoading.value ? 1 : 0),
               itemBuilder: (context, index) {
                 if (controller.isLoading.value && index == controller.events.length) {
                   return Padding(
@@ -109,7 +107,7 @@ class EventScreen extends StatelessWidget {
                 String formattedTime = "No Time";
                 if (event['eventDate'] != null) {
                   DateTime eventDate = DateTime.parse(event['eventDate']);
-                  formattedDate = DateFormat('dd MMM yyyy').format(eventDate);  // Format date
+                  formattedDate = DateFormat('dd MMM yyyy').format(eventDate);
                 }
 
                 if (event['eventTime'] != null) {
@@ -151,12 +149,12 @@ class EventScreen extends StatelessWidget {
                           ],
                         ),
                         CustomTextTwo(
-                          text: "Date: $formattedDate",  // Use formatted date
+                          text: "Date: $formattedDate",
                           fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
                         ),
                         CustomTextTwo(
-                          text: "Time: $formattedTime",  // Use formatted time
+                          text: "Time: $formattedTime",
                           fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
                         ),
@@ -253,7 +251,7 @@ class EventScreen extends StatelessWidget {
 
   // Edit event function
   void _onEditEvent(Map<String, dynamic> event) {
-    // You can navigate to the event update screen or handle editing directly
-    Get.to(() => EventCreateScreen(eventData: event, eventId: event['_id']));  // Pass the event data to the create/update screen
+
+    Get.to(() => EventCreateScreen(eventData: event, eventId: event['_id']));
   }
 }

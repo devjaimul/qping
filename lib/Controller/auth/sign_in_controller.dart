@@ -36,13 +36,11 @@ class SignInController extends GetxController {
         // Save these values in shared preferences
         await PrefsHelper.setString(AppConstants.bearerToken, token);
         await PrefsHelper.setString(AppConstants.userId, userId);
+        await PrefsHelper.setString(AppConstants.isEmailVerified, "true");
+        await PrefsHelper.setString(AppConstants.isProfilePicture, "true");
+        await PrefsHelper.setString(AppConstants.isProfileID, "true");
+        await PrefsHelper.setString(AppConstants.isLogged, "true");
         SocketServices.init();
-        // await PrefsHelper.setString(
-        //     AppConstants.isEmailVerified, isEmailVerified);
-        // await PrefsHelper.setString(
-        //     AppConstants.isProfilePicture, isProfilePicture);
-        // await PrefsHelper.setString(AppConstants.isProfileID, isProfileID);
-        // Navigate to the dashboard or home screen
 
         if (isProfileID == null|| isProfileID.isEmpty) {
           Get.snackbar("Unauthorized","Profile Details Are Missing!!");

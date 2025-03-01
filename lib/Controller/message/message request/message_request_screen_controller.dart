@@ -62,7 +62,7 @@ class MessageRequestController extends GetxController{
 
   //get message request chats message
   Future<void> fetchChatMessages(String conversationId,
-      {String type = 'request', bool refresh = false}) async {
+      {String type = 'individual', bool refresh = false}) async {
     if (refresh) {
       currentPageMsg.value = 1;
       totalPagesMsg.value = 1;
@@ -134,6 +134,25 @@ class MessageRequestController extends GetxController{
       Get.snackbar("Error", "An unexpected error occurred: $e");
     }
   }
+  // Delete request chat message
+  Future<void> deleteRequest (String conversationId) async {
+    try {
+      final response = await ApiClient.postData(
+        Urls.deleteRequest(conversationId),
+        {},
+      );
+
+      if (response.statusCode == 200) {
+        Get.snackbar("Success", response.body['message']);
+        Get.offAll(()=>const CustomNavBar());
+      } else {
+        Get.snackbar("!!!!!", response.body['message'] ?? "Failed.");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "An unexpected error occurred: $e");
+    }
+  }
+
 
   void markAsRead(int index) {
     chatData[index]['isUnread'] = false;

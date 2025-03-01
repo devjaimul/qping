@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -8,6 +10,7 @@ import 'package:qping/global_widgets/dialog.dart';
 import 'package:qping/helpers/prefs_helper.dart';
 import 'package:qping/routes/app_routes.dart';
 import 'package:qping/services/api_constants.dart';
+import 'package:qping/services/socket_services.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_constant.dart';
 import 'package:qping/utils/app_icons.dart';
@@ -128,9 +131,8 @@ class ProfileScreen extends StatelessWidget {
                   Get.back();
                     },
                     onConfirm: () async{
-print("beafore remove token===========================================${AppConstants.bearerToken}");
+                      SocketServices.socket.disconnect();
                       await PrefsHelper.remove(AppConstants.bearerToken);
-print("remove token===========================================${AppConstants.bearerToken}");
                       await PrefsHelper.remove(AppConstants.isLogged);
                       await PrefsHelper.remove(AppConstants.isEmailVerified);
                       await PrefsHelper.remove(AppConstants.isResetPass);

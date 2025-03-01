@@ -104,35 +104,31 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
                   ),
                   Positioned(
                     bottom: -30,
-                    child: Container(
-                      height: 50.h,
-                      width: 50.h,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 8,
-                            spreadRadius: 1,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Obx(
-                            () => IconButton(
-                          onPressed: photoController.isLoading.value
-                              ? null // Disable button if loading
-                              : () async {
-                            photoController.startLoading(); // Start loading
-                            await _pickImage(); // Open picker
-                            photoController.stopLoading(); // Stop loading after picker
-                          },
-                          icon: Icon(
-                            Icons.camera_alt,
-                            color: AppColors.primaryColor,
-                            size: 30.h,
-                          ),
+                    child: InkWell(
+                      onTap: ()async {
+    photoController.startLoading();
+    await _pickImage();
+    photoController.stopLoading();
+    },
+                      child: Container(
+                        height: 50.h,
+                        width: 50.h,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 8,
+                              spreadRadius: 1,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child:Icon(
+                          Icons.camera_alt,
+                          color: AppColors.primaryColor,
+                          size: 30.h,
                         ),
                       ),
                     ),

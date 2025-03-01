@@ -83,8 +83,10 @@ class _MessageRequestChatScreenState extends State<MessageRequestChatScreen> {
                     SizedBox(width: 20.w),
                     Expanded(
                       child: CustomTextButton(
-                        text: "Reject",
-                        onTap: () {},
+                        text: "Delete",
+                        onTap: () {
+                          _controller.deleteRequest(widget.conversationId);
+                        },
                         color: Colors.transparent,
                         borderColor: AppColors.primaryColor,
                         textColor: AppColors.primaryColor,

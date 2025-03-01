@@ -39,7 +39,7 @@ class Urls {
   static  String acceptChatRequest(String conversationId) => '/chat/$conversationId/accept';
 
 
-
+  static  String deleteRequest(String conversationId) => '/chat/$conversationId';
 
 
   static  String sendMsg(String chatID) => '/chat/create-message-with-file?chatId=$chatID';

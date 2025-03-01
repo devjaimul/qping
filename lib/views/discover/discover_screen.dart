@@ -37,70 +37,75 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Obx(
-              () {
-            if (controller.isLoading.value && controller.groupList.isEmpty) {
-              // Show loading indicator if loading first page
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (controller.groupList.isEmpty) {
-              // No data
-              return Center(child: CustomTextOne(text: "No groups found", fontSize: 16.sp));
-            }
-
-            return Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  /// Title Row
-                  Row(
-                    children: [
-                      // Example emoji or icon
-                      Text(
-                        "✨",
-                        style: TextStyle(fontSize: 20.sp),
-                      ),
-                      SizedBox(width: 8.w),
-                      CustomTextOne(
-                        text: "Discover Groups",
-                        fontSize: 18.sp,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16.h),
-
-                  /// Groups List
-                  Expanded(
-                    child: ListView.separated(
-                      controller: _scrollController,
-                      itemCount: controller.groupList.length,
-                      separatorBuilder: (_, __) => SizedBox(height: 12.h),
-                      itemBuilder: (context, index) {
-                        final group = controller.groupList[index];
-                        final avatar = group['avatar'] ?? '';
-                        final name = group['name'] ?? '';
-                        final totalMember = group['totalMember'] ?? '0';
-                        final description = group['description'] ?? '';
-                        final groupId = group['_id'] ?? '';
-
-                        return _buildGroupItem(
-                          image: avatar,
-                          name: name,
-                          members: "$totalMember Members",
-                          description: description,
-                          onJoinTap: () => controller.joinGroup(groupId),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            );
+        child: RefreshIndicator(
+          onRefresh: () async{
+            await controller.fetchGroupList();
           },
+          child: Obx(
+                () {
+              if (controller.isLoading.value && controller.groupList.isEmpty) {
+                // Show loading indicator if loading first page
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (controller.groupList.isEmpty) {
+                // No data
+                return Center(child: CustomTextOne(text: "No groups found", fontSize: 16.sp));
+              }
+
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    /// Title Row
+                    Row(
+                      children: [
+                        // Example emoji or icon
+                        Text(
+                          "✨",
+                          style: TextStyle(fontSize: 20.sp),
+                        ),
+                        SizedBox(width: 8.w),
+                        CustomTextOne(
+                          text: "Discover Groups",
+                          fontSize: 18.sp,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16.h),
+
+                    /// Groups List
+                    Expanded(
+                      child: ListView.separated(
+                        controller: _scrollController,
+                        itemCount: controller.groupList.length,
+                        separatorBuilder: (_, __) => SizedBox(height: 12.h),
+                        itemBuilder: (context, index) {
+                          final group = controller.groupList[index];
+                          final avatar = group['avatar'] ?? '';
+                          final name = group['name'] ?? '';
+                          final totalMember = group['totalMember'] ?? '0';
+                          final description = group['description'] ?? '';
+                          final groupId = group['_id'] ?? '';
+
+                          return _buildGroupItem(
+                            image: avatar,
+                            name: name,
+                            members: "$totalMember Members",
+                            description: description,
+                            onJoinTap: () => controller.joinGroup(groupId),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

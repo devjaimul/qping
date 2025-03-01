@@ -108,7 +108,7 @@ class EventController extends GetxController {
 
     if (response.statusCode == 200) {
       fetchEvents(page: currentPage.value, limit: 10);
-update();
+     update();
       Future.delayed(const Duration(seconds: 1), () {
         Get.back();
         Get.snackbar("Success", "Event deleted successfully!");
