@@ -1,5 +1,6 @@
 import 'package:qping/routes/exports.dart';
 import 'package:qping/services/api_client.dart';
+import 'package:qping/services/api_constants.dart';
 import 'package:qping/utils/urls.dart';
 import 'package:qping/views/Message/single%20message/message_chat_screen.dart';
 
@@ -107,7 +108,8 @@ class ParticipantsListScreenController extends GetxController {
       }
       else if (response.statusCode == 409) {
         Get.snackbar("Success", response.body['message']);
-        //Get.to(()=> MessageChatScreen(image: image, name: name, conversationId: conversationId));
+        Get.to(()=> MessageChatScreen(image:"${ApiConstants.imageBaseUrl}/${response.body['data']['profilePicture']}",
+            name: response.body['data']['participantName'], conversationId: response.body['data']['_id']));
       }
 
       else {
