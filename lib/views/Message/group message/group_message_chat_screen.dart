@@ -42,7 +42,7 @@ class _GroupMessageChatScreenState extends State<GroupMessageChatScreen> {
     }
     // Initial fetch with refresh true
     await _controller.fetchGroupMessages(widget.groupId, refresh: true);
-    _controller.initSocketAndJoinGroup(widget.groupId);
+    _controller.initSocketAndJoinGroup(widget.groupId,widget.name);
   }
 
   Future<void> _pickImage(bool fromCamera) async {
@@ -50,14 +50,18 @@ class _GroupMessageChatScreenState extends State<GroupMessageChatScreen> {
       source: fromCamera ? ImageSource.camera : ImageSource.gallery,
     );
     if (pickedFile != null) {
-      // Implement image sending if needed.
+      File imageFile = File(pickedFile.path);
+      // Call the group image sending method
+      await _controller.sendImageMessage(widget.groupId, imageFile);
     }
   }
+
 
   @override
   void initState() {
     super.initState();
     getMyIdAndMessages();
+    _controller.isInInbox.value = false;
     _scrollController.addListener(() {
       // When near the top (since list is reversed) load more messages.
       if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 50 &&
@@ -66,7 +70,13 @@ class _GroupMessageChatScreenState extends State<GroupMessageChatScreen> {
       }
     });
   }
-
+  @override
+  void dispose() {
+    print("==========${_controller.isInInbox.value}==============100%");
+    super.dispose();
+    _controller.isInInbox.value = true;
+    print("==========${_controller.isInInbox.value}==============100%");
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -149,14 +159,37 @@ class _GroupMessageChatScreenState extends State<GroupMessageChatScreen> {
                             ),
                           ),
                         if (message['type'] == 'image')
-                          BubbleNormalImage(
-                            id: index.toString(),
-                            image: Image.file(
-                              File(message['content']),
-                              fit: BoxFit.cover,
-                            ),
-                            isSender: message['isSentByMe'],
-                            color: Colors.transparent,
+                          Builder(
+                            builder: (context) {
+                              final imageUrl = message['content'].toString().startsWith('http')
+                                  ? message['content']
+                                  : '${ApiConstants.imageBaseUrl}/${message['content']}';
+                              return BubbleNormalImage(
+                                id: index.toString(),
+                                image: Image.network(
+                                  imageUrl,
+                                  fit: BoxFit.cover,
+                                  loadingBuilder: (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return SizedBox(
+                                      width: 100.w,
+                                      height: 100.h,
+                                      child: Center(child: CircularProgressIndicator()),
+                                    );
+                                  },
+                                  errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                                    return Container(
+                                      width: 100.w,
+                                      height: 100.h,
+                                      color: Colors.grey[300],
+                                      child: Icon(Icons.error, color: Colors.red),
+                                    );
+                                  },
+                                ),
+                                isSender: message['isSentByMe'],
+                                color: Colors.transparent,
+                              );
+                            },
                           ),
                         SizedBox(height: 5.h),
                         Text(

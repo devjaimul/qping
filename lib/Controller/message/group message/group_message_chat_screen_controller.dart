@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:qping/services/api_client.dart';
@@ -12,7 +15,7 @@ class GroupMessageChatScreenController extends GetxController {
   RxInt totalPages = 1.obs;
   static const int limit = 10;
   RxBool isLoadingMessages = false.obs;
-
+  var isInInbox = true.obs;
   String? myUserId;
   void setMyUserId(String id) {
     myUserId = id;
@@ -74,23 +77,29 @@ class GroupMessageChatScreenController extends GetxController {
   }
 
   /// Initialize the socket connection and join the group.
-  void initSocketAndJoinGroup(String groupId) {
+  void initSocketAndJoinGroup(String groupId,groupName) {
     SocketServices.emit('join', {
       'groupId': groupId,
     });
-    listenForIncomingMessages(groupId);
+    listenForIncomingMessages(groupId,groupName);
   }
 
   /// Listen for incoming messages via socket.
-  void listenForIncomingMessages(String groupId) {
+  void listenForIncomingMessages(String groupId,groupName) {
     SocketServices.socket.on('conversation-$groupId', (data) {
       if (data != null) {
         final bool isSentByMe = data['sender'] == myUserId;
         final String messageType = data['type'] ?? 'text';
-       final String content = data['content'] ?? '';
-       final String senderName = data['senderName'] ?? '';
-       final String profilePicture = data['profilePicture'] ?? '';
-
+        String content = '';
+        if (messageType == 'image') {
+          if (data['attachments'] != null && (data['attachments'] as List).isNotEmpty) {
+            content = data['attachments'][0]['fileUrl'];
+          }
+        } else {
+          content = data['content'] ?? '';
+        }
+        final String senderName = data['senderName'] ?? '';
+        final String profilePicture = data['profilePicture'] ?? '';
         messages.insert(0, {
           'type': messageType == 'image' ? 'image' : 'text',
           'content': content,
@@ -99,9 +108,14 @@ class GroupMessageChatScreenController extends GetxController {
           'profilePicture': profilePicture,
           'time': DateFormat('h.mm a').format(DateTime.now().toLocal()),
         });
+        if (isInInbox.value) {
+        if (!isSentByMe) {
+          _showNotification(groupName, messageType == 'image' ? "Sent an image" : content);
+        }}
       }
     });
   }
+
 
   /// Send a message over the socket.
   void sendMessageToSocket(String groupId, String content, {String type = 'group'}) {
@@ -111,6 +125,49 @@ class GroupMessageChatScreenController extends GetxController {
       'messageOn': type,
     };
     SocketServices.emit('send-message', body);
+  }
+
+  Future<void> _showNotification(String title, String body) async {
+    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    const notificationDetails = NotificationDetails(
+      android: AndroidNotificationDetails(
+        'chat_channel',
+        'Chat Notifications',
+        importance: Importance.max,
+        priority: Priority.high,
+      ),
+    );
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      title,
+      body,
+      notificationDetails,
+    );
+  }
+  sendImageMessage(String groupId, File? file) async {
+    if (file == null) return;
+
+    List<MultipartBody> multipartBody = [MultipartBody("files", file)];
+    var body = {
+      "conversationID": groupId,
+      "messageOn": 'group',
+      "files": '$file',
+    };
+
+    var response = await ApiClient.postMultipartData(
+      Urls.sendImage,
+      body,
+      multipartBody: multipartBody,
+    );
+
+    if (response.statusCode == 200) {
+      var messageData = response.body['data'];
+      if (messageData != null &&
+          messageData['attachments'] != null &&
+          (messageData['attachments'] as List).isNotEmpty) {
+      }
+
+    }
   }
 
   /// Poll functions

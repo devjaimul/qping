@@ -15,7 +15,7 @@ class MessageChatController extends GetxController {
   static const int limit = 10;
   RxBool isLoadingMessages = false.obs;
   String? myUserId;
-  var isInInbox = true.obs; // Make it observable
+  var isInInbox = true.obs;
 
   void setMyUserId(String id) {
     myUserId = id;

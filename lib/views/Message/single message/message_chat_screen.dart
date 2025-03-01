@@ -39,15 +39,15 @@ class _MessageChatScreenState extends State<MessageChatScreen> {
   @override
   void initState() {
     super.initState();
-    _controller.isInInbox.value = false; // Set the flag when in inbox
-    // _controller.initSocketAndJoinConversation(widget.conversationId, widget.name);
+    _controller.isInInbox.value = false;
+
   }
 
   @override
   void dispose() {
     print("==========${_controller.isInInbox.value}==============100%");
     super.dispose();
-    _controller.isInInbox.value = true; // Reset flag when leaving inbox
+    _controller.isInInbox.value = true;
     print("==========${_controller.isInInbox.value}==============100%");
   }
 
