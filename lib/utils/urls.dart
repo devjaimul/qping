@@ -30,6 +30,7 @@ class Urls {
   static const String payments = '/purchase';
   static const String hostFeatureMode = '/user/guest-mode';
   static const String sendImage = '/messages';
+  static  String getAllMedia(String page,limit,conversationId,type) => '/chat/media/$conversationId?page=$page&limit=$limit&types=$type';
 
   //individual message
   static  String createChat(String userId) => '/chat?participant=$userId';

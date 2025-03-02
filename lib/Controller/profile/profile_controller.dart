@@ -54,7 +54,7 @@ class ProfileController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        Get.snackbar("Success", response.body['message'] ?? "Profile Updated Successfully!");
+        Get.snackbar("Success","Profile Updated Successfully");
         fetchProfile();
         Get.offAllNamed(AppRoutes.customNavBar);
       } else {

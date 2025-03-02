@@ -126,7 +126,7 @@ class ProfileScreen extends StatelessWidget {
                 context: context,
                 builder: (BuildContext context) {
                   return CustomDialog(
-                    title: "Are you sure you want to \n LogOut ",
+                    title: "Are you sure you want to \n log out ",
                     onCancel: () {
                   Get.back();
                     },

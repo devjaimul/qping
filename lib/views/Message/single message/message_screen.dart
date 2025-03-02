@@ -120,7 +120,7 @@ class _MessageScreenState extends State<MessageScreen> {
       return itemCount == 0
           ? Center(
         child: CustomTextOne(
-          text: "No Message Available!!!",
+          text: "No Message Available",
           fontSize: 18.sp,
         ),
       )

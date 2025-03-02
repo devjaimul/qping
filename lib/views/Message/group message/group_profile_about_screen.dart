@@ -73,7 +73,7 @@ class _GroupProfileAboutScreenState extends State<GroupProfileAboutScreen> {
               _buildProfileOption(
                   title: 'Media',
                   onTap: () {
-                    Get.to(()=> MediaScreen());
+                    Get.to(()=> MediaScreen(conversationId: widget.groupId,type: "group",));
                   }),
               Divider(
                 color: AppColors.primaryColor.withOpacity(0.3),
