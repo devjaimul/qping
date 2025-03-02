@@ -6,10 +6,9 @@ import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/dialog.dart';
 import 'package:qping/routes/app_routes.dart';
 import 'package:qping/utils/app_colors.dart';
-import 'package:qping/views/profile/setting/about_screen.dart';
+import 'package:qping/views/profile/setting/app_data_screen.dart';
 import 'package:qping/views/profile/setting/change%20password/change_password.dart';
-import 'package:qping/views/profile/setting/privacy_policy_screen.dart';
-import 'package:qping/views/profile/setting/terms_screen.dart';
+
 
 
 
@@ -39,21 +38,21 @@ class SettingScreen extends StatelessWidget {
               icon: Icons.privacy_tip,
               label: 'Privacy Policy',
               onTap: () {
-                Get.to(const PrivacyPolicyScreen());
+                Get.to( const AppData(type: "privacy-policy",));
               },
             ),
             _buildProfileOption(
               icon: Icons.info_outline,
               label: 'Terms & Services',
               onTap: () {
-                Get.to(const TermsScreen());
+                Get.to( const AppData(type: "terms-and-conditions",));
               },
             ),
             _buildProfileOption(
               icon: Icons.help_outline,
               label: 'About Us',
               onTap: () {
-                Get.to(const AboutScreen());
+                Get.to( const AppData(type: "about-us",));
               },
             ),
             const Spacer(),

@@ -16,9 +16,7 @@ class Urls {
 
 
  //App data
-  static const String privacy = '/privacy';
-  static const String terms = '/terms';
-  static const String about = '/about';
+  static  String appData(String type) => '/settings/$type';
 
 
 
@@ -65,6 +63,9 @@ class Urls {
   static  String showGroupList (String page,limit,searchValue,involved)=> '/conversation?page=$page&limit=$limit&searchTerm=$searchValue&involved=$involved';
 
 
+
+  //poll
+  static const String groupPoll = '/messages/poll';
   //event
   static  String getEvents (String page,limit)=> '/events?page=$page&limit=$limit';
   static const String createEvents= '/events';

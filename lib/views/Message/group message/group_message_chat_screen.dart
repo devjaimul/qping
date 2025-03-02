@@ -207,16 +207,8 @@ class _GroupMessageChatScreenState extends State<GroupMessageChatScreen> {
               padding: EdgeInsets.all(10.w),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: _controller.addPoll, // Poll creation as per your code.
-                    icon: Icon(
-                      Icons.add_circle_outline,
-                      color: Colors.grey,
-                      size: 35.h,
-                    ),
-                  ),
                   InkWell(
-                    onTap: () => _pickImage(false),
+                    onTap: _showImageSourceOptions,
                     child: Image.asset(
                       AppImages.attach,
                       height: 35.h,
@@ -252,6 +244,40 @@ class _GroupMessageChatScreenState extends State<GroupMessageChatScreen> {
                   ),
                 ],
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  /// Show a bottom sheet with options for Camera and Gallery
+  void _showImageSourceOptions() {
+    Get.bottomSheet(
+      Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text("Camera"),
+              onTap: () {
+                Get.back();
+                _pickImage(true);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text("Gallery"),
+              onTap: () {
+                Get.back();
+                _pickImage(false);
+              },
             ),
           ],
         ),

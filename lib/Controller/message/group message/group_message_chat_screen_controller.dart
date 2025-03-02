@@ -170,25 +170,4 @@ class GroupMessageChatScreenController extends GetxController {
     }
   }
 
-  /// Poll functions
-  void addPoll() {
-    messages.add({
-      'type': 'poll',
-      'isSentByMe': true,
-      'time': DateFormat('h.mm a').format(DateTime.now().toLocal()),
-      'poll': {
-        'question': 'Henry created an attendance poll',
-        'options': [
-          {'text': 'Present', 'selected': false},
-          {'text': 'Not Present / Unavailable', 'selected': false},
-        ],
-      }
-    });
-  }
-
-  void updatePoll(int index, int optionIndex, bool value) {
-    var poll = messages[index]['poll'];
-    poll['options'][optionIndex]['selected'] = value;
-    messages[index] = {...messages[index], 'poll': poll};
-  }
 }

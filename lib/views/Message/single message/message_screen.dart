@@ -9,7 +9,7 @@ import 'package:qping/global_widgets/custom_text_field.dart';
 import 'package:qping/services/api_constants.dart';
 import 'package:qping/themes/light_theme.dart';
 import 'package:qping/utils/app_colors.dart';
-
+import 'package:permission_handler/permission_handler.dart';
 import 'message_chat_screen.dart';
 
 class MessageScreen extends StatefulWidget {
@@ -27,8 +27,11 @@ class _MessageScreenState extends State<MessageScreen> {
   void initState() {
     super.initState();
     messageController.getAcceptChatList(type: 'accepted');
+    _requestPermissions();
   }
-
+  Future<void> _requestPermissions() async {
+   await Permission.notification.request();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
