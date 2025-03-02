@@ -6,7 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:qping/Controller/message/group%20message/group_message_chat_screen_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/helpers/prefs_helper.dart';
-import 'package:qping/routes/app_routes.dart';
 import 'package:qping/services/api_constants.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_constant.dart';
@@ -19,11 +18,11 @@ class GroupMessageChatScreen extends StatefulWidget {
   final String name;
   final String img;
   const GroupMessageChatScreen({
-    Key? key,
+    super.key,
     required this.groupId,
     required this.name,
     required this.img,
-  }) : super(key: key);
+  });
 
   @override
   State<GroupMessageChatScreen> createState() => _GroupMessageChatScreenState();
@@ -72,10 +71,8 @@ class _GroupMessageChatScreenState extends State<GroupMessageChatScreen> {
   }
   @override
   void dispose() {
-    print("==========${_controller.isInInbox.value}==============100%");
     super.dispose();
     _controller.isInInbox.value = true;
-    print("==========${_controller.isInInbox.value}==============100%");
   }
   @override
   Widget build(BuildContext context) {
@@ -109,7 +106,7 @@ class _GroupMessageChatScreenState extends State<GroupMessageChatScreen> {
         centerTitle: true,
         leading: IconButton(
           onPressed: () => Get.back(),
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
         ),
       ),
       body: SafeArea(
@@ -174,7 +171,7 @@ class _GroupMessageChatScreenState extends State<GroupMessageChatScreen> {
                                     return SizedBox(
                                       width: 100.w,
                                       height: 100.h,
-                                      child: Center(child: CircularProgressIndicator()),
+                                      child: const Center(child: CircularProgressIndicator()),
                                     );
                                   },
                                   errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
@@ -182,7 +179,7 @@ class _GroupMessageChatScreenState extends State<GroupMessageChatScreen> {
                                       width: 100.w,
                                       height: 100.h,
                                       color: Colors.grey[300],
-                                      child: Icon(Icons.error, color: Colors.red),
+                                      child: const Icon(Icons.error, color: Colors.red),
                                     );
                                   },
                                 ),

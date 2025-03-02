@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:qping/services/api_constants.dart';
 import 'package:qping/services/socket_services.dart';
 import 'package:qping/services/api_client.dart';
 import 'package:qping/utils/urls.dart';
@@ -148,7 +147,7 @@ class MessageChatController extends GetxController {
   sendMessageWithImage(String conversationID,File? files,)async{
     List<MultipartBody> multipartBody = files == null ? [] : [MultipartBody("files", files)];
     var body = {
-      "conversationID": '$conversationID',
+      "conversationID": conversationID,
       "messageOn": 'individual',
       "files": '$files',
     };
