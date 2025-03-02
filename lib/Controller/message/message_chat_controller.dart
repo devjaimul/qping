@@ -108,7 +108,7 @@ class MessageChatController extends GetxController {
 
         // If not in inbox, show notification
         if (isInInbox.value) {
-          _showNotification("$senderName", content);
+          _showNotification("$senderName", messageType == 'image' ? "Sent an image" : content);
         }
       }
     });
