@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:qping/services/api_client.dart';
 import 'package:qping/utils/urls.dart';
-
+import 'package:qping/services/socket_services.dart';
 
 class GroupMessageController extends GetxController {
   var chatData = <Map<String, dynamic>>[].obs;
@@ -13,16 +13,61 @@ class GroupMessageController extends GetxController {
 
   @override
   void onInit() {
-    fetchGroupList();
+    fetchGroupList(isRefresh: true);
+
+    // Listen for group conversation updates from socket
+    SocketServices.socket.on('groupListUpdate', (data) {
+      _handleIncomingGroupConversation(data);
+    });
+
     super.onInit();
+  }
+
+  void _handleIncomingGroupConversation(dynamic updatedGroup) {
+    if (updatedGroup == null) return;
+
+    // Determine the new timestamp: use "lastActiveAt" if available,
+    // otherwise fall back to "lastMessageCreatedAt"
+    String? newTime = updatedGroup["lastActiveAt"] ?? updatedGroup["lastMessageCreatedAt"];
+
+    // Find if the conversation exists by _id
+    final index = chatData.indexWhere((c) => c["_id"] == updatedGroup["_id"]);
+    if (index >= 0) {
+      // Conversation exists: update only lastMessage and timestamp
+      final existing = chatData[index];
+      existing["lastMessage"] = updatedGroup["lastMessage"] ?? existing["lastMessage"];
+      existing["lastActiveAt"] = newTime ?? existing["lastActiveAt"];
+      chatData[index] = existing;
+    } else {
+      // New conversation: map the fields accordingly, using newTime for timestamp
+      final newGroup = {
+        "_id": updatedGroup["_id"],
+        "name": updatedGroup["name"] ?? "",
+        "avatar": updatedGroup["avatar"],
+        "lastMessage": updatedGroup["lastMessage"] ?? "",
+        "lastActiveAt": newTime,
+      };
+      chatData.add(newGroup);
+    }
+
+    _sortByLastActiveTime();
+    chatData.refresh();
+  }
+
+  // Sort group conversations descending by lastActiveAt
+  void _sortByLastActiveTime() {
+    chatData.sort((a, b) {
+      final dateA = DateTime.tryParse(a["lastActiveAt"] ?? "") ?? DateTime(1970);
+      final dateB = DateTime.tryParse(b["lastActiveAt"] ?? "") ?? DateTime(1970);
+      return dateB.compareTo(dateA);
+    });
   }
 
   Future<void> fetchGroupList({bool isRefresh = false}) async {
     if (isRefresh) {
-      /// Reset the pagination and data
       currentPage.value = 1;
       chatData.clear();
-      totalPages.value = 1; // Reset total pages count
+      totalPages.value = 1;
     }
 
     if (currentPage.value > totalPages.value) return;
@@ -34,27 +79,21 @@ class GroupMessageController extends GetxController {
         currentPage.value.toString(),
         limit.toString(),
         searchQuery.value,
-        "yes"
+        "yes",
       ),
     );
 
     if (response.statusCode == 200) {
       var responseBody = response.body;
-
       if (responseBody['ok'] == true) {
         totalPages.value = responseBody['pagination']['totalPages'];
         var groups = List<Map<String, dynamic>>.from(responseBody['data']);
-
         if (isRefresh) {
           chatData.assignAll(groups);
         } else {
           chatData.addAll(groups);
         }
-
-        if (chatData.isEmpty && searchQuery.value.isNotEmpty) {
-          chatData.clear();
-        }
-
+        _sortByLastActiveTime();
         currentPage.value++;
       }
     }
@@ -62,15 +101,8 @@ class GroupMessageController extends GetxController {
     isLoading.value = false;
   }
 
-
   void searchGroups(String value) {
     searchQuery.value = value;
-
-    if (value.isEmpty) {
-      fetchGroupList(isRefresh: true);
-    } else {
-      fetchGroupList(isRefresh: true);
-    }
+    fetchGroupList(isRefresh: true);
   }
-
 }
