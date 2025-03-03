@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -8,20 +7,27 @@ import 'package:qping/services/socket_services.dart';
 import 'package:qping/utils/urls.dart';
 
 class GroupMessageChatScreenController extends GetxController {
+  /// Holds the list of messages for this group
   RxList<Map<String, dynamic>> messages = <Map<String, dynamic>>[].obs;
 
-  // Pagination properties
+  /// Pagination tracking
   RxInt currentPage = 1.obs;
   RxInt totalPages = 1.obs;
   static const int limit = 10;
   RxBool isLoadingMessages = false.obs;
+
+  /// Flag to indicate if user is in the inbox or in this group chat screen
   var isInInbox = true.obs;
+
+  /// Your user ID
   String? myUserId;
+
+  /// Set user ID after fetching from preferences
   void setMyUserId(String id) {
     myUserId = id;
   }
 
-  /// Fetch group messages using your GET API with pagination.
+  /// Fetch group messages from your API
   Future<void> fetchGroupMessages(String groupId, {bool refresh = false, String type = 'group'}) async {
     if (refresh) {
       currentPage.value = 1;
@@ -45,28 +51,48 @@ class GroupMessageChatScreenController extends GetxController {
         var data = response.body['data'];
         var pagination = response.body['pagination'];
 
+        // Convert the API data into local message maps
         List<Map<String, dynamic>> newMessages = (data as List).map((msg) {
           return {
-            'type': msg['attachments'] != null &&
-                (msg['attachments'] as List).isNotEmpty
+            // Distinguish text vs image
+            'type': (msg['attachments'] != null && (msg['attachments'] as List).isNotEmpty)
                 ? 'image'
                 : 'text',
-            'content': msg['attachments'] != null &&
-                (msg['attachments'] as List).isNotEmpty
+
+            // Actual content
+            'content': (msg['attachments'] != null && (msg['attachments'] as List).isNotEmpty)
                 ? msg['attachments'][0]['fileUrl']
                 : msg['content'],
-            'isSentByMe': myUserId != null ? (msg['sender'] == myUserId) : false,
-            'time': DateFormat('h.mm a')
-                .format(DateTime.parse(msg['createdAt']).toLocal()),
+
+            // Check if sender is me
+            'isSentByMe': (myUserId != null) ? (msg['sender'] == myUserId) : false,
+
+            // Format time
+            'time': DateFormat('h.mm a').format(
+              DateTime.parse(msg['createdAt']).toLocal(),
+            ),
+
+            // Additional fields
             'senderName': msg['senderName'],
             'profilePicture': msg['profilePicture'],
+
+            // For reaction updates
+            'messageId': msg['_id'],
+            // Store reactions if present, else empty map
+            'reactions': (msg['reactions'] != null)
+                ? Map<String, dynamic>.from(msg['reactions'])
+                : <String, dynamic>{},
           };
         }).toList();
 
+        // Append new messages
         messages.addAll(newMessages);
+
+        // Update pagination
         totalPages.value = pagination['totalPages'] ?? 1;
         currentPage.value = (pagination['currentPage'] as int) + 1;
       } else {
+        // Show error from server if any
         Get.snackbar("Error", response.body['message'] ?? "Failed to retrieve messages");
       }
     } catch (e) {
@@ -76,20 +102,29 @@ class GroupMessageChatScreenController extends GetxController {
     }
   }
 
-  /// Initialize the socket connection and join the group.
-  void initSocketAndJoinGroup(String groupId,groupName) {
+  /// Join the group room via socket
+  void initSocketAndJoinGroup(String groupId, String groupName) {
+    // Remove any previous listeners for this group
+    SocketServices.socket.off('conversation-$groupId');
+    SocketServices.socket.off('groupMessageReactionUpdated');
+
+    // Join the group
     SocketServices.emit('join', {
       'groupId': groupId,
     });
-    listenForIncomingMessages(groupId,groupName);
+
+    listenForIncomingMessages(groupId, groupName);
   }
 
-  /// Listen for incoming messages via socket.
-  void listenForIncomingMessages(String groupId,groupName) {
+  /// Listen for new messages and reaction updates
+  void listenForIncomingMessages(String groupId, String groupName) {
+    // 1) Listen for new group messages
     SocketServices.socket.on('conversation-$groupId', (data) {
       if (data != null) {
-        final bool isSentByMe = data['sender'] == myUserId;
+        final bool isSentByMe = (data['sender'] == myUserId);
         final String messageType = data['type'] ?? 'text';
+
+        // Get content
         String content = '';
         if (messageType == 'image') {
           if (data['attachments'] != null && (data['attachments'] as List).isNotEmpty) {
@@ -98,8 +133,11 @@ class GroupMessageChatScreenController extends GetxController {
         } else {
           content = data['content'] ?? '';
         }
+
         final String senderName = data['senderName'] ?? '';
         final String profilePicture = data['profilePicture'] ?? '';
+
+        // Insert the new message at index 0 (since reverse = true)
         messages.insert(0, {
           'type': messageType == 'image' ? 'image' : 'text',
           'content': content,
@@ -107,26 +145,36 @@ class GroupMessageChatScreenController extends GetxController {
           'senderName': senderName,
           'profilePicture': profilePicture,
           'time': DateFormat('h.mm a').format(DateTime.now().toLocal()),
+          'messageId': data['_id'] ?? 'temp-id',
+          'reactions': <String, dynamic>{},
         });
-        if (isInInbox.value) {
-        if (!isSentByMe) {
+
+        // If user is in the inbox, show a local notification
+        if (isInInbox.value && !isSentByMe) {
           _showNotification(groupName, messageType == 'image' ? "Sent an image" : content);
-        }}
+        }
+      }
+    });
+
+    // 2) Listen for group reaction updates
+    // Make sure your backend emits 'groupMessageReactionUpdated'
+    // with { messageId, reactions } whenever a user reacts
+    SocketServices.socket.on('groupMessageReactionUpdated', (data) {
+      if (data != null && data['messageId'] != null && data['reactions'] != null) {
+        final String updatedMessageId = data['messageId'];
+        final Map<String, dynamic> updatedReactions = Map<String, dynamic>.from(data['reactions']);
+
+        // Find the message in local list
+        final index = messages.indexWhere((m) => m['messageId'] == updatedMessageId);
+        if (index >= 0) {
+          messages[index]['reactions'] = updatedReactions;
+          messages.refresh();
+        }
       }
     });
   }
 
-
-  /// Send a message over the socket.
-  void sendMessageToSocket(String groupId, String content, {String type = 'group'}) {
-    final body = {
-      'groupId': groupId,
-      'content': content,
-      'messageOn': type,
-    };
-    SocketServices.emit('send-message', body);
-  }
-
+  /// Show local notification for group message
   Future<void> _showNotification(String title, String body) async {
     final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     const notificationDetails = NotificationDetails(
@@ -137,16 +185,22 @@ class GroupMessageChatScreenController extends GetxController {
         priority: Priority.high,
       ),
     );
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      title,
-      body,
-      notificationDetails,
-    );
+    await flutterLocalNotificationsPlugin.show(0, title, body, notificationDetails);
   }
-  sendImageMessage(String groupId, File? file) async {
-    if (file == null) return;
 
+  /// Send a text message in a group
+  void sendMessageToSocket(String groupId, String content, {String type = 'group'}) {
+    final body = {
+      'groupId': groupId,
+      'content': content,
+      'messageOn': type,
+    };
+    SocketServices.emit('send-message', body);
+  }
+
+  /// Send an image message in a group
+  Future<void> sendImageMessage(String groupId, File? file) async {
+    if (file == null) return;
     List<MultipartBody> multipartBody = [MultipartBody("files", file)];
     var body = {
       "conversationID": groupId,
@@ -154,20 +208,30 @@ class GroupMessageChatScreenController extends GetxController {
       "files": '$file',
     };
 
-    var response = await ApiClient.postMultipartData(
+    await ApiClient.postMultipartData(
       Urls.sendImage,
       body,
       multipartBody: multipartBody,
     );
-
-    if (response.statusCode == 200) {
-      var messageData = response.body['data'];
-      if (messageData != null &&
-          messageData['attachments'] != null &&
-          (messageData['attachments'] as List).isNotEmpty) {
-      }
-
-    }
   }
 
+  /// React to a group message locally, then emit
+  void reactToGroupMessage(int index, String reaction) {
+    final messageId = messages[index]['messageId'];
+    if (messageId == null) return;
+
+    // Quick local increment for immediate feedback
+    if (messages[index]['reactions'] == null) {
+      messages[index]['reactions'] = <String, dynamic>{};
+    }
+    final oldVal = messages[index]['reactions'][reaction] ?? 0;
+    messages[index]['reactions'][reaction] = oldVal + 1;
+    messages.refresh();
+
+    // Emit to server
+    SocketServices.emit('reactOnGroupMessage', {
+      "messageId": messageId,
+      "reactionType": reaction,
+    });
+  }
 }
