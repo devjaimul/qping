@@ -60,8 +60,8 @@ class EventController extends GetxController {
     );
 
     if (response.statusCode == 200) {
-      print("Event created successfully!");
-      // Optionally, you can call fetchEvents again to update the list.
+      Get.snackbar("Success", "Event Created Successfully.");
+
       fetchEvents(page: currentPage.value, limit: 10);
     } else {
       print('Error creating event: ${response.statusText}');
