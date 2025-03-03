@@ -1,3 +1,4 @@
+import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -10,6 +11,7 @@ import 'package:qping/services/api_constants.dart';
 import 'package:qping/themes/light_theme.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:qping/views/Message/group%20message/group_message_chat_screen.dart';
 import 'message_chat_screen.dart';
 
 class MessageScreen extends StatefulWidget {
@@ -22,12 +24,24 @@ class MessageScreen extends StatefulWidget {
 class _MessageScreenState extends State<MessageScreen> {
   final MessageController messageController = Get.put(MessageController());
   final TextEditingController searchController = TextEditingController();
-
+  final AppLinks _appLinks = AppLinks();
   @override
   void initState() {
     super.initState();
     messageController.getAcceptChatList(type: 'accepted');
     _requestPermissions();
+    _appLinks.uriLinkStream.listen((Uri? uri) {
+      if (uri != null) {
+        final String id = uri.pathSegments.last;
+        Get.offAll(GroupMessageChatScreen(
+          name: "Test",
+          img: "test",
+          groupId: id,
+        ),);
+        print("Received URI: $uri");
+        print("Extracted ID: $id");
+      }
+    });
   }
   Future<void> _requestPermissions() async {
    await Permission.notification.request();

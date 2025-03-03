@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:qping/Controller/message/group%20message/group_profile_about_screen_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/dialog.dart';
+import 'package:qping/services/api_constants.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/views/Message/group%20message/participants_list_screen.dart';
 import 'package:qping/views/Message/media_screen.dart';
 import 'package:qping/views/Message/report_screen.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'create_group_screen.dart';
 
@@ -25,7 +28,27 @@ class _GroupProfileAboutScreenState extends State<GroupProfileAboutScreen> {
   final GroupProfileAboutController controller = Get.put(GroupProfileAboutController());
 
   bool isSwitched = false;
+  // Link to share
+  late final String _shareLink;
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _shareLink = "${ApiConstants.imageBaseUrl}/${widget.groupId}";
+  }
+  // Function to handle sharing
+  void _shareLinkToApps() {
+    Share.share(_shareLink);
+  }
 
+  // Function to copy link to clipboard
+  void _copyLinkToClipboard() {
+    Clipboard.setData(ClipboardData(text: _shareLink)).then((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Link copied to clipboard!")),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +130,32 @@ class _GroupProfileAboutScreenState extends State<GroupProfileAboutScreen> {
                   title: 'Share Group Link',
                   noIcon: true,
                   onTap: () {
-
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ListTile(
+                              leading: Icon(Icons.share),
+                              title: Text("Share Link"),
+                              onTap: () {
+                                _shareLinkToApps();
+                                Navigator.pop(context); // Close the bottom sheet
+                              },
+                            ),
+                            ListTile(
+                              leading: Icon(Icons.copy),
+                              title: Text("Copy Link"),
+                              onTap: () {
+                                _copyLinkToClipboard();
+                                Navigator.pop(context); // Close the bottom sheet
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   }),
               Divider(
                 color: AppColors.primaryColor.withOpacity(0.3),
