@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:qping/Controller/message/message_chat_controller.dart';
 import 'package:qping/Controller/message/message_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_field.dart';
@@ -25,27 +24,31 @@ class _MessageScreenState extends State<MessageScreen> {
   final MessageController messageController = Get.put(MessageController());
   final TextEditingController searchController = TextEditingController();
   final AppLinks _appLinks = AppLinks();
+
   @override
   void initState() {
     super.initState();
+    // Fetch initial chat list
     messageController.getAcceptChatList(type: 'accepted');
     _requestPermissions();
+
+    // Deep link handling
     _appLinks.uriLinkStream.listen((Uri? uri) {
       if (uri != null) {
         final String id = uri.pathSegments.last;
-        Get.offAll(GroupMessageChatScreen(
-          name: "Test",
-          img: "test",
-          groupId: id,
-        ),);
+        Get.offAll(
+          GroupMessageChatScreen(name: "Test", img: "test", groupId: id),
+        );
         print("Received URI: $uri");
         print("Extracted ID: $id");
       }
     });
   }
+
   Future<void> _requestPermissions() async {
-   await Permission.notification.request();
+    await Permission.notification.request();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,15 +57,13 @@ class _MessageScreenState extends State<MessageScreen> {
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
           child: Column(
             children: [
-              /// ==================================> Search ====================================>
+              /// Search Bar
               CustomTextField(
                 controller: searchController,
                 hintText: "Search",
-                validator: (value) {
-                  return null;
-                },
+                validator: (value) => null,
                 onChanged: (value) {
-                  // Just update the searchQuery; the debounce in the controller will trigger the API call.
+                  // Debounce in the controller triggers the API call after 500ms
                   messageController.searchQuery.value = value;
                 },
                 suffixIcon: Padding(
@@ -79,7 +80,7 @@ class _MessageScreenState extends State<MessageScreen> {
               ),
               SizedBox(height: 20.h),
 
-              /// ===================================== ChatList ====================================>
+              /// Chat List
               Expanded(child: _buildChatList()),
             ],
           ),
@@ -90,7 +91,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
   Widget _buildChatList() {
     return Obx(() {
-      // Check if there's an error
+      // If there's an error
       if (messageController.errorMessage.isNotEmpty) {
         return Center(
           child: CustomTextOne(
@@ -100,8 +101,9 @@ class _MessageScreenState extends State<MessageScreen> {
         );
       }
 
-      // Show loader if still loading and no data available yet.
-      if (messageController.isLoading.value && messageController.chatData.isEmpty) {
+      // If loading and no data yet
+      if (messageController.isLoading.value &&
+          messageController.chatData.isEmpty) {
         final shimmerTheme = Theme.of(context).extension<ShimmerThemeExtension>()!;
         return ListView.builder(
           itemCount: 10,
@@ -125,37 +127,47 @@ class _MessageScreenState extends State<MessageScreen> {
         );
       }
 
-      // Determine the item count and add one extra item if more pages are available
+      // Possibly add an extra item if more pages exist
       int itemCount = messageController.chatData.length;
-      if (messageController.currentPage.value <= messageController.totalPages.value) {
+      if (messageController.currentPage.value <=
+          messageController.totalPages.value) {
         itemCount++;
       }
 
-      return itemCount == 0
-          ? Center(
-        child: CustomTextOne(
-          text: "No Message Available",
-          fontSize: 18.sp,
-        ),
-      )
-          : ListView.separated(
+      // If no chats
+      if (itemCount == 0) {
+        return Center(
+          child: CustomTextOne(
+            text: "No Message Available",
+            fontSize: 18.sp,
+          ),
+        );
+      }
+
+      // Display chat list
+      return ListView.separated(
         itemCount: itemCount,
-        separatorBuilder: (_, __) => Divider(color: Colors.grey.shade300, thickness: 1),
+        separatorBuilder: (_, __) => Divider(
+          color: Colors.grey.shade300,
+          thickness: 1,
+        ),
         itemBuilder: (context, index) {
-          // When reaching the extra item, load more data after the current build frame.
+          // If we hit the extra item, load more
           if (index == messageController.chatData.length) {
             Future.delayed(Duration.zero, () {
               messageController.getAcceptChatList(type: 'accepted');
             });
             return Center(
               child: Padding(
-                padding: EdgeInsets.all(16.r),
+                padding: EdgeInsets.all(16),
                 child: const CircularProgressIndicator(),
               ),
             );
           }
+
           final chat = messageController.chatData[index];
           final bool isUnread = chat["isUnread"] ?? false;
+
           return Card(
             color: isUnread
                 ? AppColors.primaryColor.withOpacity(0.1)
@@ -164,24 +176,28 @@ class _MessageScreenState extends State<MessageScreen> {
             child: ListTile(
               leading: CircleAvatar(
                 backgroundImage: chat["profilePicture"] != null
-                    ? NetworkImage("${ApiConstants.imageBaseUrl}/${chat["profilePicture"]}")
+                    ? NetworkImage(
+                    "${ApiConstants.imageBaseUrl}/${chat["profilePicture"]}")
                     : null,
                 child: chat["profilePicture"] == null
-                    ? CustomTextTwo(
-                    text: chat["participantName"][0].toString().toUpperCase())
+                    ? CustomTextOne(
+                  text: chat["participantName"][0]
+                      .toString()
+                      .toUpperCase(),
+                  color: Colors.white,
+                )
                     : null,
               ),
               title: CustomTextOne(
-                text: chat["participantName"] as String,
+                text: chat["participantName"] ?? "",
                 color: AppColors.textColor,
                 fontSize: 14.sp,
                 maxLine: 1,
                 textAlign: TextAlign.start,
                 textOverflow: TextOverflow.ellipsis,
               ),
-              // Show lastMessage
               subtitle: CustomTextOne(
-                text: "${chat["lastMessage"] ?? "....."}  ",
+                text: "${chat["lastMessage"] ?? "....."}",
                 fontSize: 12.sp,
                 color: AppColors.textColor.withOpacity(0.5),
                 maxLine: 1,
@@ -191,10 +207,13 @@ class _MessageScreenState extends State<MessageScreen> {
               trailing: Column(
                 spacing: 10.h,
                 children: [
+                  // Last message time
                   CustomTextOne(
                     text: chat["lastMessageCreatedAt"] != null
                         ? DateFormat.jm().format(
-                        DateTime.parse(chat["lastMessageCreatedAt"].toString()).toLocal())
+                      DateTime.parse(chat["lastMessageCreatedAt"])
+                          .toLocal(),
+                    )
                         : "...",
                     color: AppColors.textColor.withOpacity(0.8),
                     fontSize: 12.sp,
@@ -202,32 +221,28 @@ class _MessageScreenState extends State<MessageScreen> {
                     textAlign: TextAlign.start,
                     textOverflow: TextOverflow.ellipsis,
                   ),
-                  // Show active status indicator based on each chat's isActive field
+                  // Active status indicator
                   Container(
                     height: 10.h,
                     width: 10.w,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: (chat["isActive"] == true) ? Colors.green : Colors.grey,
+                      color: (chat["isActive"] == true)
+                          ? Colors.green
+                          : Colors.grey,
                     ),
                   ),
-                  // SizedBox(height: 10.w),
-                  // if (isUnread)
-                  //   GestureDetector(
-                  //     onTap: () => messageController.markAsRead(index),
-                  //     child: CircleAvatar(
-                  //       radius: 5.r,
-                  //       backgroundColor: AppColors.primaryColor,
-                  //     ),
-                  //   ),
                 ],
               ),
               onTap: () {
-                Get.to(() => MessageChatScreen(
-                  name: chat["participantName"],
-                  image: "${ApiConstants.imageBaseUrl}/${chat["profilePicture"]}",
-                  conversationId: chat["_id"],
-                ));
+                Get.to(
+                      () => MessageChatScreen(
+                    name: chat["participantName"],
+                    image:
+                    "${ApiConstants.imageBaseUrl}/${chat["profilePicture"]}",
+                    conversationId: chat["_id"],
+                  ),
+                );
               },
             ),
           );

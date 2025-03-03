@@ -15,22 +15,18 @@ class MessageController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Debounce search input so that the API call is triggered only after 500ms of no changes
+
+    // Debounce search input so that the API call is triggered only after 500ms
     debounce(searchQuery, (_) {
       getAcceptChatList(isRefresh: true, type: 'accepted');
     }, time: const Duration(milliseconds: 500));
 
-    // Listen to 'active-users' socket event
+    // Listen to 'active-users' socket event (already in your code)
     SocketServices.socket.on('active-users', (data) {
-      print("================= 'active-users' event received ================");
-      print(data); // For debugging
       if (data != null) {
-        // Get the active status and the user id from the socket event.
         bool isActive = data["isActive"] is bool ? data["isActive"] : false;
         String userId = data["id"];
-        print("User $userId => Active: $isActive");
-
-        // Update only the conversation where receiverID matches the socket id.
+        // Update only the conversation where receiverID matches the socket id
         for (var c in chatData) {
           if (c["receiverID"] == userId) {
             c["isActive"] = isActive;
@@ -40,9 +36,74 @@ class MessageController extends GetxController {
       }
     });
 
+    // ============================================
+    //  Listen for updated conversation from socket
+    //  Use your actual event name from the backend
+    // ============================================
+    SocketServices.socket.on('conversationListUpdate', (data) {
+      _handleIncomingConversation(data);
+    });
   }
 
-  Future<void> getAcceptChatList({bool isRefresh = false, required String type}) async {
+  // Only update lastMessage fields; keep old name/profile
+  void _handleIncomingConversation(dynamic updatedConversation) {
+    if (updatedConversation == null) return;
+
+    // 1. See if we already have this conversation
+    final index = chatData.indexWhere((c) => c["_id"] == updatedConversation["_id"]);
+
+    if (index >= 0) {
+      // 2. Conversation exists: update ONLY lastMessage fields
+      final existing = chatData[index];
+
+      // Keep old participantName and profilePicture from existing
+      // Update only the fields that should be "live"
+      existing["lastMessage"] = updatedConversation["lastMessage"] ?? existing["lastMessage"];
+      existing["lastMessageCreatedAt"] = updatedConversation["lastMessageCreatedAt"] ?? existing["lastMessageCreatedAt"];
+      existing["updatedAt"] = updatedConversation["updatedAt"] ?? existing["updatedAt"];
+      // If you want to track messageType, uncomment:
+      // existing["messageType"] = updatedConversation["messageType"] ?? existing["messageType"];
+
+      // Reassign the modified map back into the list
+      chatData[index] = existing;
+    } else {
+      // 3. New conversation we haven't seen: insert it
+      //    We do need to map the socket fields to your existing structure.
+      //    The socket uses "name" => your code uses "participantName", etc.
+      final newConv = {
+        "_id": updatedConversation["_id"],
+        "participantName": updatedConversation["name"] ?? "",      // or a fallback
+        "profilePicture": updatedConversation["profilePicture"],  // might be null
+        "lastMessage": updatedConversation["lastMessage"] ?? "",
+        "lastMessageCreatedAt": updatedConversation["lastMessageCreatedAt"],
+        "updatedAt": updatedConversation["updatedAt"],
+        // if you need messageType:
+        "messageType": updatedConversation["messageType"] ?? "text",
+        // you might also need "receiverID" if it’s relevant
+      };
+      chatData.add(newConv);
+    }
+
+    // 4. Re-sort so newest conversation is on top
+    _sortByLastMessageTime();
+
+    // 5. Refresh to update the UI
+    chatData.refresh();
+  }
+
+  // Sort by 'lastMessageCreatedAt' descending
+  void _sortByLastMessageTime() {
+    chatData.sort((a, b) {
+      final dateA = DateTime.tryParse(a["lastMessageCreatedAt"] ?? "") ?? DateTime(1970);
+      final dateB = DateTime.tryParse(b["lastMessageCreatedAt"] ?? "") ?? DateTime(1970);
+      return dateB.compareTo(dateA);
+    });
+  }
+
+  Future<void> getAcceptChatList({
+    bool isRefresh = false,
+    required String type,
+  }) async {
     if (isRefresh) {
       currentPage.value = 1;
       totalPages.value = 1;
@@ -54,10 +115,9 @@ class MessageController extends GetxController {
     }
 
     isLoading.value = true;
-    errorMessage.value = ''; // Clear any previous error messages
+    errorMessage.value = '';
 
     try {
-      // Build the API URL with page, limit, type, and search parameters
       final response = await ApiClient.getData(
         Urls.getChatList(
           currentPage.value.toString(),
@@ -72,6 +132,7 @@ class MessageController extends GetxController {
         if (data is List) {
           chatData.addAll(data);
         }
+
         var pagination = response.body['pagination'];
         totalPages.value = pagination['totalPages'] ?? 1;
 
@@ -80,14 +141,25 @@ class MessageController extends GetxController {
         } else {
           currentPage.value = (pagination['currentPage'] as int) + 1;
         }
+
+        // Sort after loading
+        _sortByLastMessageTime();
       } else {
-        errorMessage.value = response.body['message'] ?? "Failed to load chat list.";
+        errorMessage.value =
+            response.body['message'] ?? "Failed to load chat list.";
       }
     } catch (e) {
-      errorMessage.value = "An error occurred: $e"; // Display error if the request fails
+      errorMessage.value = "An error occurred: $e";
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void listenForIncomingMessages(String conversationId, senderName) {
+    // If you have a specific event for a conversation, you could handle it here
+    SocketServices.socket.on('conversation-$conversationId', (data) {
+      // For example, handle direct conversation updates
+    });
   }
 
   void markAsRead(int index) {
