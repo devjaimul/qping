@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:qping/Controller/auth/upload_profile_photo_controller.dart';
@@ -23,14 +24,14 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
   String? _selectedAvatar;
   final UploadProfilePhotoController photoController = Get.put(UploadProfilePhotoController());
 
-  // Predefined avatar options
+  // Predefined avatar options (now using SVG asset paths)
   final List<String> _avatars = [
-    AppImages.dogAvater,
-    AppImages.hippoAvater,
-    AppImages.crowAvater,
-    AppImages.lion,
-    AppImages.cat,
-    AppImages.dolfin,
+    AppImages.avater0,
+    AppImages.avater1,
+    AppImages.avater2,
+    AppImages.avater3,
+    AppImages.avater4,
+    AppImages.avater5,
   ];
 
   Future<void> _pickImage() async {
@@ -49,7 +50,6 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
       Get.snackbar("Error", "Failed to pick an image: $e");
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -80,36 +80,36 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
                     decoration: BoxDecoration(
                       color: AppColors.textFieldFillColor,
                       borderRadius: const BorderRadius.all(Radius.circular(16)),
-                      image: _image != null
-                          ? DecorationImage(
-                        image: FileImage(File(_image!.path)),
-                        fit: BoxFit.cover,
-                      )
-                          : _selectedAvatar != null
-                          ? DecorationImage(
-                        image: AssetImage(_selectedAvatar!),
-                        fit: BoxFit.contain,
-                      )
-                          : null,
                     ),
-                    child: _image == null && _selectedAvatar == null
+                    // Show the image: if a file is selected, display that; otherwise show the selected SVG avatar.
+                    child: _image != null
+                        ? Image.file(
+                      File(_image!.path),
+                      fit: BoxFit.cover,
+                    )
+                        : _selectedAvatar != null
                         ? Center(
+                      child: SvgPicture.asset(
+                        _selectedAvatar!,
+                        fit: BoxFit.contain,
+                      ),
+                    )
+                        : Center(
                       child: CustomTextOne(
                         text: "No Image Selected",
                         fontSize: 14.sp,
                         color: AppColors.textColor,
                       ),
-                    )
-                        : null,
+                    ),
                   ),
                   Positioned(
                     bottom: -30,
                     child: InkWell(
-                      onTap: ()async {
-    photoController.startLoading();
-    await _pickImage();
-    photoController.stopLoading();
-    },
+                      onTap: () async {
+                        photoController.startLoading();
+                        await _pickImage();
+                        photoController.stopLoading();
+                      },
                       child: Container(
                         height: 50.h,
                         width: 50.h,
@@ -125,7 +125,7 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
                             ),
                           ],
                         ),
-                        child:Icon(
+                        child: Icon(
                           Icons.camera_alt,
                           color: AppColors.primaryColor,
                           size: 30.h,
@@ -133,8 +133,6 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
                       ),
                     ),
                   ),
-
-
                 ],
               ),
               SizedBox(height: 50.h),
@@ -170,9 +168,14 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
                           width: 3,
                         ),
                         borderRadius: BorderRadius.circular(16),
-                        image: DecorationImage(
-                          image: AssetImage(_avatars[index]),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: SvgPicture.asset(
+                          _avatars[index],
                           fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
                         ),
                       ),
                     ),
@@ -185,7 +188,7 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
                   text: photoController.isLoading.value ? "Uploading..." : "Submit",
                   onTap: () {
                     if (_image == null && _selectedAvatar == null) {
-                      Get.snackbar("Error", "Please select or upload a profile image.");
+                      Get.snackbar("!!!", "Please select or upload a profile image.");
                     } else {
                       // Upload image file or avatar
                       final file = _image != null ? File(_image!.path) : null;
@@ -197,8 +200,6 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
                   },
                 ),
               ),
-
-
             ],
           ),
         ),

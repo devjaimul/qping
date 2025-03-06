@@ -18,7 +18,7 @@ class RegistrationScreen extends StatelessWidget {
 
     TextEditingController nameTEController = TextEditingController();
     TextEditingController genderTEController = TextEditingController();
-    TextEditingController locationTEController = TextEditingController();
+    TextEditingController organizationTEController = TextEditingController();
     TextEditingController birthdayTEController = TextEditingController();
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     Future<void> selectDate(BuildContext context) async {
@@ -119,10 +119,13 @@ class RegistrationScreen extends StatelessWidget {
                 borderRadio: 12.r,
               ),
 
-              // Address
+
+              // Organization (as a popup menu)
               CustomTextField(
-                controller: locationTEController,
-                hintText: "Address",
+                readOnly: true,
+                onTap: () {}, // can be left empty since the PopupMenuButton handles selection
+                controller: organizationTEController,
+                hintText: "Organization",
                 prefixIcon: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10.w),
                   child: Image.asset(
@@ -130,14 +133,38 @@ class RegistrationScreen extends StatelessWidget {
                     height: 18.h,
                   ),
                 ),
+                suffixIcon: PopupMenuButton<String>(
+                  icon: const Icon(
+                    Icons.arrow_drop_down_circle_outlined,
+                    color: AppColors.primaryColor,
+                  ),
+                  onSelected: (String selectedOrganization) {
+                    organizationTEController.text = selectedOrganization;
+                  },
+                  itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                    const PopupMenuItem<String>(
+                      value: "Emory University",
+                      child: Text("Emory University"),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: "Harvard University",
+                      child: Text("Harvard University"),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: "Stanford University",
+                      child: Text("Stanford University"),
+                    ),
+                  ],
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Address cannot be empty";
+                    return "Organization cannot be empty";
                   }
                   return null;
                 },
                 borderRadio: 12.r,
               ),
+
 
               // Birthday
               CustomTextField(
@@ -175,7 +202,7 @@ class RegistrationScreen extends StatelessWidget {
                     if (formKey.currentState?.validate() ?? false) {
                     final fullName = nameTEController.text.trim();
                     final gender = genderTEController.text.trim();
-                    final address = locationTEController.text.trim();
+                    final address = organizationTEController.text.trim();
                     final dob = birthdayTEController.text.trim();
 
 

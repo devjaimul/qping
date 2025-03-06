@@ -177,7 +177,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
               ),
               // Update Profile Button
               CustomTextButton(
-                text: controller.isLoading.value? 'Updating...':"Update Profile",
+                text: controller.isLoading.value? 'Update Profile':"Updating...",
                 onTap: () async {
                   await controller.updateProfile(
                     name: nameController.text,

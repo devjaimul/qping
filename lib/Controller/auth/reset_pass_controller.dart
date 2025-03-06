@@ -6,7 +6,7 @@ import 'package:qping/utils/urls.dart';
 class ResetPassController extends GetxController {
   final isLoading = false.obs;
 
-  Future<void> changePassword(String password, String confirmPassword) async {
+  Future<void> resetPassword(String password, String confirmPassword) async {
     if (password != confirmPassword) {
       Get.snackbar("Error", "Passwords do not match.");
       return;
@@ -31,6 +31,35 @@ class ResetPassController extends GetxController {
       } else {
         final errorMessage = response.body['message'] ?? "Failed to update password.";
         Get.snackbar("Error", errorMessage);
+      }
+    } catch (e) {
+      Get.snackbar("Error", "An unexpected error occurred: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> changePassword(String oldPassword, String newPassword) async {
+
+    isLoading.value = true;
+
+    final body = {
+      "oldPassword": oldPassword,
+      "newPassword": newPassword,
+    };
+
+    try {
+      final response = await ApiClient.postData(
+        Urls.newChangePass,
+        body,
+      );
+
+      if (response.statusCode == 200) {
+        Get.snackbar("Success", response.body['message'] ?? "Password Updated Successfully!");
+        Get.offAllNamed(AppRoutes.customNavBar);
+      } else {
+        final errorMessage = response.body['message'] ?? "Failed to update password.";
+        Get.snackbar("!!!!", errorMessage);
       }
     } catch (e) {
       Get.snackbar("Error", "An unexpected error occurred: $e");

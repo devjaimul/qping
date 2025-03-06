@@ -21,8 +21,8 @@ class ProfileAboutScreen extends StatefulWidget {
 class _ProfileAboutScreenState extends State<ProfileAboutScreen> {
   final ProfileAboutController controller = Get.put(ProfileAboutController());
 
-  // Move `isSwitched` here as a state variable
-  bool isSwitched = false;
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -57,25 +57,7 @@ class _ProfileAboutScreenState extends State<ProfileAboutScreen> {
                 textOverflow: TextOverflow.ellipsis,
               ),
               SizedBox(height: 80.h),
-              _buildProfileOption(
-                title: 'Enable Notifications',
-                onTap: () {
-                  print('Option Tapped');
-                },
-                toogle: true,
-                noIcon: true,
-                switchValue: isSwitched,
-                onSwitchChanged: (value) {
-                  setState(() {
-                    isSwitched = value; // Update the state when toggled
-                  });
-                  print('Switch Value: $value');
-                },
-              ),
 
-              Divider(
-                color: AppColors.primaryColor.withOpacity(0.3),
-              ),
               _buildProfileOption(
                   title: 'Media',
                   onTap: () {

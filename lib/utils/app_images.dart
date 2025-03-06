@@ -10,11 +10,16 @@ class AppImages {
   static const String discover = "$baseUrl/discover.png";
   static const String event = "$baseUrl/event.png";
   static const String selecton = "$baseUrl/selecton.png";
-  static const String dogAvater = "$baseUrl/avatars/dog.png";
-  static const String crowAvater = "$baseUrl/avatars/crow.png";
-  static const String hippoAvater = "$baseUrl/avatars/hippo.png";
-  static const String dolfin = "$baseUrl/avatars/dolfin.png";
-  static const String cat = "$baseUrl/avatars/cat.png";
-  static const String lion = "$baseUrl/avatars/lion.png";
   static const String palestineFlag = "$baseUrl/palestine_flag.webp";
+
+
+
+
+  static const String avater0 = "$baseUrl/avatars/avater0.svg";
+  static const String avater1 = "$baseUrl/avatars/avater1.svg";
+  static const String avater2 = "$baseUrl/avatars/avater2.svg";
+  static const String avater3 = "$baseUrl/avatars/avater3.svg";
+  static const String avater4 = "$baseUrl/avatars/avater4.svg";
+  static const String avater5 = "$baseUrl/avatars/avater5.svg";
+
 }

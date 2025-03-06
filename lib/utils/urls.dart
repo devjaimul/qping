@@ -10,6 +10,7 @@ class Urls {
   static const String emailVerify = '/auth/otp/send-for-forgot-password';
   static const String forgetPass = '/auth/password/forgot';
   static const String changePass = '/user/change-password';
+  static const String newChangePass = '/auth/password/reset';
   static String updateUser(String userId) => '/users/$userId';
   static String deleteUser(String userId) => '/user/delete?id=$userId';
   static String resetPass(String email) => '/user/reset-password?email=$email';

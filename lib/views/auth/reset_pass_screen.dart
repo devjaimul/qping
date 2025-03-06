@@ -95,7 +95,7 @@ class ResetPassScreen extends StatelessWidget {
     if (formKey.currentState?.validate() ?? false) {
                     final password = passTEController.text.trim();
                     final confirmPassword = rePassTEController.text.trim();
-                    resetPassController.changePassword(password, confirmPassword);
+                    resetPassController.resetPassword(password, confirmPassword);
                   }},
                 ),
               ),
