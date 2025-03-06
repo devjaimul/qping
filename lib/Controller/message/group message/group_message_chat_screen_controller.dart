@@ -229,7 +229,7 @@ class GroupMessageChatScreenController extends GetxController {
     messages.refresh();
 
     // Emit to server
-    SocketServices.emit('reactOnGroupMessage', {
+    SocketServices.emit('reaction', {
       "messageId": messageId,
       "reactionType": reaction,
     });

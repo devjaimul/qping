@@ -145,7 +145,7 @@ class MessageChatController extends GetxController {
         // If user is not in the chat screen, show a local notification
         if (isInInbox.value) {
           _showNotification(
-            "$senderName",
+            senderName,
             messageType == 'image' ? "Sent an image" : content,
           );
         }
