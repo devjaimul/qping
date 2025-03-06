@@ -106,7 +106,7 @@ class GroupMessageChatScreenController extends GetxController {
   void initSocketAndJoinGroup(String groupId, String groupName) {
     // Remove any previous listeners for this group
     SocketServices.socket.off('conversation-$groupId');
-    SocketServices.socket.off('groupMessageReactionUpdated');
+    SocketServices.socket.off('messageReactionUpdated');
 
     // Join the group
     SocketServices.emit('join', {
@@ -156,10 +156,9 @@ class GroupMessageChatScreenController extends GetxController {
       }
     });
 
-    // 2) Listen for group reaction updates
-    // Make sure your backend emits 'groupMessageReactionUpdated'
-    // with { messageId, reactions } whenever a user reacts
-    SocketServices.socket.on('groupMessageReactionUpdated', (data) {
+    //  Listen for group reaction updates
+
+    SocketServices.socket.on('messageReactionUpdated', (data) {
       if (data != null && data['messageId'] != null && data['reactions'] != null) {
         final String updatedMessageId = data['messageId'];
         final Map<String, dynamic> updatedReactions = Map<String, dynamic>.from(data['reactions']);
@@ -219,14 +218,6 @@ class GroupMessageChatScreenController extends GetxController {
   void reactToGroupMessage(int index, String reaction) {
     final messageId = messages[index]['messageId'];
     if (messageId == null) return;
-
-    // Quick local increment for immediate feedback
-    if (messages[index]['reactions'] == null) {
-      messages[index]['reactions'] = <String, dynamic>{};
-    }
-    final oldVal = messages[index]['reactions'][reaction] ?? 0;
-    messages[index]['reactions'][reaction] = oldVal + 1;
-    messages.refresh();
 
     // Emit to server
     SocketServices.emit('reaction', {

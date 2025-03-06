@@ -224,14 +224,6 @@ class MessageChatController extends GetxController {
     final messageId = messages[index]['messageId'];
     if (messageId == null) return;
 
-    // Quick local increment for immediate feedback
-    if (messages[index]['reactions'] == null) {
-      messages[index]['reactions'] = <String, dynamic>{};
-    }
-    final oldVal = messages[index]['reactions'][reaction] ?? 0;
-    messages[index]['reactions'][reaction] = oldVal + 1;
-    messages.refresh();
-
     // Emit to server
     SocketServices.emit('reaction', {
       "messageId": messageId,
