@@ -7,7 +7,8 @@ import 'package:qping/utils/app_colors.dart';
 import 'package:qping/views/Message/describe_complaint_screen.dart';
 
 class ReportScreen extends StatefulWidget {
-  const ReportScreen({super.key});
+  final String receiverId;
+  const ReportScreen({super.key, required this.receiverId});
 
   @override
   State<ReportScreen> createState() => _ReportScreenState();
@@ -112,6 +113,7 @@ class _ReportScreenState extends State<ReportScreen> {
                 if (selectedOption != null) {
                 Get.to(()=> DescribeComplaintScreen(
                   selectedOption: selectedOption!,
+                  receiverId: widget.receiverId,
                 ),);
                 } else {
                   Get.snackbar("!!!!!!!", 'Please select a report option');

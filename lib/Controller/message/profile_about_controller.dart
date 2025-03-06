@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
-import '../../utils/app_colors.dart';
+import 'package:qping/routes/app_routes.dart';
+import 'package:qping/services/api_client.dart';
+import 'package:qping/utils/urls.dart';
+import 'package:qping/views/Message/describe_complaint_screen.dart';
+import 'package:qping/utils/app_colors.dart';
 
 class ProfileAboutController extends GetxController {
-
   var notificationsEnabled = true.obs;
+
   void toggleNotifications() {
     notificationsEnabled.value = !notificationsEnabled.value;
   }
-
 
   void showBlockDialog(BuildContext context) {
     Get.defaultDialog(
@@ -58,7 +60,6 @@ class ProfileAboutController extends GetxController {
                     fixedSize: Size(130.5.w, 60.h),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(100),
-
                       side: BorderSide.none,
                     ),
                     padding: EdgeInsets.symmetric(vertical: 18.h, horizontal: 16.w),
@@ -73,7 +74,7 @@ class ProfileAboutController extends GetxController {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    //showCustomDialog(context);
+                    // Optionally, add functionality for blocking
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: AppColors.textColor,
@@ -96,5 +97,32 @@ class ProfileAboutController extends GetxController {
         ],
       ),
     );
+  }
+
+  var isLoading = false.obs;
+
+
+  Future<void> submitReport(String selectedOption,description,userId) async {
+    isLoading.value = true;
+
+
+
+    final body = {
+      "title": selectedOption,
+      "description": description,
+      "userID": userId,
+    };
+
+
+    // Call the POST API using your ApiClient.
+    final response = await ApiClient.postData(Urls.report, body);
+    isLoading.value = false;
+
+    if (response.statusCode == 200) {
+      Get.snackbar("Success", "Report submitted successfully");
+      Get.offAllNamed(AppRoutes.customNavBar);
+    } else {
+      Get.snackbar("Error", response.statusText ?? "Failed to submit report");
+    }
   }
 }

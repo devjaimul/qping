@@ -24,13 +24,13 @@ class Urls {
 //common
   static const String getProfile = '/users/info/me';
   static const String updateProfile = '/users/info/me';
-  static const String verifyProfile = '/user/verify-profile-request';
+
   static  String notification(String page,limit) => '/notifications?page=$page&limit=$limit';
   static const String notificationBadge = '/notification/badge-count';
-  static const String payments = '/purchase';
-  static const String hostFeatureMode = '/user/guest-mode';
+
   static const String sendImage = '/messages';
   static  String getAllMedia(String page,limit,conversationId,type) => '/chat/media/$conversationId?page=$page&limit=$limit&types=$type';
+  static const String report = '/report';
 
   //individual message
   static  String createChat(String userId) => '/chat?participant=$userId';

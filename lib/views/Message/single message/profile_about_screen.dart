@@ -5,7 +5,6 @@ import 'package:qping/Controller/message/profile_about_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/dialog.dart';
 import 'package:qping/utils/app_colors.dart';
-import 'package:qping/utils/app_images.dart';
 import 'package:qping/views/Message/media_screen.dart';
 import 'package:qping/views/Message/report_screen.dart';
 
@@ -89,7 +88,7 @@ class _ProfileAboutScreenState extends State<ProfileAboutScreen> {
               _buildProfileOption(
                   title: 'Report',
                   onTap: () {
-                    Get.to(const ReportScreen());
+                    Get.to( ReportScreen(receiverId: widget.conversationId,));
                   }),
               Divider(
                 color: AppColors.primaryColor.withOpacity(0.3),

@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:qping/Controller/message/profile_about_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_button.dart';
 import 'package:qping/global_widgets/custom_text_field.dart';
+import 'package:qping/helpers/prefs_helper.dart';
 import 'package:qping/utils/app_colors.dart';
+import 'package:qping/utils/app_constant.dart';
 
 class DescribeComplaintScreen extends StatefulWidget {
   final String selectedOption;
+  final String receiverId;
 
-  const DescribeComplaintScreen({required this.selectedOption, super.key});
+  const DescribeComplaintScreen({required this.selectedOption, super.key, required this.receiverId});
 
   @override
   State<DescribeComplaintScreen> createState() =>
@@ -18,6 +22,7 @@ class DescribeComplaintScreen extends StatefulWidget {
 
 class _DescribeComplaintScreenState extends State<DescribeComplaintScreen> {
   final TextEditingController complaintController = TextEditingController();
+  ProfileAboutController controller =ProfileAboutController();
 
   @override
   Widget build(BuildContext context) {
@@ -88,8 +93,8 @@ class _DescribeComplaintScreenState extends State<DescribeComplaintScreen> {
                 text: "Submit",
                 onTap: () {
                   if (complaintController.text.isNotEmpty) {
-                    // Handle complaint submission
                     print('Complaint Submitted: ${complaintController.text}');
+                    controller.submitReport(widget.selectedOption,complaintController.text,widget.receiverId);
                     Get.back();
                   } else {
                     // Handle empty complaint

@@ -121,7 +121,7 @@ class _GroupProfileAboutScreenState extends State<GroupProfileAboutScreen> {
               _buildProfileOption(
                   title: 'Report',
                   onTap: () {
-                    Get.to(const ReportScreen());
+                    Get.to( ReportScreen(receiverId:widget.groupId,));
                   }),
               Divider(
                 color: AppColors.primaryColor.withOpacity(0.3),
