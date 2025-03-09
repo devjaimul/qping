@@ -10,10 +10,9 @@ class CreateGroupController extends GetxController {
   List<dynamic> allUsers = [];
 
 
-  Future<void> getUsersList() async {
+  Future<void> getMyFriendsList() async {
     isLoading.value = true;
-
-      final response = await ApiClient.getData(Urls.addParticipantsList);
+      final response = await ApiClient.getData(Urls.getMyFriendsList);
       if (response.statusCode == 200) {
         final data = response.body['data'];
         allUsers = data;

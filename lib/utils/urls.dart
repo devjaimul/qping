@@ -59,6 +59,8 @@ class Urls {
   static  String promoteToModerator(String groupId,userId) => '/conversation/group/$groupId/promote/$userId';
   static  String removeFromParticipantsList(String groupId,userId) => '/conversation/group/$groupId/remove/$userId';
   static const String addParticipantsList = '/users';
+  static const String getMyFriendsList = '/conversation/friends';
+
   static const String createGroup = '/conversation';
   static  String leaveGroup(String groupId) => '/conversation/group/$groupId/leave';
   static  String addUserToGroup (String userId)=> '/conversation/group/$userId';

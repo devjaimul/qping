@@ -30,7 +30,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   @override
   void initState() {
     super.initState();
-    _controller.getUsersList();
+    _controller.getMyFriendsList();
   }
 
   void _toggleSelection(dynamic friend) {

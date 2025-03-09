@@ -34,6 +34,7 @@ class _MessageChatScreenState extends State<MessageChatScreen> {
   final MessageChatController _chatController = Get.put(MessageChatController());
   final TextEditingController _messageController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
+  final ScrollController _scrollController = ScrollController();
   String? userId;
 
   @override
@@ -41,10 +42,19 @@ class _MessageChatScreenState extends State<MessageChatScreen> {
     super.initState();
     _chatController.isInInbox.value = false;
     _getUserIdAndFetchMessages();
+
+    // Add the scroll listener
+    _scrollController.addListener(() {
+      if (!_chatController.isLoadingMessages.value &&
+          _scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 100) {
+        _chatController.fetchChatMessages(widget.conversationId);
+      }
+    });
   }
 
   @override
   void dispose() {
+    _scrollController.dispose();
     _chatController.isInInbox.value = true;
     super.dispose();
   }
@@ -131,6 +141,7 @@ class _MessageChatScreenState extends State<MessageChatScreen> {
             Expanded(
               child: Obx(
                     () => ListView.builder(
+                      controller: _scrollController,
                   itemCount: _chatController.messages.length,
                   reverse: true,
                   padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
@@ -145,6 +156,7 @@ class _MessageChatScreenState extends State<MessageChatScreen> {
                             : CrossAxisAlignment.start,
                         children: [
                           // Bubble: text or image
+
                           if (message['type'] == 'text')
                             BubbleNormal(
                               text: message['content'],
