@@ -103,7 +103,7 @@ class _GroupProfileAboutScreenState extends State<GroupProfileAboutScreen> {
               ),
 
               _buildProfileOption(
-                  title: 'Participants',
+                  title: 'Members',
                   onTap: () {
                     Get.to(()=> ParticipantsListScreen(groupId: widget.groupId,));
                   }),
@@ -111,7 +111,7 @@ class _GroupProfileAboutScreenState extends State<GroupProfileAboutScreen> {
                 color: AppColors.primaryColor.withOpacity(0.3),
               ),
               _buildProfileOption(
-                  title: 'Add Participants',
+                  title: 'Add Members',
                   onTap: () {
                     Get.to(()=>  CreateGroupScreen(addParticipants: true,groupId:widget.groupId,));
                   }),
@@ -166,7 +166,7 @@ class _GroupProfileAboutScreenState extends State<GroupProfileAboutScreen> {
                     showDialog(
                       context: context,
                       builder: (context) => CustomDialog(
-                        title: 'Are you sure you want to Leave this Group?',
+                        title: 'Are you sure you want to leave this group?',
                         confirmButtonText: "Yes, Leave",
                         confirmButtonColor: AppColors.primaryColor,
                         onCancel: () {

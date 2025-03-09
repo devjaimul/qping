@@ -108,7 +108,7 @@ class _MessageRequestScreenState extends State<MessageRequestScreen> {
       }
 
       return itemCount == 0
-          ? Center(child: CustomTextOne(text: "No Message Available!!!", fontSize: 18.sp))
+          ? Center(child: CustomTextOne(text: "No Messages Available", fontSize: 18.sp))
           : ListView.separated(
         itemCount: itemCount,
         separatorBuilder: (_, __) => Divider(color: Colors.grey.shade300, thickness: 1),

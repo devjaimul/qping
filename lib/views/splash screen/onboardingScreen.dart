@@ -53,7 +53,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
                   //title
                   CustomTextTwo(
-                    text: "Connect, Play, Discover",
+                    text: "Work Smarter.\nConnect Faster.",
                     fontSize: 20.sp,
                     color: AppColors.bgColor,
                   ),

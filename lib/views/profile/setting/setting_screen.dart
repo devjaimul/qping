@@ -21,7 +21,7 @@ class SettingScreen extends StatelessWidget {
     final sizeH = MediaQuery.sizeOf(context).height;
     return Scaffold(
       appBar: AppBar(
-        title: CustomTextOne(text: "Setting",fontSize: 18.sp,color: AppColors.textColor,),
+        title: CustomTextOne(text: "Settings",fontSize: 18.sp,color: AppColors.textColor,),
       ),
       body: Padding(
         padding: EdgeInsets.all(sizeH * .008),
@@ -66,7 +66,7 @@ class SettingScreen extends StatelessWidget {
               onTap: () {
                 Get.dialog(
                   CustomDialog(
-                    title: "Are you sure you want to Delete the Account??",
+                    title: "Are you sure you want to delete this account?",
                     confirmButtonText: "Yes",
                     cancelButtonText: "No",
                     onCancel: () {

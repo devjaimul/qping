@@ -49,7 +49,7 @@ class _DescribeComplaintScreenState extends State<DescribeComplaintScreen> {
               ),
         
               CustomTextTwo(
-                  text: 'Help us understanding what’s happening',
+                  text: 'Help us understand what’s happening',
                   fontSize: 14.sp,
                   color: Colors.black
               ),
@@ -77,11 +77,11 @@ class _DescribeComplaintScreenState extends State<DescribeComplaintScreen> {
                 ),
               ),
               SizedBox(height: 10.h),
-              const CustomTextTwo(text: 'Describe your Complaint'),
+              const CustomTextTwo(text: 'Describe the issue'),
               // Complaint Text Field
               CustomTextField(
                 controller: complaintController,
-                hintText: "Type Your message...",
+                hintText: "Type your message...",
                 maxLine: 5,
                 borderRadio: 12,
                 filColor: Colors.transparent,

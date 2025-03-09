@@ -57,7 +57,8 @@ class GroupMessageChatScreenController extends GetxController {
             // Distinguish text vs image
             'type': (msg['attachments'] != null && (msg['attachments'] as List).isNotEmpty)
                 ? 'image'
-                : 'text',
+                : msg['type'],
+
 
             // Actual content
             'content': (msg['attachments'] != null && (msg['attachments'] as List).isNotEmpty)

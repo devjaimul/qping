@@ -116,78 +116,81 @@ class _GroupMessageChatScreenState extends State<GroupMessageChatScreen> {
                   reverse: true,
                   padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                   itemCount: _controller.messages.length,
-                  itemBuilder: (context, index) {
-                    final message = _controller.messages[index];
+                      itemBuilder: (context, index) {
+                        final message = _controller.messages[index];
 
-                    return GestureDetector(
-                      onDoubleTap: () => _showReactionPicker(index),
-                      child: Column(
-                        crossAxisAlignment: message['isSentByMe']
-                            ? CrossAxisAlignment.end
-                            : CrossAxisAlignment.start,
-                        children: [
-                          // Show avatar + name if not me
-                          if (!message['isSentByMe'])
-                            Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 15.r,
-                                  backgroundImage: (message['profilePicture'] != null)
-                                      ? NetworkImage(
-                                      "${ApiConstants.imageBaseUrl}/${message['profilePicture']}")
-                                      : null,
-                                ),
-                                SizedBox(width: 5.w),
-                                CustomTextOne(
-                                  text: message['senderName'] ?? "Unknown",
-                                  fontSize: 12.sp,
-                                  color: Colors.black,
-                                ),
-                              ],
-                            ),
-
-                          // Bubble (text or image)
-                          if (message['type'] == 'text')
-                            BubbleNormal(
-                              text: message['content'],
-                              isSender: message['isSentByMe'],
-                              color: message['isSentByMe']
-                                  ? AppColors.primaryColor
-                                  : AppColors.chatSecondColor,
-                              tail: true,
-                              textStyle: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16.sp,
+                        // If the message type is "added" or "removed", show it centered.
+                        if (message['type'] == 'added' || message['type'] == 'removed') {
+                          return Center(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+                              margin: EdgeInsets.symmetric(vertical: 10.h),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade200,
+                                borderRadius: BorderRadius.circular(10.r),
                               ),
-                            )
-                          else if (message['type'] == 'image')
-                            _buildImageBubble(message, index),
-
-                          // Reaction row
-                          if (message['reactions'] != null &&
-                              message['reactions'].isNotEmpty)
-                            Padding(
-                              padding: EdgeInsets.only(top: 4.h),
-                              child: _buildReactionRow(
-                                message['reactions'] as Map<String, dynamic>,
+                              child: Text(
+                                message['content'],
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 14.sp, color: Colors.black54),
                               ),
                             ),
+                          );
+                        }
 
-                          // Timestamp
-                          SizedBox(height: 5.h),
-                          Text(
-                            message['time'],
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 12.sp,
-                            ),
+
+                        // Otherwise, use the regular message bubble layout.
+                        return GestureDetector(
+                          onDoubleTap: () => _showReactionPicker(index),
+                          child: Column(
+                            crossAxisAlignment: message['isSentByMe']
+                                ? CrossAxisAlignment.end
+                                : CrossAxisAlignment.start,
+                            children: [
+                              if (!message['isSentByMe'])
+                                Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 15.r,
+                                      backgroundImage: message['profilePicture'] != null
+                                          ? NetworkImage("${ApiConstants.imageBaseUrl}/${message['profilePicture']}")
+                                          : null,
+                                    ),
+                                    SizedBox(width: 5.w),
+                                    CustomTextOne(
+                                      text: message['senderName'] ?? "Unknown",
+                                      fontSize: 12.sp,
+                                      color: Colors.black,
+                                    ),
+                                  ],
+                                ),
+                              if (message['type'] == 'text')
+                                BubbleNormal(
+                                  text: message['content'],
+                                  isSender: message['isSentByMe'],
+                                  color: message['isSentByMe'] ? AppColors.primaryColor : AppColors.chatSecondColor,
+                                  tail: true,
+                                  textStyle: TextStyle(color: Colors.white, fontSize: 16.sp),
+                                )
+                              else if (message['type'] == 'image')
+                                _buildImageBubble(message, index),
+                              if (message['reactions'] != null && message['reactions'].isNotEmpty)
+                                Padding(
+                                  padding: EdgeInsets.only(top: 4.h),
+                                  child: _buildReactionRow(message['reactions'] as Map<String, dynamic>),
+                                ),
+                              SizedBox(height: 5.h),
+                              Text(
+                                message['time'],
+                                style: TextStyle(color: Colors.grey, fontSize: 12.sp),
+                              ),
+                              SizedBox(height: 10.h),
+                            ],
                           ),
-                          SizedBox(height: 10.h),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                        );
+                      },
+
+                    ),
               ),
             ),
 

@@ -53,10 +53,10 @@ class CustomNavBarState extends State<CustomNavBar> {
         actions: [
           IconButton(onPressed: (){
             Get.to(()=>MessageRequestScreen());
-          }, icon: Badge(label: const Text("2"), child: Icon(Icons.message_outlined,size: 22.h,),)),
+          }, icon: Icon(Icons.message_outlined,size: 22.h,)),
           IconButton(onPressed: (){
             Get.to(()=> const NotificationScreen());
-          }, icon: Badge(label: const Text("2"), child: Icon(Icons.notifications_none_outlined,size: 22.h,),))
+          }, icon: Icon(Icons.notifications_none_outlined,size: 22.h,))
         ],
       ),
       body: Center(

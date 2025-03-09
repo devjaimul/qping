@@ -48,7 +48,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     return Scaffold(
       appBar: AppBar(
         title: CustomTextOne(
-          text: widget.addParticipants == true ? "Add Participants" : "Create Group",
+          text: widget.addParticipants == true ? "Add Members" : "Create Group",
           fontSize: 18.sp,
           color: AppColors.textColor,
         ),

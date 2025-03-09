@@ -147,12 +147,12 @@ class RegistrationScreen extends StatelessWidget {
                       child: Text("Emory University"),
                     ),
                     const PopupMenuItem<String>(
-                      value: "Harvard University",
-                      child: Text("Harvard University"),
+                      value: "Georgia Institute of Technology",
+                      child: Text("Georgia Institute of Technology"),
                     ),
                     const PopupMenuItem<String>(
-                      value: "Stanford University",
-                      child: Text("Stanford University"),
+                      value: "Georgia State University",
+                      child: Text("Georgia State University"),
                     ),
                   ],
                 ),
