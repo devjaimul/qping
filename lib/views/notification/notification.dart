@@ -69,7 +69,7 @@ class NotificationScreen extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16.r),
                             ),
-                            color: index == 0 ? AppColors.primaryColor : Colors.transparent,
+                            color: Colors.transparent,
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 2.w),
                               child: ListTile(
@@ -77,17 +77,17 @@ class NotificationScreen extends StatelessWidget {
                                   height: 40.h,
                                   width: 40.w,
                                   decoration: BoxDecoration(
-                                    color: index == 0 ? AppColors.bgColor : AppColors.primaryColor.withOpacity(0.4),
+                                    color:  AppColors.primaryColor.withOpacity(0.4),
                                     shape: BoxShape.circle,
                                   ),
                                   child: Icon(
                                     Icons.notifications_none,
-                                    color: index == 0 ? AppColors.primaryColor : Colors.white,
+                                    color:Colors.white,
                                   ),
                                 ),
                                 title: CustomTextOne(
                                   text: "Notification",
-                                  color: index == 0 ? Colors.white : Colors.black,
+                                  color:  Colors.black,
                                   fontSize: 14.sp,
                                   maxLine: 1,
                                   textOverflow: TextOverflow.ellipsis,
@@ -98,7 +98,7 @@ class NotificationScreen extends StatelessWidget {
                                   children: [
                                     CustomTextOne(
                                       text: notification['message']??"",
-                                      color: index == 0 ? Colors.white : AppColors.textColor,
+                                      color:  AppColors.textColor,
                                       fontSize: 12.sp,
                                       maxLine: 3,
                                       textOverflow: TextOverflow.ellipsis,
@@ -108,7 +108,7 @@ class NotificationScreen extends StatelessWidget {
                                       children: [
                                         CustomTextOne(
                                           text: formattedDate,
-                                          color: index == 0 ? Colors.white : Colors.black,
+                                          color:  Colors.black,
                                           fontSize: 12.sp,
                                           maxLine: 1,
                                           textOverflow: TextOverflow.ellipsis,
@@ -116,7 +116,7 @@ class NotificationScreen extends StatelessWidget {
                                         SizedBox(width: 5.w),
                                         CustomTextOne(
                                           text: formattedTime,
-                                          color: index == 0 ? Colors.white : Colors.black,
+                                          color:  Colors.black,
                                           fontSize: 12.sp,
                                           maxLine: 1,
                                           textOverflow: TextOverflow.ellipsis,
