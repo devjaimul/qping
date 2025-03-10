@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "357166640950",
+    "project_id": "shaznova",
+    "storage_bucket": "shaznova.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:357166640950:android:1d200ba9d7dc07ff714d97",
+        "android_client_info": {
+          "package_name": "com.example.qping"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBy5XaduVBzuWhveDZZY8mYPAkekk89f6c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
