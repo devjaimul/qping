@@ -89,103 +89,127 @@ class EventScreen extends StatelessWidget {
             }
 
             // Display events
-            return ListView.builder(
-              controller: scrollController,
-              itemCount: controller.events.length + (controller.isLoading.value ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (controller.isLoading.value && index == controller.events.length) {
-                  return Padding(
-                    padding: EdgeInsets.all(16.r),
-                    child: const Center(child: CircularProgressIndicator()),
-                  );
-                }
+            return Column(
+              children: [
+                /// Title Row
+                Row(
+                  children: [
+                    // Example emoji or icon
+                    Text(
+                      "✨",
+                      style: TextStyle(fontSize: 20.sp),
+                    ),
+                    SizedBox(width: 8.w),
+                    CustomTextOne(
+                      text: "Events",
+                      fontSize: 18.sp,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10.h,),
+                Expanded(
+                  child: ListView.builder(
+                    controller: scrollController,
+                    itemCount: controller.events.length + (controller.isLoading.value ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (controller.isLoading.value && index == controller.events.length) {
+                        return Padding(
+                          padding: EdgeInsets.all(16.r),
+                          child: const Center(child: CircularProgressIndicator()),
+                        );
+                      }
 
-                var event = controller.events[index];
+                      var event = controller.events[index];
 
-                // Format eventDate and eventTime
-                String formattedDate = "No Date";
-                String formattedTime = "No Time";
-                if (event['eventDate'] != null) {
-                  DateTime eventDate = DateTime.parse(event['eventDate']);
-                  formattedDate = DateFormat('dd MMM yyyy').format(eventDate);
-                }
+                      // Format eventDate and eventTime
+                      String formattedDate = "No Date";
+                      String formattedTime = "No Time";
+                      if (event['eventDate'] != null) {
+                        DateTime eventDate = DateTime.parse(event['eventDate']);
+                        formattedDate = DateFormat('dd MMM yyyy').format(eventDate);
+                      }
 
-                if (event['eventTime'] != null) {
-                  formattedTime = event['eventTime'];
-                }
-                GlobalKey iconKey = GlobalKey();
-                return Card(
-                  color: Colors.white,
-                  child: Padding(
-                    padding: EdgeInsets.all(15.r),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 5.h,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Row(
+                      if (event['eventTime'] != null) {
+                        formattedTime = event['eventTime'];
+                      }
+                      GlobalKey iconKey = GlobalKey();
+                      return Card(
+                        color: Colors.white,
+                        child: Padding(
+                          padding: EdgeInsets.all(15.r),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            spacing: 5.h,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  CustomTextOne(
-                                    text: event['eventName'] ?? 'No name',
-                                    fontSize: 16.sp,
-                                    textAlign: TextAlign.start,
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        CustomTextOne(
+                                          text: event['eventName'] ?? 'No name',
+                                          fontSize: 16.sp,
+                                          textAlign: TextAlign.start,
+                                        ),
+                                        event['isMyEvent'] == true?Icon(Icons.person,size: 18.h,):const SizedBox.shrink()
+                                      ],
+                                    ),
                                   ),
-                                  event['isMyEvent'] == true?Icon(Icons.person,size: 18.h,):const SizedBox.shrink()
+                                  // Show options only if this is the user's event
+                                  if (event['isMyEvent'] == true)
+                                    IconButton(
+                                      key: iconKey, // Set the key for the IconButton
+                                      icon: const Icon(Icons.more_vert_outlined),
+                                      onPressed: () {
+                                        _showPopupMenu(context, event, iconKey);  // Pass the key along with event data
+                                      },
+                                    ),
                                 ],
                               ),
-                            ),
-                            // Show options only if this is the user's event
-                            if (event['isMyEvent'] == true)
-                              IconButton(
-                                key: iconKey, // Set the key for the IconButton
-                                icon: const Icon(Icons.more_vert_outlined),
-                                onPressed: () {
-                                  _showPopupMenu(context, event, iconKey);  // Pass the key along with event data
-                                },
+                              CustomTextTwo(
+                                text: "Date: $formattedDate",
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.bold,
                               ),
-                          ],
+                              CustomTextTwo(
+                                text: "Time: $formattedTime",
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              CustomTextTwo(
+                                text: "Location: ${event['eventLocation'] ?? '--'}",
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              ReadMoreText(
+                                "Description: ${event['eventDescription'] ?? 'No description'}",
+                                trimLines: 3,
+                                trimMode: TrimMode.Line,
+                                trimCollapsedText: "show more",
+                                moreStyle: const TextStyle(color: AppColors.primaryColor),
+                                style: TextStyle(color: AppColors.textColor, fontSize: 14.sp),
+                                trimExpandedText: "show less",
+                                colorClickableText: AppColors.primaryColor,
+                              ),
+                              CustomTextButton(
+                                text: "Join",
+                                onTap: () {
+                                  controller.joinEvent(event['_id']);
+                                },
+                                fontSize: 14.sp,
+                                padding: 4.r,
+                              ),
+                            ],
+                          ),
                         ),
-                        CustomTextTwo(
-                          text: "Date: $formattedDate",
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        CustomTextTwo(
-                          text: "Time: $formattedTime",
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        CustomTextTwo(
-                          text: "Location: ${event['eventLocation'] ?? '--'}",
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        ReadMoreText(
-                          "Description: ${event['eventDescription'] ?? 'No description'}",
-                          trimLines: 3,
-                          trimMode: TrimMode.Line,
-                          trimCollapsedText: "show more",
-                          moreStyle: const TextStyle(color: AppColors.primaryColor),
-                          style: TextStyle(color: AppColors.textColor, fontSize: 14.sp),
-                          trimExpandedText: "show less",
-                          colorClickableText: AppColors.primaryColor,
-                        ),
-                        CustomTextButton(
-                          text: "Join",
-                          onTap: () {
-                            controller.joinEvent(event['_id']);
-                          },
-                          fontSize: 14.sp,
-                          padding: 4.r,
-                        ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
-                );
-              },
+                ),
+              ],
             );
           }),
         ),

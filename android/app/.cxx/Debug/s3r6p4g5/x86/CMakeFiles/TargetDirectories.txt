@@ -1,0 +1,2 @@
+/Users/akik/StudioProjects/qping/android/app/.cxx/Debug/s3r6p4g5/x86/CMakeFiles/edit_cache.dir
+/Users/akik/StudioProjects/qping/android/app/.cxx/Debug/s3r6p4g5/x86/CMakeFiles/rebuild_cache.dir
