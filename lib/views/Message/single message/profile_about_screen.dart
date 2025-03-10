@@ -72,34 +72,34 @@ class _ProfileAboutScreenState extends State<ProfileAboutScreen> {
                   onTap: () {
                     Get.to( ReportScreen(receiverId: widget.conversationId,));
                   }),
-              Divider(
-                color: AppColors.primaryColor.withOpacity(0.3),
-              ),
-
-              _buildProfileOption(
-                  title: 'Block',
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => CustomDialog(
-                        title: 'Are you sure you want to block this Account?',
-                        confirmButtonText: "Yes, Block",
-                        confirmButtonColor: AppColors.primaryColor,
-                        onCancel: () {
-                          Get.back();
-                        },
-                        onConfirm: () {
-                          Get.back();
-                          Get.back();
-                        },
-                      ),
-                    );
-                  },
-                  color: Colors.red.withOpacity(
-                    0.2,
-                  ),
-                  textColor: Colors.red,
-                  noIcon: true),
+              // Divider(
+              //   color: AppColors.primaryColor.withOpacity(0.3),
+              // ),
+              //
+              // _buildProfileOption(
+              //     title: 'Block',
+              //     onTap: () {
+              //       showDialog(
+              //         context: context,
+              //         builder: (context) => CustomDialog(
+              //           title: 'Are you sure you want to block this Account?',
+              //           confirmButtonText: "Yes, Block",
+              //           confirmButtonColor: AppColors.primaryColor,
+              //           onCancel: () {
+              //             Get.back();
+              //           },
+              //           onConfirm: () {
+              //             Get.back();
+              //             Get.back();
+              //           },
+              //         ),
+              //       );
+              //     },
+              //     color: Colors.red.withOpacity(
+              //       0.2,
+              //     ),
+              //     textColor: Colors.red,
+              //     noIcon: true),
               Divider(
                 color: AppColors.primaryColor.withOpacity(0.3),
               ),

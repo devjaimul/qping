@@ -18,6 +18,8 @@ import 'package:qping/utils/app_images.dart';
 import 'package:qping/views/profile/profile_information.dart';
 import 'package:qping/views/profile/setting/setting_screen.dart';
 
+import 'support_screen.dart';
+
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -105,6 +107,18 @@ class ProfileScreen extends StatelessWidget {
             label: 'Settings',
             onTap: () {
               Get.to( ()=> const SettingScreen());
+            },
+          ),
+          const Divider(
+            thickness: 1,
+            indent: 40,
+            endIndent: 40,
+          ),
+          _buildProfileOption(
+            icon: Icon(Icons.support_agent,color: AppColors.primaryColor.withOpacity(0.5),size: 22.sp,),
+            label: 'Support',
+            onTap: () {
+              Get.to( ()=> const SupportScreen());
             },
           ),
           const Divider(

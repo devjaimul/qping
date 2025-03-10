@@ -67,4 +67,29 @@ class ProfileController extends GetxController {
       isLoading.value = false;
     }
   }
+
+
+
+  Future<void> submitSupport(description,userId) async {
+    isLoading.value = true;
+
+
+
+    final body = {
+      "description": description,
+      "userID": userId,
+    };
+
+
+    // Call the POST API using your ApiClient.
+    final response = await ApiClient.postData(Urls.support, body);
+    isLoading.value = false;
+
+    if (response.statusCode == 200) {
+      Get.snackbar("Success", response.body['message']);
+      Get.offAllNamed(AppRoutes.customNavBar);
+    } else {
+      Get.snackbar("!!!", response.statusText ?? "Failed to submit report");
+    }
+  }
 }

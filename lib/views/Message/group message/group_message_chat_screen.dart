@@ -10,6 +10,7 @@ import 'package:qping/Controller/message/group%20message/group_message_chat_scre
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_button.dart';
 import 'package:qping/helpers/prefs_helper.dart';
+import 'package:qping/routes/app_routes.dart';
 import 'package:qping/services/api_constants.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_constant.dart';
@@ -247,7 +248,7 @@ class _GroupMessageChatScreenState extends State<GroupMessageChatScreen> {
                 padding:  EdgeInsets.all(8.r),
                 child: CustomTextButton(text: "Join", onTap: (){
                   controller.joinGroup(widget.groupId);
-                  Get.back();
+                  Get.offAllNamed(AppRoutes.customNavBar);
                 }),
               );
             }):Padding(

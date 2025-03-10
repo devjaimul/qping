@@ -32,6 +32,7 @@ class Urls {
   static const String sendImage = '/messages';
   static  String getAllMedia(String page,limit,conversationId,type) => '/chat/media/$conversationId?page=$page&limit=$limit&types=$type';
   static const String report = '/report';
+  static const String support = '/report';
 
   //individual message
   static  String createChat(String userId) => '/chat?participant=$userId';
