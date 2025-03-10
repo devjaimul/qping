@@ -27,7 +27,6 @@ class GroupProfileAboutScreen extends StatefulWidget {
 class _GroupProfileAboutScreenState extends State<GroupProfileAboutScreen> {
   final GroupProfileAboutController controller = Get.put(GroupProfileAboutController());
 
-  bool isSwitched = false;
   // Link to share
   late final String _shareLink;
 @override
@@ -76,23 +75,7 @@ class _GroupProfileAboutScreenState extends State<GroupProfileAboutScreen> {
                 textOverflow: TextOverflow.ellipsis,
               ),
               SizedBox(height: 80.h),
-              _buildProfileOption(
-                title: 'Enable Notifications',
-                onTap: () {
-                },
-                toogle: true,
-                noIcon: true,
-                switchValue: isSwitched,
-                onSwitchChanged: (value) {
-                  setState(() {
-                    isSwitched = value; // Update the state when toggled
-                  });
-                },
-              ),
 
-              Divider(
-                color: AppColors.primaryColor.withOpacity(0.3),
-              ),
               _buildProfileOption(
                   title: 'Media',
                   onTap: () {
