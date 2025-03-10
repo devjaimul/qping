@@ -75,5 +75,11 @@
     <array>
         <string>dev.flutter.background.refresh</string>
     </array>
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+      <string>UIInterfaceOrientationPortrait</string>
+      <string>UIInterfaceOrientationPortraitUpsideDown</string> <!-- Optional -->
+    </array>
+
 </dict>
 </plist>

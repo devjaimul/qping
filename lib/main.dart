@@ -1,10 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart' show FirebaseMessaging, RemoteMessage, RemoteNotification;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:qping/routes/app_routes.dart' show AppRoutes;
+import 'package:qping/services/internet/connectivity.dart';
+import 'package:qping/services/internet/no_internet_wrapper.dart';
 import 'package:qping/services/socket_services.dart';
 import 'package:qping/themes/light_theme.dart' show light;
 import 'Controller/controller_bindings.dart';
@@ -33,7 +36,13 @@ void main() async {
     Get.toNamed(AppRoutes.customNavBar);  // Navigate to a screen
   });
 
-  runApp(const MyApp());
+  Get.put(ConnectivityController());
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown, // Optional: allow upside-down portrait
+  ]).then((_) {
+    runApp(MyApp());
+  });;
 }
 
 // Initialize local notifications
@@ -95,7 +104,7 @@ class MyApp extends StatelessWidget {
           initialRoute: AppRoutes.splashScreen,
           initialBinding: ControllerBindings(),
           builder: (context, child) {
-            return child!;
+            return NoInternetWrapper(child: child!);
           },
         );
       },
