@@ -1,17 +1,81 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart' show FirebaseMessaging, RemoteMessage, RemoteNotification;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:qping/Controller/controller_bindings.dart';
-import 'routes/app_routes.dart';
-import 'services/socket_services.dart';
-import 'themes/light_theme.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:qping/routes/app_routes.dart' show AppRoutes;
+import 'package:qping/services/socket_services.dart';
+import 'package:qping/themes/light_theme.dart' show light;
+import 'Controller/controller_bindings.dart';
+import 'firebase_options.dart';  // Add your firebase options file
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SocketServices.init();
+  await Firebase.initializeApp();
+  await _initializeNotifications();  // Initialize local notifications
+  SocketServices.init();  // If needed for socket setup
+
+  // Register the Firebase messaging onMessage listener for receiving notifications
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print("Received a message: ${message.notification?.title}");
+    if (message.notification != null) {
+      _showNotification(message.notification!);
+    }
+  });
+
+  // Handle the initial notification when the app is launched from a terminated state
+  await _handleInitialMessage();
+
+  // Register onMessageOpenedApp to handle notification taps
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    print("Notification tapped: ${message.messageId}");
+    Get.toNamed(AppRoutes.customNavBar);  // Navigate to a screen
+  });
+
   runApp(const MyApp());
+}
+
+// Initialize local notifications
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+Future<void> _initializeNotifications() async {
+  const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+  final InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+}
+
+// Show the notification when in the foreground
+Future<void> _showNotification(RemoteNotification notification) async {
+  const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+    'your_channel_id',
+    'your_channel_name',
+    channelDescription: 'your_channel_description',
+    importance: Importance.max,
+    priority: Priority.high,
+    ticker: 'ticker',
+  );
+  const NotificationDetails platformChannelSpecifics = NotificationDetails(
+    android: androidPlatformChannelSpecifics,
+  );
+  await flutterLocalNotificationsPlugin.show(
+    0,
+    notification.title,
+    notification.body,
+    platformChannelSpecifics,
+  );
+}
+
+// Handle the initial notification when the app is launched from a terminated state
+Future<void> _handleInitialMessage() async {
+  RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+  if (initialMessage != null) {
+    print("App launched from notification: ${initialMessage.messageId}");
+    // Navigate to a specific screen or perform any action on app launch
+    Get.toNamed(AppRoutes.customNavBar);  // Navigate to a screen
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -31,15 +95,6 @@ class MyApp extends StatelessWidget {
           initialRoute: AppRoutes.splashScreen,
           initialBinding: ControllerBindings(),
           builder: (context, child) {
-            // Initialize local notifications
-            final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-            const InitializationSettings initializationSettings = InitializationSettings(
-              android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-              iOS: DarwinInitializationSettings(),
-            );
-
-            flutterLocalNotificationsPlugin.initialize(initializationSettings);
-
             return child!;
           },
         );

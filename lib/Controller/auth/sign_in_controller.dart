@@ -2,6 +2,7 @@ import 'package:qping/helpers/prefs_helper.dart';
 import 'package:qping/routes/app_routes.dart';
 import 'package:qping/routes/exports.dart';
 import 'package:qping/services/api_client.dart';
+import 'package:qping/services/get_fcm_token.dart';
 import 'package:qping/services/socket_services.dart';
 import 'package:qping/utils/app_constant.dart';
 import 'package:qping/utils/urls.dart';
@@ -10,11 +11,14 @@ class SignInController extends GetxController {
   final isLoading = false.obs;
 
   Future<void> login(String email, String password) async {
+    FirebaseService _firebaseService = FirebaseService();
+    String? fcmToken = await _firebaseService.getFCMToken();
     isLoading.value = true;
 
     final body = {
       "email": email,
       "password": password,
+      "fcm":fcmToken,
     };
 
     try {
