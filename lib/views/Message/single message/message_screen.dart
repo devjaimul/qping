@@ -37,7 +37,7 @@ class _MessageScreenState extends State<MessageScreen> {
       if (uri != null) {
         final String id = uri.pathSegments.last;
         Get.offAll(
-          GroupMessageChatScreen(name: "Test", img: "test", groupId: id),
+          GroupMessageChatScreen(groupId: id,isFormLink: true,),
         );
         print("Received URI: $uri");
         print("Extracted ID: $id");

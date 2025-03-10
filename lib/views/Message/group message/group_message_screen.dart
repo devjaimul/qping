@@ -196,8 +196,6 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
               ),
               onTap: () => Get.to(() => GroupMessageChatScreen(
                     groupId: chat["_id"],
-                    name: chat['name'],
-                    img:"${ApiConstants.imageBaseUrl}/${chat["avatar"]}",
                   )),
             ),
           );

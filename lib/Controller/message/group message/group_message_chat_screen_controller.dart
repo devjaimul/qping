@@ -9,6 +9,7 @@ import 'package:qping/utils/urls.dart';
 class GroupMessageChatScreenController extends GetxController {
   /// Holds the list of messages for this group
   RxList<Map<String, dynamic>> messages = <Map<String, dynamic>>[].obs;
+  RxMap<String, dynamic> groupMetadata = <String, dynamic>{}.obs;
 
   /// Pagination tracking
   RxInt currentPage = 1.obs;
@@ -51,7 +52,10 @@ class GroupMessageChatScreenController extends GetxController {
         var data = response.body['data'];
         var pagination = response.body['pagination'];
 
-        // Convert the API data into local message maps
+        var metadata = response.body['metadata'] ?? {};
+
+        groupMetadata.value = Map<String, dynamic>.from(metadata);
+      update();
         List<Map<String, dynamic>> newMessages = (data as List).map((msg) {
           return {
             // Distinguish text vs image

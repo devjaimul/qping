@@ -4,9 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
+import 'package:qping/Controller/discover/discover_controller.dart';
 
 import 'package:qping/Controller/message/group%20message/group_message_chat_screen_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
+import 'package:qping/global_widgets/custom_text_button.dart';
 import 'package:qping/helpers/prefs_helper.dart';
 import 'package:qping/services/api_constants.dart';
 import 'package:qping/utils/app_colors.dart';
@@ -16,14 +18,11 @@ import 'package:qping/views/Message/group%20message/group_profile_about_screen.d
 
 class GroupMessageChatScreen extends StatefulWidget {
   final String groupId;
-  final String name;
-  final String img;
+  final bool? isFormLink;
 
   const GroupMessageChatScreen({
     super.key,
-    required this.groupId,
-    required this.name,
-    required this.img,
+    required this.groupId, this.isFormLink,
   });
 
   @override
@@ -36,7 +35,7 @@ class _GroupMessageChatScreenState extends State<GroupMessageChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
   final ScrollController _scrollController = ScrollController();
-
+  final DiscoverScreenController controller = Get.put(DiscoverScreenController());
   @override
   void initState() {
     super.initState();
@@ -45,12 +44,12 @@ class _GroupMessageChatScreenState extends State<GroupMessageChatScreen> {
 
     // Load more messages when scrolling near top (because reverse=true)
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent - 50 &&
+      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 50 &&
           !_controller.isLoadingMessages.value) {
         _controller.fetchGroupMessages(widget.groupId);
       }
     });
+
   }
 
   @override
@@ -66,7 +65,7 @@ class _GroupMessageChatScreenState extends State<GroupMessageChatScreen> {
     }
     // Initial fetch
     await _controller.fetchGroupMessages(widget.groupId, refresh: true);
-    _controller.initSocketAndJoinGroup(widget.groupId, widget.name);
+    _controller.initSocketAndJoinGroup(widget.groupId, _controller.groupMetadata["name"]);
   }
 
   @override
@@ -78,26 +77,28 @@ class _GroupMessageChatScreenState extends State<GroupMessageChatScreen> {
             // Show group profile
             Get.to(() => GroupProfileAboutScreen(
               groupId: widget.groupId,
-              img: widget.img,
-              name: widget.name,
+              img: "${ApiConstants.imageBaseUrl}/${_controller.groupMetadata["avatar"]}",
+              name: _controller.groupMetadata["name"]??"Unknown",
             ));
           },
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: 20.r,
-                backgroundImage: NetworkImage(widget.img),
-              ),
-              SizedBox(width: 10.w),
-              CustomTextOne(
-                text: widget.name,
-                fontSize: 15.sp,
-                color: Colors.black,
-                maxLine: 1,
-                textOverflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
+          child: Obx(() {
+            return Row(
+              children: [
+                CircleAvatar(
+                  radius: 20.r,
+                  backgroundImage: NetworkImage( "${ApiConstants.imageBaseUrl}/${_controller.groupMetadata["avatar"]}"),
+                ),
+                SizedBox(width: 10.w),
+                CustomTextOne(
+                  text: _controller.groupMetadata["name"]??"Unknown",
+                  fontSize: 15.sp,
+                  color: Colors.black,
+                  maxLine: 1,
+                  textOverflow: TextOverflow.ellipsis,
+                ),
+              ],
+            );
+          },)
         ),
         centerTitle: true,
         leading: IconButton(
@@ -195,51 +196,107 @@ class _GroupMessageChatScreenState extends State<GroupMessageChatScreen> {
             ),
 
             // Input row
-            Padding(
-              padding: EdgeInsets.all(10.w),
-              child: Row(
-                children: [
-                  InkWell(
-                    onTap: _showImageSourceOptions,
-                    child: Image.asset(
-                      AppImages.attach,
-                      height: 35.h,
-                      width: 35.w,
+
+         widget.isFormLink==true?   Obx(() {
+              final isMember = _controller.groupMetadata["isMember"] ?? false;
+              return isMember ? Padding(
+                padding: EdgeInsets.all(10.w),
+                child: Row(
+                  children: [
+                    InkWell(
+                      onTap: _showImageSourceOptions,
+                      child: Image.asset(
+                        AppImages.attach,
+                        height: 35.h,
+                        width: 35.w,
+                      ),
                     ),
-                  ),
-                  SizedBox(width: 5.w),
-                  Flexible(
-                    child: TextField(
-                      controller: _messageController,
-                      decoration: InputDecoration(
-                        hintText: 'Type Your Message',
-                        hintStyle: const TextStyle(color: Colors.grey),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.r),
-                          borderSide: BorderSide(
-                            color: AppColors.primaryColor.withOpacity(0.5),
+                    SizedBox(width: 5.w),
+                    Flexible(
+                      child: TextField(
+                        controller: _messageController,
+                        decoration: InputDecoration(
+                          hintText: 'Type Your Message',
+                          hintStyle: const TextStyle(color: Colors.grey),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.r),
+                            borderSide: BorderSide(
+                              color: AppColors.primaryColor.withOpacity(0.5),
+                            ),
                           ),
-                        ),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 15.w,
-                          vertical: 10.h,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 15.w,
+                            vertical: 10.h,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      final text = _messageController.text.trim();
-                      if (text.isNotEmpty) {
-                        _controller.sendMessageToSocket(widget.groupId, text, type: 'group');
-                        _messageController.clear();
-                      }
-                    },
-                    icon: const Icon(Icons.send, color: AppColors.primaryColor),
-                  ),
-                ],
-              ),
-            ),
+                    IconButton(
+                      onPressed: () {
+                        final text = _messageController.text.trim();
+                        if (text.isNotEmpty) {
+                          _controller.sendMessageToSocket(widget.groupId, text, type: 'group');
+                          _messageController.clear();
+                        }
+                      },
+                      icon: const Icon(Icons.send, color: AppColors.primaryColor),
+                    ),
+                  ],
+                ),
+              ) : Padding(
+                padding:  EdgeInsets.all(8.r),
+                child: CustomTextButton(text: "Join", onTap: (){
+                  controller.joinGroup(widget.groupId);
+                  Get.back();
+                }),
+              );
+            }):Padding(
+           padding: EdgeInsets.all(10.w),
+           child: Row(
+             children: [
+               InkWell(
+                 onTap: _showImageSourceOptions,
+                 child: Image.asset(
+                   AppImages.attach,
+                   height: 35.h,
+                   width: 35.w,
+                 ),
+               ),
+               SizedBox(width: 5.w),
+               Flexible(
+                 child: TextField(
+                   controller: _messageController,
+                   decoration: InputDecoration(
+                     hintText: 'Type Your Message',
+                     hintStyle: const TextStyle(color: Colors.grey),
+                     border: OutlineInputBorder(
+                       borderRadius: BorderRadius.circular(20.r),
+                       borderSide: BorderSide(
+                         color: AppColors.primaryColor.withOpacity(0.5),
+                       ),
+                     ),
+                     contentPadding: EdgeInsets.symmetric(
+                       horizontal: 15.w,
+                       vertical: 10.h,
+                     ),
+                   ),
+                 ),
+               ),
+               IconButton(
+                 onPressed: () {
+                   final text = _messageController.text.trim();
+                   if (text.isNotEmpty) {
+                     _controller.sendMessageToSocket(widget.groupId, text, type: 'group');
+                     _messageController.clear();
+                   }
+                 },
+                 icon: const Icon(Icons.send, color: AppColors.primaryColor),
+               ),
+             ],
+           ),
+         )
+
+
           ],
         ),
       ),
@@ -383,7 +440,7 @@ class _GroupMessageChatScreenState extends State<GroupMessageChatScreen> {
     });
 
     if (reactionWidgets.isEmpty) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
 
     return Row(
