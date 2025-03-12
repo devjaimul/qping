@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 
 class OtpVerificationController extends GetxController {
   final isLoading = false.obs;
+  final isResendLoading = false.obs;
 
   // Verify OTP
   Future<void> verifyOtp(String otpCode, bool? isFormForget) async {
@@ -52,7 +53,7 @@ class OtpVerificationController extends GetxController {
 
   // Resend OTP
   Future<void> resendOtp(String email) async {
-    isLoading.value = true;
+    isResendLoading.value = true;
     try {
       final response = await ApiClient.postData(Urls.otpResend, {});
 
@@ -66,7 +67,7 @@ class OtpVerificationController extends GetxController {
     } catch (e) {
       Get.snackbar("!!", "An unexpected error occurred: $e");
     } finally {
-      isLoading.value = false;
+      isResendLoading.value = false;
     }
   }
 }

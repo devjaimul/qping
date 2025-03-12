@@ -52,7 +52,7 @@ class OtpVerificationScreen extends StatelessWidget {
                   const CustomTextTwo(text: "Didn’t get the code?"),
                   Obx(
                         () => StyleTextButton(
-                      text: otpController.isLoading.value ? "Resending..." : "Resend OTP",
+                      text: otpController.isResendLoading.value ? "Resending..." : "Resend OTP",
                       onTap: () {
                         otpController.resendOtp(email);
                       },
