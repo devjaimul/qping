@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qping/helpers/prefs_helper.dart';
 import 'package:qping/routes/exports.dart';
 import 'package:qping/services/api_client.dart';
+import 'package:qping/services/get_fcm_token.dart';
 import 'package:qping/utils/app_constant.dart';
 import 'package:qping/utils/urls.dart';
 
@@ -17,12 +18,14 @@ class SignUpController extends GetxController {
 
   Future<void> createAccount() async {
     isLoading.value = true;
-
+    FirebaseService _firebaseService = FirebaseService();
+    String? fcmToken = await _firebaseService.getFCMToken();
     final body = {
       "name": userNameController.text,
       "password": passwordController.text,
       "email": emailController.text,
-      "phone": selectedPhoneNumber, // Use formatted phone number
+      "phone": selectedPhoneNumber,
+      "fcm":fcmToken,
     };
 
     try {

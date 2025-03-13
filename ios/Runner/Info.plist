@@ -6,6 +6,13 @@
     <!-- Flutter specific settings -->
     <key>io.flutter.embedded_views_preview</key>
     <true/>
+<key>UIBackgroundModes</key>
+<array>
+  <string>fetch</string>
+  <string>remote-notification</string>
+</array>
+<key>FirebaseAppDelegateProxyEnabled</key>
+<false/>
 
     <!-- Bundle settings -->
     <key>CFBundleDevelopmentRegion</key>

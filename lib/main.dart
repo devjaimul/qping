@@ -1,5 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart' show FirebaseMessaging, RemoteMessage, RemoteNotification;
+import 'package:firebase_messaging/firebase_messaging.dart' show AuthorizationStatus, FirebaseMessaging, NotificationSettings, RemoteMessage, RemoteNotification;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,8 +16,9 @@ import 'firebase_options.dart';  // Add your firebase options file
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await _initializeNotifications();  // Initialize local notifications
-  SocketServices.init();  // If needed for socket setup
+  await _initializeNotifications();
+  await setupFirebaseMessaging();
+  SocketServices.init();
 
   // Register the Firebase messaging onMessage listener for receiving notifications
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -47,13 +48,67 @@ void main() async {
 
 // Initialize local notifications
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+Future<void> setupFirebaseMessaging() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  // Request notification permissions on iOS
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    print('User granted permission');
+  } else {
+    print('User declined or has not accepted permission');
+  }
+
+  // Get FCM token (for sending targeted push notifications)
+  String? token = await messaging.getToken();
+  print('FCM Token: $token');
+
+  // Listen for messages in the background
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+}
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("Handling background message: ${message.messageId}");
+}
+
 
 Future<void> _initializeNotifications() async {
-  const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+  const AndroidInitializationSettings initializationSettingsAndroid =
+  AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  final DarwinInitializationSettings initializationSettingsIOS =
+  DarwinInitializationSettings(
+    requestSoundPermission: true,
+    requestBadgePermission: true,
+    requestAlertPermission: true,
+    notificationCategories: [], // Add this if you need custom actions later
+  );
+
   final InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
+    iOS: initializationSettingsIOS,
   );
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+    onDidReceiveNotificationResponse: (NotificationResponse response) {
+      print("Notification tapped: ${response.payload}");
+      Get.toNamed(AppRoutes.customNavBar); // Handle tap navigation
+    },
+  );
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print("Received a message: ${message.notification?.title}");
+    if (message.notification != null) {
+      _showNotification(message.notification!);
+    }
+  });
 }
 
 // Show the notification when in the foreground
@@ -104,7 +159,7 @@ class MyApp extends StatelessWidget {
           initialRoute: AppRoutes.splashScreen,
           initialBinding: ControllerBindings(),
           builder: (context, child) {
-            return NoInternetWrapper(child: child!);
+            return Scaffold(body: NoInternetWrapper(child: child!));
           },
         );
       },
