@@ -43,7 +43,7 @@ class SettingScreen extends StatelessWidget {
             ),
             _buildProfileOption(
               icon: Icons.info_outline,
-              label: 'Terms & Services',
+              label: 'Terms & Conditions',
               onTap: () {
                 Get.to( const AppData(type: "terms-and-conditions",));
               },

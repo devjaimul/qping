@@ -21,7 +21,7 @@ class NotificationScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: CustomTextOne(
-          text: 'Notification',
+          text: 'Notifications',
           fontSize: 18.sp,
           color: AppColors.textColor,
         ),

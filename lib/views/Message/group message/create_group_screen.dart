@@ -133,13 +133,13 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
             )
                 : CustomTextButton(
               text: "Create Group",
-              onTap: selectedFriends.isNotEmpty ? () {
+              onTap:  () {
                 String groupName = "Group Name"; // Get from TextController
                 String groupType = "public"; // Replace with actual logic for type
                 List<String> userIds = selectedFriends.map((friend) => friend['_id'].toString()).toList();
                 showGroupDialog(context, groupName, groupType, userIds);
-              } : () {},
-              color: selectedFriends.isNotEmpty ? AppColors.primaryColor : Colors.grey,
+              } ,
+              color:  AppColors.primaryColor,
             )
           ],
         ),

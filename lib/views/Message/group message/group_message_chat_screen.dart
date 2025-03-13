@@ -143,7 +143,7 @@ class _GroupMessageChatScreenState extends State<GroupMessageChatScreen> {
 
                         // Otherwise, use the regular message bubble layout.
                         return GestureDetector(
-                          onDoubleTap: () => _showReactionPicker(index),
+                          onLongPress: () => _showReactionPicker(index),
                           child: Column(
                             crossAxisAlignment: message['isSentByMe']
                                 ? CrossAxisAlignment.end

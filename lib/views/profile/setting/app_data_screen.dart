@@ -16,15 +16,28 @@ class AppData extends StatelessWidget {
     final sizeH = MediaQuery.sizeOf(context).height;
     final SettingController settingController = Get.put(SettingController());
     settingController.fetchAppData(type);
+    String getAppTitle(String type) {
+      switch (type) {
+        case "privacy-policy":
+          return "Privacy Policy";
+        case "terms-and-conditions":
+          return "Terms & Conditions";
+        case "about-us":
+          return "About Us";
+        default:
+          return "Info";
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
-        title: CustomTextOne(
-          text: type.capitalize.toString(),
-          fontSize: 18.sp,
-          color: AppColors.textColor,
-        ),
-      ),
+        title:CustomTextOne(
+          text: getAppTitle(type),
+      fontSize: 18.sp,
+      color: AppColors.textColor,
+    ),
+
+    ),
       body: Obx(() {
         if (settingController.isLoadingAppData.value) {
           return const Center(child: CircularProgressIndicator());
@@ -34,7 +47,7 @@ class AppData extends StatelessWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           children: [
              CustomTextTwo(
-              text: 'Our ${type.capitalize}',
+              text: 'Our ${getAppTitle(type)}',
               textAlign: TextAlign.start,
             ),
             SizedBox(height: sizeH * .02),

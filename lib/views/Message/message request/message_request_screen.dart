@@ -25,7 +25,7 @@ class _MessageRequestScreenState extends State<MessageRequestScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title:  CustomTextOne(text: "Message Request",fontSize: 18.sp,),),
+      appBar: AppBar(title:  CustomTextOne(text: "Message Requests",fontSize: 18.sp,),),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
@@ -108,7 +108,7 @@ class _MessageRequestScreenState extends State<MessageRequestScreen> {
       }
 
       return itemCount == 0
-          ? Center(child: CustomTextOne(text: "No Messages Available", fontSize: 18.sp))
+          ? Center(child: CustomTextOne(text: "No Requests Available", fontSize: 18.sp))
           : ListView.separated(
         itemCount: itemCount,
         separatorBuilder: (_, __) => Divider(color: Colors.grey.shade300, thickness: 1),

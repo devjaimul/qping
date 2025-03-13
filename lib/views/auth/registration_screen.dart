@@ -173,7 +173,7 @@ class RegistrationScreen extends StatelessWidget {
                 },
                 readOnly: true,
                 controller: birthdayTEController,
-                hintText: "Birthday",
+                hintText: "Date of birth",
                 prefixIcon: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10.w),
                   child: Image.asset(

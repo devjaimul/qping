@@ -126,7 +126,7 @@ void showGroupDialog(BuildContext context, String groupName, String groupType, L
                             groupImage: groupImage != null ? File(groupImage!) : null,
                           );
                         },
-                        color: selectedFriends.isNotEmpty ? AppColors.primaryColor : Colors.grey,
+                        color:  AppColors.primaryColor,
                       )
 
                   ),

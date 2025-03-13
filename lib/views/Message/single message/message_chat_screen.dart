@@ -149,7 +149,7 @@ class _MessageChatScreenState extends State<MessageChatScreen> {
                     final message = _chatController.messages[index];
 
                     return GestureDetector(
-                      onDoubleTap:  () => _showReactionPicker(index),
+                      onLongPress:  () => _showReactionPicker(index),
                       child: Column(
                         crossAxisAlignment: message['isSentByMe']
                             ? CrossAxisAlignment.end
