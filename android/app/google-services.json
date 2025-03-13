@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "357166640950",
-    "project_id": "shaznova",
-    "storage_bucket": "shaznova.firebasestorage.app"
+    "project_number": "777000362456",
+    "project_id": "qping-1838f",
+    "storage_bucket": "qping-1838f.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:357166640950:android:1d200ba9d7dc07ff714d97",
+        "mobilesdk_app_id": "1:777000362456:android:c089feb90e46c5cac452ad",
         "android_client_info": {
           "package_name": "com.example.qping"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBy5XaduVBzuWhveDZZY8mYPAkekk89f6c"
+          "current_key": "AIzaSyDxJN89SreSCBCJzQGTRpe8xv5fdfa1Tic"
         }
       ],
       "services": {
