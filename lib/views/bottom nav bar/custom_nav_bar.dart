@@ -8,6 +8,7 @@ import 'package:qping/views/Message/message%20request/message_request_screen.dar
 import 'package:qping/views/Message/message_tab_bar_screen.dart';
 import 'package:qping/views/discover/discover_screen.dart';
 import 'package:qping/views/event/event_screen.dart';
+import 'package:qping/views/event/event_tab_bar_screen.dart';
 import 'package:qping/views/notification/notification.dart';
 import 'package:qping/views/profile/profile_screen.dart';
 
@@ -25,7 +26,7 @@ class CustomNavBarState extends State<CustomNavBar> {
   final List<Widget> _screens = [
     const MessageTabBarScreen(),
     const DiscoverScreen(),
-    const EventScreen(),
+    const EventTabBarScreen(),
     const ProfileScreen(),
   ];
   int _selectedIndex = 0;

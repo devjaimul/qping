@@ -134,7 +134,6 @@ class EventScreen extends StatelessWidget {
                       if (event['eventTime'] != null) {
                         formattedTime = event['eventTime'];
                       }
-                      GlobalKey iconKey = GlobalKey();
                       return Card(
                         color: Colors.white,
                         child: Padding(
@@ -147,26 +146,12 @@ class EventScreen extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
-                                    child: Row(
-                                      children: [
-                                        CustomTextOne(
-                                          text: event['eventName'] ?? 'No name',
-                                          fontSize: 16.sp,
-                                          textAlign: TextAlign.start,
-                                        ),
-                                        event['isMyEvent'] == true?Icon(Icons.person,size: 18.h,):const SizedBox.shrink()
-                                      ],
+                                    child:  CustomTextOne(
+                                      text: event['eventName'] ?? 'No name',
+                                      fontSize: 16.sp,
+                                      textAlign: TextAlign.start,
                                     ),
                                   ),
-                                  // Show options only if this is the user's event
-                                  if (event['isMyEvent'] == true)
-                                    IconButton(
-                                      key: iconKey, // Set the key for the IconButton
-                                      icon: const Icon(Icons.more_vert_outlined),
-                                      onPressed: () {
-                                        _showPopupMenu(context, event, iconKey);  // Pass the key along with event data
-                                      },
-                                    ),
                                 ],
                               ),
                               CustomTextTwo(
@@ -214,68 +199,8 @@ class EventScreen extends StatelessWidget {
           }),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Get.to(() => const EventCreateScreen());
-        },
-        backgroundColor: AppColors.primaryColor,
-        foregroundColor: Colors.white,
-        child: const Icon(Icons.add),
-      ),
     );
   }
 
-  // Method to show the popup menu
-  void _showPopupMenu(BuildContext context, Map<String, dynamic> event, GlobalKey iconKey) async {
-    // Find the position of the icon button using RenderBox
-    final RenderBox? renderBox = iconKey.currentContext?.findRenderObject() as RenderBox?;
-    if (renderBox != null) {
-      final position = renderBox.localToGlobal(Offset.zero);
-      final width = renderBox.size.width;
 
-      // Show the menu near the icon button
-      await showMenu(
-        context: context,
-        position: RelativeRect.fromLTRB(position.dx + width, position.dy, 0, 0), // Position right next to the icon
-        items: [
-          const PopupMenuItem(
-            value: 'edit',
-            child: Text('Edit'),
-          ),
-          const PopupMenuItem(
-            value: 'delete',
-            child: Text('Delete'),
-          ),
-        ],
-        elevation: 8.0,
-      ).then((value) {
-        if (value == 'edit') {
-          _onEditEvent(event);  // Trigger edit functionality
-        } else if (value == 'delete') {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return CustomDialog(
-                title: "Are you sure you want to delete this event?",
-                confirmButtonText: "Delete Event",
-                onCancel: () {
-                  Get.back();
-                },
-                onConfirm: () async {
-                  await EventController().deleteEvent(event['_id']);
-                  Get.back();
-                },
-              );
-            },
-          );
-        }
-      });
-    }
-  }
-
-  // Edit event function
-  void _onEditEvent(Map<String, dynamic> event) {
-
-    Get.to(() => EventCreateScreen(eventData: event, eventId: event['_id']));
-  }
 }

@@ -73,6 +73,8 @@ class Urls {
   static const String groupPoll = '/messages/poll';
   //event
   static  String getEvents (String page,limit)=> '/events?page=$page&limit=$limit';
+  static  String myEvents (String page,limit)=> '/events/me?page=$page&limit=$limit';
+  static  String joinedEvents (String page,limit)=> '/events/interest?page=$page&limit=$limit';
   static const String createEvents= '/events';
   static  String updateEvents(String eventId)=> '/events/$eventId';
   static  String deleteEvents(String eventId)=> '/events/$eventId';

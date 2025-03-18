@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:qping/Controller/event/my_events_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_button.dart';
 import 'package:qping/global_widgets/custom_text_field.dart';
@@ -11,11 +12,12 @@ import 'package:qping/Controller/event/event_controller.dart';
 class EventCreateScreen extends StatelessWidget {
   final String? eventId;
   final Map<String, dynamic>? eventData;  // Optional parameter for editing an event
+
   const EventCreateScreen({super.key, this.eventData, this.eventId});
 
   @override
   Widget build(BuildContext context) {
-    final EventController controller = Get.put(EventController());
+    final MyEventController controller = Get.put(MyEventController());
 
     // Controllers for form fields
     TextEditingController titleTEController = TextEditingController();
@@ -26,11 +28,19 @@ class EventCreateScreen extends StatelessWidget {
 
     // If eventData is provided, pre-fill the form
     if (eventData != null) {
-      titleTEController.text = eventData!['eventName'] ?? '';
+      titleTEController.text = eventData!['eventName'] ?? ''; // Use an empty string if null
 
-      // Parse eventDate string and format
-      DateTime eventDate = DateFormat('yyyy-MM-dd').parse(eventData!['eventDate']);
-      dateTEController.text = DateFormat('dd MMM yyyy').format(eventDate);  // Format as dd MMM yyyy
+      // Ensure date is parsed correctly
+      if (eventData!['eventDate'] != null) {
+        try {
+          // Check if eventDate is a valid string before parsing
+          DateTime eventDate = DateFormat('yyyy-MM-dd').parse(eventData!['eventDate']);
+          dateTEController.text = DateFormat('dd MMM yyyy').format(eventDate);  // Format as dd MMM yyyy
+        } catch (e) {
+          // If parsing fails, use a fallback date
+          dateTEController.text = "Invalid Date";
+        }
+      }
 
       timeTEController.text = eventData!['eventTime'] ?? '';
       locationTEController.text = eventData!['eventLocation'] ?? '';
@@ -52,7 +62,8 @@ class EventCreateScreen extends StatelessWidget {
         dateTEController.text = '${selectedDate.toLocal()}'.split(' ')[0]; // Format date
       }
     }
-// Time Picker Function forcing 12-hour mode
+
+    // Time Picker Function forcing 12-hour mode
     Future<void> _selectTime(BuildContext context) async {
       TimeOfDay? selectedTime = await showTimePicker(
         context: context,
@@ -69,14 +80,12 @@ class EventCreateScreen extends StatelessWidget {
         },
       );
       if (selectedTime != null) {
-
         final now = DateTime.now();
         final dt = DateTime(now.year, now.month, now.day, selectedTime.hour, selectedTime.minute);
         final formattedTime = DateFormat('hh:mm a').format(dt);
         timeTEController.text = formattedTime;
       }
     }
-
 
     return Scaffold(
       appBar: AppBar(
@@ -214,3 +223,4 @@ class EventCreateScreen extends StatelessWidget {
     );
   }
 }
+
