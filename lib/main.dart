@@ -64,6 +64,7 @@ Future<void> setupFirebaseMessaging() async {
     print('User declined or has not accepted permission');
   }
 
+
   // Get FCM token (for sending targeted push notifications)
   String? token = await messaging.getToken();
   print('FCM Token: $token');
