@@ -22,6 +22,7 @@ class DefaultFirebaseOptions {
             'you can reconfigure this by running the FlutterFire CLI again.',
       );
     }
+
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
