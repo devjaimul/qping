@@ -2,20 +2,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:qping/Controller/profile/setting_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/dialog.dart';
+import 'package:qping/helpers/prefs_helper.dart';
 import 'package:qping/routes/app_routes.dart';
 import 'package:qping/utils/app_colors.dart';
+import 'package:qping/utils/app_constant.dart';
 import 'package:qping/views/profile/setting/app_data_screen.dart';
 import 'package:qping/views/profile/setting/change%20password/change_password.dart';
 
 
 
 
-class SettingScreen extends StatelessWidget {
+class SettingScreen extends StatefulWidget {
 
   const SettingScreen({super.key,});
 
+  @override
+  State<SettingScreen> createState() => _SettingScreenState();
+}
+
+class _SettingScreenState extends State<SettingScreen> {
+  final SettingController settingController = Get.put(SettingController());
+  String? userId;
+  void getUserId()async{
+    userId = await PrefsHelper.getString(AppConstants.userId);
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getUserId();
+  }
   @override
   Widget build(BuildContext context) {
     final sizeH = MediaQuery.sizeOf(context).height;
@@ -73,7 +92,7 @@ class SettingScreen extends StatelessWidget {
                       Get.back();
                     },
                     onConfirm: () {
-                      Get.offAllNamed(AppRoutes.signInScreen);
+                      settingController.deleteUser(userId.toString());
                     },
                   ),
                 );

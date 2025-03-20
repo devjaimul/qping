@@ -12,7 +12,7 @@ class Urls {
   static const String changePass = '/user/change-password';
   static const String newChangePass = '/auth/password/reset';
   static String updateUser(String userId) => '/users/$userId';
-  static String deleteUser(String userId) => '/user/delete?id=$userId';
+  static String deleteUser(String userId) => '/users/$userId';
   static String resetPass(String email) => '/user/reset-password?email=$email';
 
 

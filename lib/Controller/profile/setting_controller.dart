@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:qping/routes/app_routes.dart';
 import 'package:qping/services/api_client.dart';
 import 'package:qping/utils/urls.dart';
 
@@ -21,6 +22,19 @@ class SettingController extends GetxController {
       Get.snackbar("Error", "An unexpected error occurred: $e");
     } finally {
       isLoadingAppData.value = false;
+    }
+  }
+
+  Future<void> deleteUser(String userId) async {
+
+    final response = await ApiClient.deleteData(Urls.deleteUser(userId));
+
+    if (response.statusCode == 200) {
+      Get.snackbar("Success", "Account deleted successfully!");
+      Get.offAllNamed(AppRoutes.signInScreen);
+
+    } else {
+      print('Error deleting event: ${response.statusText}');
     }
   }
 }
