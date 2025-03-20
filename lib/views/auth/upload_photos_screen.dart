@@ -1,8 +1,6 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:qping/Controller/auth/upload_profile_photo_controller.dart';
@@ -10,9 +8,11 @@ import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_button.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_images.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class UploadPhotosScreen extends StatefulWidget {
-  const UploadPhotosScreen({super.key});
+  final String? img;  // Accept img parameter to pass existing image (URL)
+  const UploadPhotosScreen({super.key, this.img});
 
   @override
   State<UploadPhotosScreen> createState() => _UploadPhotosScreenState();
@@ -24,7 +24,7 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
   String? _selectedAvatar;
   final UploadProfilePhotoController photoController = Get.put(UploadProfilePhotoController());
 
-  // Predefined avatar options (now using SVG asset paths)
+  // Predefined avatar options (using PNG asset paths)
   final List<String> _avatars = [
     AppImages.avater0,
     AppImages.avater1,
@@ -34,20 +34,33 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
     AppImages.avater5,
   ];
 
+  // Keep track of the network image or avatar selected
+  String? _networkImage;
+
   Future<void> _pickImage() async {
     try {
-      // Temporarily disable the button while picking an image
       final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-
       if (pickedFile != null) {
         setState(() {
-          _image = pickedFile; // Set the selected image
+          _image = pickedFile;
           _selectedAvatar = null; // Clear avatar selection
+          _networkImage = null;   // Clear network image if user selects a new image
         });
       }
     } catch (e) {
-      // Handle any errors (e.g., user denied permission)
       Get.snackbar("Error", "Failed to pick an image: $e");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Set the passed image (if any) to be the initial image
+    if (widget.img != null && widget.img!.isNotEmpty) {
+      setState(() {
+        _networkImage = widget.img;
+      });
     }
   }
 
@@ -81,17 +94,31 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
                       color: AppColors.textFieldFillColor,
                       borderRadius: const BorderRadius.all(Radius.circular(16)),
                     ),
-                    // Show the image: if a file is selected, display that; otherwise show the selected SVG avatar.
                     child: _image != null
                         ? Image.file(
                       File(_image!.path),
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
+                      width: double.infinity,
+                      height: double.infinity,
+                    )
+                        : _networkImage != null && _networkImage!.isNotEmpty
+                        ? CachedNetworkImage(
+                      imageUrl: _networkImage!,
+                      fit: BoxFit.contain,
+                      width: double.infinity,
+                      height: double.infinity,
+                      placeholder: (context, url) =>
+                          Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) =>
+                          Icon(Icons.error),
                     )
                         : _selectedAvatar != null
                         ? Center(
-                      child: SvgPicture.asset(
+                      child: Image.asset(
                         _selectedAvatar!,
                         fit: BoxFit.contain,
+                        width: 150.w,
+                        height: 150.h,
                       ),
                     )
                         : Center(
@@ -157,6 +184,7 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
                       setState(() {
                         _selectedAvatar = _avatars[index];
                         _image = null; // Clear file selection when an avatar is picked
+                        _networkImage = null; // Clear network image if avatar is selected
                       });
                     },
                     child: Container(
@@ -171,11 +199,11 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16),
-                        child: SvgPicture.asset(
+                        child: Image.asset(
                           _avatars[index],
                           fit: BoxFit.cover,
-                          width: double.infinity,
-                          height: double.infinity,
+                          height: 40.h, // Set fixed height for all avatars
+                          width: 40.h,  // Set fixed width for all avatars
                         ),
                       ),
                     ),
@@ -190,7 +218,6 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
                     if (_image == null && _selectedAvatar == null) {
                       Get.snackbar("!!!", "Please select or upload a profile image.");
                     } else {
-                      // Upload image file or avatar
                       final file = _image != null ? File(_image!.path) : null;
                       photoController.uploadProfilePicture(
                         imageFile: file,

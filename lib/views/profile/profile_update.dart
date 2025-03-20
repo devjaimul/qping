@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_button.dart';
 import 'package:qping/global_widgets/custom_text_field.dart';
+import 'package:qping/routes/exports.dart';
 import 'package:qping/services/api_constants.dart';
 import 'package:qping/utils/app_colors.dart';
 
@@ -97,7 +98,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
               // Profile Picture
               Center(
                 child: Stack(
-                  alignment: Alignment.bottomRight,
+               alignment: Alignment.bottomRight,
                   children: [
                     Container(
                       width: 120.r,
@@ -119,9 +120,8 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                       child: CircleAvatar(
                         radius: 50.r,
                         backgroundColor: Colors.grey[300],
-                        backgroundImage: _profileImage == null
-                            ? NetworkImage("${ApiConstants.imageBaseUrl}/${controller.profile['profilePicture']}")
-                            : FileImage(_profileImage!) as ImageProvider,
+                        backgroundImage:NetworkImage("${ApiConstants.imageBaseUrl}/${controller.profile['profilePicture']}")
+
                       ),
                     ),
                     Container(
@@ -133,7 +133,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                       ),
                       child: Center(
                         child: IconButton(
-                          onPressed: _pickImage,
+                          onPressed:(){Get.to(()=>UploadPhotosScreen(img:"${ApiConstants.imageBaseUrl}/${controller.profile['profilePicture']}",));},
                           icon: const Icon(Icons.camera_alt, color: Colors.white),
                         ),
                       ),
