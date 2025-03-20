@@ -107,12 +107,7 @@ class EventScreen extends StatelessWidget {
                     controller: scrollController,
                     itemCount: controller.events.length + (controller.isLoading.value ? 1 : 0),
                     itemBuilder: (context, index) {
-                      if (controller.isLoading.value && index == controller.events.length) {
-                        return Padding(
-                          padding: EdgeInsets.all(16.r),
-                          child: const Center(child: CircularProgressIndicator()),
-                        );
-                      }
+
 
                       var event = controller.events[index];
 

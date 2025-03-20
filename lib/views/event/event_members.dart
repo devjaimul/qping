@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:qping/Controller/event/event_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/services/api_constants.dart';
@@ -74,20 +75,32 @@ class EventMembers extends StatelessWidget {
               }
 
               var member = controller.eventMembers[index];
-
+              String profilePicture = member['profilePicture'] ?? '';
+              bool isSvg = profilePicture.toLowerCase().endsWith('.svg');
               return Card(
                 color: Colors.white,
                 margin: EdgeInsets.symmetric(vertical: 4.h, horizontal: 10.w),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
                   child: ListTile(
-                    leading: CircleAvatar(
-                      radius: 25.r,
-                      backgroundImage: member['profilePicture'] != null
-                          ? CachedNetworkImageProvider("${ApiConstants.imageBaseUrl}/${member['profilePicture']}")
-                          : null,
-                      backgroundColor: Colors.grey,
-                    ),
+              leading: CircleAvatar(
+              radius: 25.r,
+              backgroundColor:profilePicture.isEmpty?Colors.grey:Colors.transparent,
+              child: profilePicture.isNotEmpty
+              ? isSvg
+              // For SVG images, use `flutter_svg` to render
+              ? SvgPicture.network(
+              "${ApiConstants.imageBaseUrl}/$profilePicture",
+
+                fit: BoxFit.contain,
+              )
+
+                  : CachedNetworkImage(
+              imageUrl: "${ApiConstants.imageBaseUrl}/$profilePicture",
+
+              fit: BoxFit.contain,
+              )
+                  : null,),
                     title: CustomTextOne(
                       text: member['name'] ?? 'No name',
                       fontSize: 18.sp,

@@ -190,7 +190,7 @@ class _JoinEventScreenState extends State<JoinEventScreen> {
                               CustomTextButton(
                                 text: "See Members",
                                 onTap: () {
-                                  Get.to(()=>EventMembers(eventName: event['eventName'], eventId: event['_id']));
+                                  Get.to(()=>EventMembers(eventName: event['eventName'], eventId: event['eventId']));
                                 },
                                 fontSize: 14.sp,
                                 padding: 4.r,

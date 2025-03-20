@@ -21,7 +21,6 @@ class MyEventController extends GetxController {
       var pagination = response.body['pagination'];
 
       if (pagination != null) {
-        // Safe check to ensure pagination exists
         currentPage.value = pagination['currentPage'] ?? 1;
         totalPages.value = pagination['totalPages'] ?? 1;
       }
@@ -32,11 +31,12 @@ class MyEventController extends GetxController {
         events.addAll(data.map((event) => event as Map<String, dynamic>).toList());
       }
     } else {
-      print('Error fetching events: ${response.statusText}');
+      Get.snackbar("!!!", response.body['message']);
     }
 
     isLoading.value = false;
   }
+
 
   // Create event with POST request
   Future<void> createEvent({
@@ -61,7 +61,7 @@ class MyEventController extends GetxController {
 
     if (response.statusCode == 200) {
       Get.snackbar("Success", "Event Created Successfully.");
-
+      // Fetch updated events list
       fetchMyEvents(page: currentPage.value, limit: 10);
     } else {
       print('Error creating event: ${response.statusText}');
@@ -93,14 +93,17 @@ class MyEventController extends GetxController {
 
     if (response.statusCode == 200) {
       Get.snackbar("Success", "Event Updated Successfully.");
+      // Fetch updated events list
       fetchMyEvents(page: currentPage.value, limit: 10);
       update();
     } else {
-      print('Error creating event: ${response.statusText}');
+      print('Error updating event: ${response.statusText}');
     }
 
     isLoading.value = false;
   }
+
+
 
   // Delete event with DELETE request
   Future<void> deleteEvent(String eventId) async {
@@ -113,6 +116,7 @@ class MyEventController extends GetxController {
         Get.back();
         Get.snackbar("Success", "Event deleted successfully!");
       });
+      // Fetch updated events list
       fetchMyEvents(page: currentPage.value, limit: 10);
       update();
     } else {
@@ -121,4 +125,6 @@ class MyEventController extends GetxController {
 
     isLoading.value = false;
   }
+
+
 }

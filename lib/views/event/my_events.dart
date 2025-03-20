@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:qping/Controller/event/event_controller.dart';
 import 'package:qping/Controller/event/my_events_controller.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_button.dart';
@@ -15,7 +14,7 @@ import 'event_create_screen.dart';
 
 class MyEvents extends StatefulWidget {
 
-  MyEvents({super.key});
+  const MyEvents({super.key});
 
   @override
   State<MyEvents> createState() => _MyEventsState();
@@ -27,8 +26,10 @@ class _MyEventsState extends State<MyEvents> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    myEventController.fetchMyEvents(limit: 10,page: 1);
-  }
+    myEventController.fetchMyEvents(page: 1, limit: 10);
+    myEventController.update();
+
+}
   @override
   Widget build(BuildContext context) {
     ScrollController scrollController = ScrollController();
@@ -84,7 +85,11 @@ class _MyEventsState extends State<MyEvents> {
                 },
               );
             }
-
+            if (myEventController.events.isEmpty) {
+              return  Center(
+                child: CustomTextOne(text: 'No Events Available',fontSize: 18.sp,),
+              );
+            }
             return Column(
               children: [
                 Row(
@@ -109,7 +114,7 @@ class _MyEventsState extends State<MyEvents> {
                     itemCount: myEventController.events.length + (myEventController.isLoading.value ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (myEventController.isLoading.value && index == myEventController.events.length) {
-                        return Center(child: CircularProgressIndicator());
+                        return const Center(child: CircularProgressIndicator());
                       }
 
                       var event = myEventController.events[index];
@@ -144,7 +149,7 @@ class _MyEventsState extends State<MyEvents> {
                                   ),
                                   IconButton(
                                     key: iconKey,
-                                    icon: Icon(Icons.more_vert),
+                                    icon: const Icon(Icons.more_vert),
                                     onPressed: () {
                                       _showPopupMenu(context, event, iconKey);
                                     },
