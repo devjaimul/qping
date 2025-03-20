@@ -7,6 +7,7 @@ import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_button.dart';
 import 'package:qping/global_widgets/dialog.dart';
 import 'package:qping/utils/app_colors.dart';
+import 'package:qping/views/event/event_members.dart';
 import 'package:readmore/readmore.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -41,119 +42,163 @@ class _MyEventsState extends State<MyEvents> {
     });
 
     return Scaffold(
-      body: Obx(
-            () {
-          if (myEventController.isLoading.value && myEventController.events.isEmpty) {
-            return Center(
-              child: Shimmer.fromColors(
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
-                child: ListView.builder(
-                  itemCount: 5, // simulate loading state for 5 items
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Container(
-                        height: 120,
-                        color: Colors.white,
+      body: Padding(
+        padding:  EdgeInsets.all(16.h),
+        child: Obx(
+              () {
+            if (myEventController.isLoading.value && myEventController.events.isEmpty) {
+              return ListView.builder(
+                itemCount: 10,
+                itemBuilder: (context, index) {
+                  return Card(
+                    color: Colors.white,
+                    child: Padding(
+                      padding: EdgeInsets.all(10.r),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Shimmer.fromColors(
+                            baseColor: Colors.grey[300]!,
+                            highlightColor: Colors.grey[100]!,
+                            child: Container(
+                              width: double.infinity,
+                              height: 20.h,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(height: 5.h),
+                          Shimmer.fromColors(
+                            baseColor: Colors.grey[300]!,
+                            highlightColor: Colors.grey[100]!,
+                            child: Container(
+                              width: 150.w,
+                              height: 20.h,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(height: 10.h),
+                        ],
                       ),
-                    );
-                  },
-                ),
-              ),
-            );
-          }
-
-          return ListView.builder(
-            controller: scrollController,
-            itemCount: myEventController.events.length + (myEventController.isLoading.value ? 1 : 0),
-            itemBuilder: (context, index) {
-              if (myEventController.isLoading.value && index == myEventController.events.length) {
-                return Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Center(child: CircularProgressIndicator()),
-                );
-              }
-
-              var event = myEventController.events[index];
-
-              // Format eventDate and eventTime
-              String formattedDate = "No Date";
-              String formattedTime = "No Time";
-              if (event['createdAt'] != null) {
-                DateTime eventDate = DateTime.parse(event['createdAt']);
-                formattedDate = "${eventDate.day}-${eventDate.month}-${eventDate.year}";
-              }
-
-              if (event['eventTime'] != null) {
-                formattedTime = event['eventTime'];
-              }
-              GlobalKey iconKey = GlobalKey();
-              return Padding(
-                padding:  EdgeInsets.all(16.h),
-                child: Card(
-                  color: Colors.white,
-                  child: Padding(
-                    padding: EdgeInsets.all(15.h),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 5.h,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            CustomTextOne(
-                              text: event['eventName'] ?? 'No name',
-                              fontSize: 16,
-                              textAlign: TextAlign.start,
-                            ),
-                            IconButton(
-                              key: iconKey,
-                              icon: Icon(Icons.more_vert),
-                              onPressed: () {
-                                _showPopupMenu(context, event, iconKey);
-                              },
-                            ),
-                          ],
-                        ),
-                        CustomTextTwo(
-                          text: "Date: $formattedDate",
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        CustomTextTwo(
-                          text: "Time: $formattedTime",
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        CustomTextTwo(
-                          text: "Location: ${event['eventLocation'] ?? '--'}",
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        ReadMoreText(
-                          "Description: ${event['eventDescription'] ?? 'No description'}",
-                          trimLines: 3,
-                          trimMode: TrimMode.Line,
-                          trimCollapsedText: "show more",
-                          moreStyle: const TextStyle(color: AppColors.primaryColor),
-                          style: TextStyle(color: AppColors.textColor, fontSize: 14.sp),
-                          trimExpandedText: "show less",
-                          colorClickableText: AppColors.primaryColor,
-                        ),
-                        CustomTextButton(
-                          text: "See Members",
-                          onTap: () {},
-                          fontSize: 14,
-                        ),
-                      ],
                     ),
+                  );
+                },
+              );
+            }
+
+            return Column(
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      "✨",
+                      style: TextStyle(fontSize: 20.sp),
+                    ),
+                    SizedBox(width: 8.w),
+                    CustomTextOne(
+                      text: "My Events",
+                      fontSize: 18.sp,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10.h),
+                Expanded(
+                  child: ListView.builder(
+                    controller: scrollController,
+                    itemCount: myEventController.events.length + (myEventController.isLoading.value ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (myEventController.isLoading.value && index == myEventController.events.length) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+
+                      var event = myEventController.events[index];
+
+                      // Format eventDate and eventTime
+                      String formattedDate = "No Date";
+                      String formattedTime = "No Time";
+                      if (event['createdAt'] != null) {
+                        DateTime eventDate = DateTime.parse(event['createdAt']);
+                        formattedDate = "${eventDate.day}-${eventDate.month}-${eventDate.year}";
+                      }
+
+                      if (event['eventTime'] != null) {
+                        formattedTime = event['eventTime'];
+                      }
+                      GlobalKey iconKey = GlobalKey();
+                      return Card(
+                        color: Colors.white,
+                        child: Padding(
+                          padding: EdgeInsets.all(15.h),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            spacing: 5.h,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  CustomTextOne(
+                                    text: event['eventName'] ?? 'No name',
+                                    fontSize: 16,
+                                    textAlign: TextAlign.start,
+                                  ),
+                                  IconButton(
+                                    key: iconKey,
+                                    icon: Icon(Icons.more_vert),
+                                    onPressed: () {
+                                      _showPopupMenu(context, event, iconKey);
+                                    },
+                                  ),
+                                ],
+                              ),
+                              CustomTextTwo(
+                                text: "Date: $formattedDate",
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              CustomTextTwo(
+                                text: "Time: $formattedTime",
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              CustomTextTwo(
+                                text: "Location: ${event['eventLocation'] ?? '--'}",
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              CustomTextTwo(
+                                text: "Joined: ${event['joined'] ?? '--'}",
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              ReadMoreText(
+                                "Description: ${event['eventDescription'] ?? 'No description'}",
+                                trimLines: 3,
+                                trimMode: TrimMode.Line,
+                                trimCollapsedText: "show more",
+                                moreStyle: const TextStyle(color: AppColors.primaryColor),
+                                style: TextStyle(color: AppColors.textColor, fontSize: 14.sp),
+                                trimExpandedText: "show less",
+                                colorClickableText: AppColors.primaryColor,
+                              ),
+                              CustomTextButton(
+                                text: "See Members",
+                                onTap: () {
+                                  Get.to(()=>EventMembers(eventName: event['eventName'], eventId: event['_id']));
+                                },
+                                fontSize: 14,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
-              );
-            },
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
 
       floatingActionButton: FloatingActionButton(

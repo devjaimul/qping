@@ -3,11 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:qping/global_widgets/custom_text.dart';
 import 'package:qping/global_widgets/custom_text_button.dart';
-import 'package:qping/global_widgets/dialog.dart';
 import 'package:qping/utils/app_colors.dart';
-import 'package:qping/views/event/event_create_screen.dart';
 import 'package:readmore/readmore.dart';
-import 'package:intl/intl.dart';  // For date and time formatting
+import 'package:intl/intl.dart';
 import 'package:qping/Controller/event/event_controller.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -18,15 +16,13 @@ class EventScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final EventController controller = Get.put(EventController());
 
-
+    // Fetch events when the screen is displayed
     controller.fetchEvents(page: 1, limit: 10);
 
     ScrollController scrollController = ScrollController();
 
     scrollController.addListener(() {
-
       if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
-
         if (controller.currentPage.value < controller.totalPages.value && !controller.isLoading.value) {
           controller.fetchEvents(page: controller.currentPage.value + 1, limit: 15);
         }
@@ -41,7 +37,6 @@ class EventScreen extends StatelessWidget {
             await controller.fetchEvents(page: 1, limit: 10);
           },
           child: Obx(() {
-
             if (controller.isLoading.value && controller.events.isEmpty) {
               return ListView.builder(
                 itemCount: 10,
@@ -83,18 +78,16 @@ class EventScreen extends StatelessWidget {
 
             // Show a message when there are no events
             if (controller.events.isEmpty) {
-              return const Center(
-                child: CustomTextTwo(text: 'No events available'),
+              return  Center(
+                child: CustomTextOne(text: 'No Events Available',fontSize: 18.sp,),
               );
             }
 
             // Display events
             return Column(
               children: [
-                /// Title Row
                 Row(
                   children: [
-                    // Example emoji or icon
                     Text(
                       "✨",
                       style: TextStyle(fontSize: 20.sp),
@@ -108,7 +101,7 @@ class EventScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 10.h,),
+                SizedBox(height: 10.h),
                 Expanded(
                   child: ListView.builder(
                     controller: scrollController,
@@ -134,6 +127,7 @@ class EventScreen extends StatelessWidget {
                       if (event['eventTime'] != null) {
                         formattedTime = event['eventTime'];
                       }
+
                       return Card(
                         color: Colors.white,
                         child: Padding(
@@ -146,7 +140,7 @@ class EventScreen extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
-                                    child:  CustomTextOne(
+                                    child: CustomTextOne(
                                       text: event['eventName'] ?? 'No name',
                                       fontSize: 16.sp,
                                       textAlign: TextAlign.start,
@@ -201,6 +195,7 @@ class EventScreen extends StatelessWidget {
       ),
     );
   }
-
-
 }
+
+
+

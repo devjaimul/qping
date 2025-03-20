@@ -4,8 +4,27 @@ import 'package:qping/views/event/event_screen.dart';
 import 'package:qping/views/event/joined_event.dart';
 import 'package:qping/views/event/my_events.dart';
 
-class EventTabBarScreen extends StatelessWidget {
+class EventTabBarScreen extends StatefulWidget {
   const EventTabBarScreen({super.key});
+
+  @override
+  _EventTabBarScreenState createState() => _EventTabBarScreenState();
+}
+
+class _EventTabBarScreenState extends State<EventTabBarScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,10 +33,10 @@ class EventTabBarScreen extends StatelessWidget {
       child: Scaffold(
         body: Column(
           children: [
-
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
               child: TabBar(
+                controller: _tabController,
                 labelColor: Colors.white,
                 unselectedLabelColor: AppColors.primaryColor,
                 dividerColor: Colors.transparent,
@@ -26,7 +45,6 @@ class EventTabBarScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 tabs: [
-                  // Messages Tab
                   Tab(
                     child: Container(
                       decoration: BoxDecoration(
@@ -36,21 +54,7 @@ class EventTabBarScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: const Center(
-                        child: Text('Events',style: TextStyle(fontFamily: "Outfit"),),
-                      ),
-                    ),
-                  ),
-                  //Group Messages Tab
-                  Tab(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: AppColors.primaryColor, // Unselected tab border color
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Center(
-                        child: Text('My Events',style: TextStyle(fontFamily: "Outfit"),),
+                        child: Text('Events',style: TextStyle(fontFamily: "Outfit")),
                       ),
                     ),
                   ),
@@ -63,20 +67,33 @@ class EventTabBarScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: const Center(
-                        child: Text('Joined',style: TextStyle(fontFamily: "Outfit"),),
+                        child: Text('My Events',style: TextStyle(fontFamily: "Outfit")),
+                      ),
+                    ),
+                  ),
+                  Tab(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: AppColors.primaryColor, // Unselected tab border color
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Center(
+                        child: Text('Joined',style: TextStyle(fontFamily: "Outfit")),
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-            // Expanded TabBarView
             Expanded(
               child: TabBarView(
+                controller: _tabController,
                 children: [
-              EventScreen(),
-                  MyEvents(),
-                  JoinEventScreen()
+                  EventScreen(), // Show Events data
+                  MyEvents(),    // Show My Events data
+                  JoinEventScreen(), // Show Joined events data
                 ],
               ),
             ),
@@ -86,3 +103,4 @@ class EventTabBarScreen extends StatelessWidget {
     );
   }
 }
+

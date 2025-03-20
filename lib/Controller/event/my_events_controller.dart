@@ -109,12 +109,12 @@ class MyEventController extends GetxController {
     final response = await ApiClient.deleteData(Urls.deleteEvents(eventId));
 
     if (response.statusCode == 200) {
-      fetchMyEvents(page: currentPage.value, limit: 10);
-      update();
       Future.delayed(const Duration(seconds: 1), () {
         Get.back();
         Get.snackbar("Success", "Event deleted successfully!");
       });
+      fetchMyEvents(page: currentPage.value, limit: 10);
+      update();
     } else {
       print('Error deleting event: ${response.statusText}');
     }

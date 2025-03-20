@@ -65,7 +65,7 @@ class Urls {
   static const String createGroup = '/conversation';
   static  String leaveGroup(String groupId) => '/conversation/group/$groupId/leave';
   static  String addUserToGroup (String userId)=> '/conversation/group/$userId';
-  static  String showGroupList (String page,limit,searchValue,involved)=> '/conversation?page=$page&limit=$limit&searchTerm=$searchValue&involved=$involved';
+  static  String showGroupList (String page,limit,searchValue,involved)=> '/conversation?page=$page&limit=$limit&searchTerm=$searchValue&involved=$involved&accepted=true';
 
 
 
@@ -75,6 +75,7 @@ class Urls {
   static  String getEvents (String page,limit)=> '/events?page=$page&limit=$limit';
   static  String myEvents (String page,limit)=> '/events/me?page=$page&limit=$limit';
   static  String joinedEvents (String page,limit)=> '/events/interest?page=$page&limit=$limit';
+  static  String eventMembers (String page,limit,eventId)=> '/events/details/$eventId?page=$page&limit=$limit';
   static const String createEvents= '/events';
   static  String updateEvents(String eventId)=> '/events/$eventId';
   static  String deleteEvents(String eventId)=> '/events/$eventId';

@@ -9,6 +9,8 @@ import 'package:qping/utils/app_colors.dart' show AppColors;
 import 'package:readmore/readmore.dart' show ReadMoreText, TrimMode;
 import 'package:shimmer/shimmer.dart';
 
+import 'event_members.dart';
+
 class JoinEventScreen extends StatefulWidget {
   const JoinEventScreen({super.key});
 
@@ -17,14 +19,15 @@ class JoinEventScreen extends StatefulWidget {
 }
 
 class _JoinEventScreenState extends State<JoinEventScreen> {
-  // Use Get.find() to fetch the existing instance of the controller
   final EventController controller = Get.find<EventController>();
 
   @override
   void initState() {
     super.initState();
-    // Fetch the joined events when the screen is loaded
-    controller.fetchJoinedEvents(page: 1, limit: 10);
+    // Fetch the joined events after the first build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.fetchJoinedEvents(page: 1, limit: 10);
+    });
   }
 
   @override
@@ -47,7 +50,7 @@ class _JoinEventScreenState extends State<JoinEventScreen> {
             await controller.fetchJoinedEvents(page: 1, limit: 10);
           },
           child: Obx(() {
-            if (controller.isLoading.value && controller.events.isEmpty) {
+            if (controller.isLoading.value && controller.joinedEvents.isEmpty) {
               return ListView.builder(
                 itemCount: 10,
                 itemBuilder: (context, index) {
@@ -87,9 +90,9 @@ class _JoinEventScreenState extends State<JoinEventScreen> {
             }
 
             // Show a message when there are no events
-            if (controller.events.isEmpty) {
-              return const Center(
-                child: CustomTextTwo(text: 'No events available'),
+            if (controller.joinedEvents.isEmpty) {
+              return  Center(
+                child: CustomTextOne(text: 'No Events Available',fontSize: 18.sp,),
               );
             }
 
@@ -112,16 +115,16 @@ class _JoinEventScreenState extends State<JoinEventScreen> {
                 Expanded(
                   child: ListView.builder(
                     controller: scrollController,
-                    itemCount: controller.events.length + (controller.isLoading.value ? 1 : 0),
+                    itemCount: controller.joinedEvents.length + (controller.isLoading.value ? 1 : 0),
                     itemBuilder: (context, index) {
-                      if (controller.isLoading.value && index == controller.events.length) {
+                      if (controller.isLoading.value && index == controller.joinedEvents.length) {
                         return Padding(
                           padding: EdgeInsets.all(16.r),
                           child: const Center(child: CircularProgressIndicator()),
                         );
                       }
 
-                      var event = controller.events[index];
+                      var event = controller.joinedEvents[index];
 
                       String formattedDate = "No Date";
                       String formattedTime = "No Time";
@@ -133,6 +136,7 @@ class _JoinEventScreenState extends State<JoinEventScreen> {
                       if (event['eventTime'] != null) {
                         formattedTime = event['eventTime'];
                       }
+
                       return Card(
                         color: Colors.white,
                         child: Padding(
@@ -168,6 +172,11 @@ class _JoinEventScreenState extends State<JoinEventScreen> {
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w500,
                               ),
+                              CustomTextTwo(
+                                text: "Joined: ${event['joined'] ?? '--'}",
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                              ),
                               ReadMoreText(
                                 "Description: ${event['eventDescription'] ?? 'No description'}",
                                 trimLines: 3,
@@ -179,9 +188,9 @@ class _JoinEventScreenState extends State<JoinEventScreen> {
                                 colorClickableText: AppColors.primaryColor,
                               ),
                               CustomTextButton(
-                                text: "Join",
+                                text: "See Members",
                                 onTap: () {
-                                  controller.joinEvent(event['_id']);
+                                  Get.to(()=>EventMembers(eventName: event['eventName'], eventId: event['_id']));
                                 },
                                 fontSize: 14.sp,
                                 padding: 4.r,
@@ -201,4 +210,5 @@ class _JoinEventScreenState extends State<JoinEventScreen> {
     );
   }
 }
+
 

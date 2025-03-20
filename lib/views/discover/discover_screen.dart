@@ -7,6 +7,7 @@ import 'package:qping/global_widgets/custom_text_button.dart';
 import 'package:qping/services/api_constants.dart';
 import 'package:qping/utils/app_colors.dart';
 import 'package:qping/utils/app_images.dart';
+import 'package:shimmer/shimmer.dart';
 
 class DiscoverScreen extends StatefulWidget {
   const DiscoverScreen({super.key});
@@ -44,8 +45,45 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
           child: Obx(
                 () {
               if (controller.isLoading.value && controller.groupList.isEmpty) {
-                // Show loading indicator if loading first page
-                return const Center(child: CircularProgressIndicator());
+                return ListView.builder(
+                  itemCount: 5,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding:  EdgeInsets.symmetric(horizontal: 16.w),
+                      child: Card(
+                        color: Colors.white,
+                        child: Padding(
+                          padding: EdgeInsets.all(10.r),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Shimmer.fromColors(
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.grey[100]!,
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 20.h,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(height: 5.h),
+                              Shimmer.fromColors(
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.grey[100]!,
+                                child: Container(
+                                  width: 150.w,
+                                  height: 20.h,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(height: 10.h),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
               }
 
               if (controller.groupList.isEmpty) {

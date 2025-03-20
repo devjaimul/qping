@@ -4,6 +4,8 @@ import 'package:qping/utils/urls.dart';
 
 class EventController extends GetxController {
   var events = <Map<String, dynamic>>[].obs;
+  var joinedEvents = <Map<String, dynamic>>[].obs;
+  var eventMembers = <Map<String, dynamic>>[].obs;
   var isLoading = false.obs;
   var currentPage = 1.obs;
   var totalPages = 1.obs;
@@ -77,12 +79,41 @@ class EventController extends GetxController {
       }
 
       if (page == 1) {
-        events.value = data.map((event) => event as Map<String, dynamic>).toList();
+        joinedEvents.value = data.map((event) => event as Map<String, dynamic>).toList();
       } else {
-        events.addAll(data.map((event) => event as Map<String, dynamic>).toList());
+        joinedEvents.addAll(data.map((event) => event as Map<String, dynamic>).toList());
       }
     } else {
       print('Error fetching joined events: ${response.statusText}');
+    }
+
+    isLoading.value = false;
+  }
+
+  // Fetch event members from the API with pagination
+  Future<void> fetchEventMembers({int page = 1, int limit = 10, required String eventId}) async {
+    if (isLoading.value || page > totalPages.value) return;
+
+    isLoading.value = true;
+
+    final response = await ApiClient.getData(Urls.eventMembers(page.toString(), limit.toString(), eventId));
+
+    if (response.statusCode == 200) {
+      var data = response.body['data'] as List;
+      var pagination = response.body['pagination'];
+
+      if (pagination != null) {
+        currentPage.value = pagination['currentPage'] ?? 1;
+        totalPages.value = pagination['totalPages'] ?? 1;
+      }
+
+      if (page == 1) {
+        eventMembers.value = data.map((event) => event as Map<String, dynamic>).toList();
+      } else {
+        eventMembers.addAll(data.map((event) => event as Map<String, dynamic>).toList());
+      }
+    } else {
+      print('Error fetching event members: ${response.statusText}');
     }
 
     isLoading.value = false;
