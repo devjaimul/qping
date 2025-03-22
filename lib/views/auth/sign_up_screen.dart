@@ -103,19 +103,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         height: 18.h,
                       ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Password cannot be empty";
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Password cannot be empty";
+                        }
+                        if (value.length < 8) {
+                          return "Password must be at least 8 characters";
+                        }
+                        if (!RegExp(r'^(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$').hasMatch(value)) {
+                          return "Password must contain at least 1 special character";
+                        }
+                        return null;
                       }
-                      if (value.length < 8) {
-                        return "Password must be at least 8 characters and include uppercase, lowercase, numbers, and special characters (e.g., Abc123@!)";
-                      }
-                      if (!RegExp(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$')
-                          .hasMatch(value)) {
-                        return "Password must contain letters, numbers, uppercase, and special characters";
-                      }
-                      return null;
-                    },
                   ),
 
                   // Confirm Password Field
