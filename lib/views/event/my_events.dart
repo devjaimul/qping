@@ -22,17 +22,17 @@ class MyEvents extends StatefulWidget {
 
 class _MyEventsState extends State<MyEvents> {
   final MyEventController myEventController = Get.put(MyEventController());
+  ScrollController scrollController = ScrollController();
 @override
   void initState() {
     // TODO: implement initState
     super.initState();
     myEventController.fetchMyEvents(page: 1, limit: 10);
-    myEventController.update();
 
 }
   @override
   Widget build(BuildContext context) {
-    ScrollController scrollController = ScrollController();
+
 
     scrollController.addListener(() {
       if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {

@@ -199,7 +199,6 @@ class EventCreateScreen extends StatelessWidget {
                         eventDate: dateTEController.text,
                         eventLocation: locationTEController.text,
                       );
-                      Get.back();
                     }
                   }
                       : () {

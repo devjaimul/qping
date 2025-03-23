@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:qping/services/api_client.dart';
 import 'package:qping/utils/urls.dart';
@@ -8,6 +10,11 @@ class MyEventController extends GetxController {
   var currentPage = 1.obs;
   var totalPages = 1.obs;
 
+  @override
+  void onInit(){
+    super.onInit();
+    fetchMyEvents(page: 1, limit: 10);
+  }
   // Fetch events for the user from the API with pagination
   Future<void> fetchMyEvents({int page = 1, int limit = 10}) async {
     if (isLoading.value || page > totalPages.value) return;
@@ -60,9 +67,13 @@ class MyEventController extends GetxController {
     );
 
     if (response.statusCode == 200) {
-      Get.snackbar("Success", "Event Created Successfully.");
-      // Fetch updated events list
-      fetchMyEvents(page: currentPage.value, limit: 10);
+
+
+      Timer(const Duration(seconds: 1), () {
+        Get.back();
+        Get.snackbar("Success", "Event Created Successfully.");
+        fetchMyEvents(page: currentPage.value, limit: 10);
+      });
     } else {
       print('Error creating event: ${response.statusText}');
     }
@@ -92,10 +103,12 @@ class MyEventController extends GetxController {
     );
 
     if (response.statusCode == 200) {
-      Get.snackbar("Success", "Event Updated Successfully.");
-      // Fetch updated events list
-      fetchMyEvents(page: currentPage.value, limit: 10);
-      update();
+      Timer(const Duration(seconds: 1), () {
+        Get.back();
+        Get.snackbar("Success", "Event Updated Successfully.");
+        fetchMyEvents(page: currentPage.value, limit: 10);
+      });
+
     } else {
       print('Error updating event: ${response.statusText}');
     }
@@ -112,13 +125,13 @@ class MyEventController extends GetxController {
     final response = await ApiClient.deleteData(Urls.deleteEvents(eventId));
 
     if (response.statusCode == 200) {
-      Future.delayed(const Duration(seconds: 1), () {
-        Get.back();
-        Get.snackbar("Success", "Event deleted successfully!");
-      });
-      // Fetch updated events list
-      fetchMyEvents(page: currentPage.value, limit: 10);
-      update();
+
+        Timer(const Duration(seconds: 1), () {
+          Get.back();
+          Get.snackbar("Success", "Event deleted successfully!");
+          fetchMyEvents(page: currentPage.value, limit: 10);
+        });
+
     } else {
       print('Error deleting event: ${response.statusText}');
     }
