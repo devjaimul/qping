@@ -17,6 +17,7 @@ import 'package:qping/utils/app_icons.dart';
 import 'package:qping/utils/app_images.dart';
 import 'package:qping/views/profile/profile_information.dart';
 import 'package:qping/views/profile/setting/setting_screen.dart';
+import 'package:shimmer/shimmer.dart';
 
 import 'support_screen.dart';
 
@@ -39,32 +40,28 @@ class ProfileScreen extends StatelessWidget {
           SizedBox(height: sizeH * .05),
           // Profile picture
           Obx(() {
-            // Show profile picture or a default image
-            String profileImage ="${ApiConstants.imageBaseUrl}/${controller.profile['profilePicture'] }"?? AppImages.model;
-            return Container(
-              width: 120.r,
-              height: 120.r,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.3),
-                    blurRadius: 10.r,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
-                border: Border.all(
-                  color: AppColors.primaryColor.withOpacity(0.5), // Outer blue border
-                  width: 2.w,
-                ),
-              ),
+            String profileImage = "${ApiConstants.imageBaseUrl}/${controller.profile['profilePicture']}" ?? AppImages.model;
+
+            return controller.profile['profilePicture'] == null
+                ? Shimmer.fromColors(
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
               child: CircleAvatar(
                 radius: 50.r,
-                backgroundColor: Colors.grey[300],
-                backgroundImage: NetworkImage(profileImage),  // Load image from network
+                backgroundColor: Colors.grey[300], // Placeholder color
               ),
+            )
+                : CircleAvatar(
+              radius: 50.r,
+              backgroundColor: Colors.transparent,
+              backgroundImage: NetworkImage(profileImage),
+              onBackgroundImageError: (error, stackTrace) {
+                // Handle any errors that occur when loading the image (e.g., if the image URL is broken)
+                print("Error loading image: $error");
+              },
             );
           }),
+
 
           SizedBox(height: sizeH * .02),
           // Name

@@ -10,6 +10,7 @@ import 'package:qping/global_widgets/custom_text_field.dart';
 import 'package:qping/routes/exports.dart';
 import 'package:qping/services/api_constants.dart';
 import 'package:qping/utils/app_colors.dart';
+import 'package:qping/utils/app_images.dart';
 
 
 class ProfileUpdate extends StatefulWidget {
@@ -100,30 +101,20 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                 child: Stack(
                alignment: Alignment.bottomRight,
                   children: [
-                    Container(
-                      width: 120.r,
-                      height: 120.r,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.3),
-                            blurRadius: 10.r,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
-                        border: Border.all(
-                          color: AppColors.primaryColor.withOpacity(0.5),
-                          width: 2.w,
-                        ),
-                      ),
-                      child: CircleAvatar(
-                        radius: 50.r,
-                        backgroundColor: Colors.grey[300],
-                        backgroundImage:NetworkImage("${ApiConstants.imageBaseUrl}/${controller.profile['profilePicture']}")
+                    Obx(() {
+                      // Show profile picture or a default image
+                      String profileImage = "${ApiConstants.imageBaseUrl}/${controller.profile['profilePicture']}" ?? AppImages.model;
 
-                      ),
-                    ),
+                      return CircleAvatar(
+                        radius: 60.r,
+                        backgroundColor: Colors.transparent,
+                        backgroundImage: NetworkImage(profileImage),  // Load image from network
+                        onBackgroundImageError: (error, stackTrace) {
+                          // Handle any errors that occur when loading the image (e.g., if the image URL is broken)
+                          print("Error loading image: $error");
+                        },
+                      );
+                    }),
                     Container(
                       height: 40.h,
                       width: 40.w,

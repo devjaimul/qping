@@ -32,30 +32,18 @@ class ProfileInformation extends StatelessWidget {
             children: [
               // Profile Picture
               Obx(() {
-                String profileImage ="${ApiConstants.imageBaseUrl}/${controller.profile['profilePicture'] }";
+                // Show profile picture or a default image
+                String profileImage = "${ApiConstants.imageBaseUrl}/${controller.profile['profilePicture']}" ?? AppImages.model;
+
                 return Center(
-                  child: Container(
-                    width: 120.r,
-                    height: 120.r,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.3),
-                          blurRadius: 10.r,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                      border: Border.all(
-                        color: AppColors.primaryColor.withOpacity(0.5), // Outer blue border
-                        width: 2.w,
-                      ),
-                    ),
-                    child: CircleAvatar(
-                      radius: 50.r,
-                      backgroundColor: Colors.grey[300],
-                      backgroundImage: NetworkImage(profileImage),  // Load image from network
-                    ),
+                  child: CircleAvatar(
+                    radius: 50.r,
+                    backgroundColor: Colors.transparent,
+                    backgroundImage: NetworkImage(profileImage),  // Load image from network
+                    onBackgroundImageError: (error, stackTrace) {
+                      // Handle any errors that occur when loading the image (e.g., if the image URL is broken)
+                      print("Error loading image: $error");
+                    },
                   ),
                 );
               }),
