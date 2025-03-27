@@ -98,18 +98,13 @@ class _JoinEventScreenState extends State<JoinEventScreen> {
 
             // Display events
             return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Text("✨", style: TextStyle(fontSize: 20.sp)),
-                    SizedBox(width: 8.w),
-                    CustomTextOne(
-                      text: "Joined Events",
-                      fontSize: 18.sp,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ],
+                CustomTextOne(
+                  text: "Joined Events",
+                  fontSize: 18.sp,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
                 ),
                 SizedBox(height: 10.h),
                 Expanded(
@@ -188,7 +183,7 @@ class _JoinEventScreenState extends State<JoinEventScreen> {
                                 colorClickableText: AppColors.primaryColor,
                               ),
                               CustomTextButton(
-                                text: "See Members",
+                                text: "View Attendees",
                                 onTap: () {
                                   Get.to(()=>EventMembers(eventName: event['eventName'], eventId: event['eventId']));
                                 },

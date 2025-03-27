@@ -26,6 +26,7 @@ class EventScreen extends StatelessWidget {
         if (controller.currentPage.value < controller.totalPages.value && !controller.isLoading.value) {
           controller.fetchEvents(page: controller.currentPage.value + 1, limit: 15);
         }
+
       }
     });
 
@@ -85,21 +86,14 @@ class EventScreen extends StatelessWidget {
 
             // Display events
             return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Text(
-                      "✨",
-                      style: TextStyle(fontSize: 20.sp),
-                    ),
-                    SizedBox(width: 8.w),
-                    CustomTextOne(
-                      text: "Events",
-                      fontSize: 18.sp,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ],
+                CustomTextOne(
+                  text: "Events",
+                  fontSize: 18.sp,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  textAlign: TextAlign.start,
                 ),
                 SizedBox(height: 10.h),
                 Expanded(
@@ -108,7 +102,7 @@ class EventScreen extends StatelessWidget {
                     itemCount: controller.events.length + (controller.isLoading.value ? 1 : 0),
                     itemBuilder: (context, index) {
 
-
+                      if (index >= controller.events.length) return Container();
                       var event = controller.events[index];
 
                       // Format eventDate and eventTime
