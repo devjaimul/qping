@@ -83,7 +83,7 @@ class SignInScreen extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerRight,
                   child: StyleTextButton(
-                    text: "Forget Password?",
+                    text: "Forgot Password?",
                     onTap: () {
                       Get.toNamed(AppRoutes.emailVerificationScreen);
                     },
